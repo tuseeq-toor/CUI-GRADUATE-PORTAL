@@ -14,21 +14,14 @@ export default function SynopsisSubmission() {
   const handleSubmit = (event) => {
     event.preventDefault();
     alert("Submitted");
+    console.log(first);
     const data = new FormData(event.currentTarget);
-    const userEmail = data.get("email");
-    const userPassword = data.get("password");
-    /* axios.post("http://localhost:3000/auth/login", {
-        email: userEmail,
-        password: userPassword,
-      })
-      .then((res) => {
-        const data = res.data.user;
-	console.log(data);
-        navigate("/Dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      }); */
+    const synopsisTitle = data.get("synopsis-title");
+    const supervisor = data.get("supervisor");
+    const coSupervisor = data.get("co-supervisor");
+    const userPassword = data.get("synopsis-track");
+    const synopsisFileName = data.get("synopsis-document");
+    const synopsisPresentationFileName = data.get("synopsis-presentation");
   };
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
@@ -38,6 +31,7 @@ export default function SynopsisSubmission() {
           width: "100%",
           marginBottom: "15px",
         }}
+        name="synopsis-title"
         label="Synopsis Title"
         color="secondary"
         variant="outlined"
@@ -48,6 +42,7 @@ export default function SynopsisSubmission() {
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
+            name="supervisor"
             //value={Program}
             label="Supervisor"
             //onChange={handleChange}
@@ -105,6 +100,7 @@ export default function SynopsisSubmission() {
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
+            name="co-supervisor"
             //value={Program}
             label="Co-Supervisor"
             //onChange={handleChange}
@@ -159,7 +155,8 @@ export default function SynopsisSubmission() {
       <TextField
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
-        label="Thesis Track"
+        name="synopsis-track"
+        label="Synopsis Track"
         color="secondary"
         variant="outlined"
       />
@@ -168,7 +165,7 @@ export default function SynopsisSubmission() {
         className=" form-control-sm  col-md-10 col-sm-8"
         type="file"
         min={0}
-        name="tutionFeePaid"
+        name="synopsis-document"
         // value={saveModal.tutionFeePaid}
         // onChange={this.changeHandler}
       />
@@ -177,7 +174,7 @@ export default function SynopsisSubmission() {
         className=" form-control-sm  col-md-10 col-sm-8"
         type="file"
         min={0}
-        name="tutionFeePaid"
+        name="synopsis-presentation"
         // value={saveModal.tutionFeePaid}
         // onChange={this.changeHandler}
       />
