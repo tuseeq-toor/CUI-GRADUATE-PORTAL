@@ -18,12 +18,24 @@ import { preventOverflow } from "@popperjs/core";
 
 export default function DialogSelect(props) {
   const [open, setOpen] = React.useState(false);
+  const [isError, setIsError] = React.useState({
+    yearError: false,
+    rollNoError: false,
+  });
+  let errorsInitState = {
+    yearError: "",
+    rollNoError: "",
+  };
+  const [errors, setErrors] = React.useState({
+    yearError: "",
+    rollNoError: "",
+  });
 
   let data = {
-    session: "--",
-    year: "--",
-    discipline: "--",
-    rollNo: "--",
+    session: "",
+    year: "",
+    discipline: "",
+    rollNo: "",
   };
 
   const handleChange = (event) => {
@@ -41,11 +53,40 @@ export default function DialogSelect(props) {
     const a = data.get("age"); */
     // props.onProgram(data.program);
 
-    props.onRegNum(data);
     if (reason !== "backdropClick") {
       setOpen(false);
     }
   };
+
+  // const handleSubmit = (event, reason) => {
+  //   event.preventDefault();
+  //   setErrors({ yearError: "", rollNoError: "" });
+  //   setIsError({ yearError: false, rollNoError: false });
+
+  //   if (!data.year.match(/[2-3][2-9]/)) {
+  //     setIsError({ yearError: true, rollNoError: true });
+  //     setErrors({
+  //       ...errors,
+  //       yearError: "The year should be between 22-39",
+  //     });
+  //   }
+
+  //   if (!data.rollNo.match(/[0-9][0-9][0-9]/)) {
+  //     setIsError({ yearError: true, rollNoError: true });
+  //     setErrors({
+  //       rollNoError: "Roll Number cannot exceed three digits",
+  //     });
+  // }
+
+  // if (!errors.yearError && !errors.rollNoError)
+  //   setErrors({ yearError: "", rollNoError: "" });
+
+  // if (!errors.yearError && !errors.rollNoError) {
+  //   props.onRegNum(data);
+  // if (reason !== "backdropClick") {
+  //   setOpen(false);
+  // }
+  // }
 
   return (
     <div>
@@ -53,7 +94,7 @@ export default function DialogSelect(props) {
         Enter Registration Number Here
       </Button>
       <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
-        <DialogTitle>Fill the form</DialogTitle>
+        <DialogTitle>Enter registration Number</DialogTitle>
         <DialogContent>
           <Box component="form" sx={{ display: "flex", flexWrap: "wrap" }}>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -75,16 +116,22 @@ export default function DialogSelect(props) {
                 <MenuItem value={"FA"}>FA</MenuItem>
               </Select>
             </FormControl>
-            <TextField
-              sx={{ m: 1, maxWidth: 120 }}
-              autoComplete="given-name"
-              name="year"
-              variant="standard"
-              placeholder="00"
-              id="year"
-              label="Year"
-              onChange={handleChange}
-            />
+            <FormControl>
+              <TextField
+                type="number"
+                sx={{ m: 1, maxWidth: 120 }}
+                error={isError.yearError}
+                helperText={errors.yearError}
+                required
+                autoComplete="given-name"
+                name="year"
+                variant="standard"
+                placeholder="00"
+                id="year"
+                label="Year"
+                onChange={handleChange}
+              />
+            </FormControl>
 
             <FormControl sx={{ m: 1, width: 120 }}>
               <InputLabel id="demo-simple-select-label">Discipline</InputLabel>
@@ -102,21 +149,27 @@ export default function DialogSelect(props) {
                 <MenuItem value={"IS"}>IS</MenuItem>
               </Select>
             </FormControl>
-            <TextField
-              sx={{ m: 1, width: 120 }}
-              autoComplete="given-name"
-              name="rollNo"
-              variant="standard"
-              placeholder="000"
-              id="rollNo"
-              label="Roll No."
-              onChange={handleChange}
-            />
+            <FormControl>
+              <TextField
+                type="number"
+                error={isError.rollNoError}
+                helperText={errors.rollNoError}
+                required
+                sx={{ m: 1, width: 120 }}
+                autoComplete="given-name"
+                name="rollNo"
+                variant="standard"
+                placeholder="000"
+                id="rollNo"
+                label="Roll No."
+                onChange={handleChange}
+              />
+            </FormControl>
+            <Button type="submit" /* onClick={handleSubmit} */>Ok</Button>
           </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Ok</Button>
         </DialogActions>
       </Dialog>
     </div>

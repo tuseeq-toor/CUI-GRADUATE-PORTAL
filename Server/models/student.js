@@ -21,16 +21,12 @@ const studentSchema = new Schema({
   synopsis: { type: String /*required: true */ },
   synopsisSemester: { type: String /*required: true */ },
   thesis: { type: String /*required: true */ },
-  thesisTitle: { type: String },
+
   thesisRegistration: { type: Number /*required: true */ },
-  thesisTrack: { type: String /*required: true */ },
   specialization: { type: String /*required: true */ },
   isActive: { type: Boolean },
   coursesPassed: { type: String },
-  synopsisFileName: { type: String },
-  thesisFileName: { type: String },
-  synopsisPresentationFileName: { type: String },
-  thesisPresentationFileName: { type: String },
+
   synopsisSession_id: { type: ObjectId, ref: "Session" },
   totalPublications: { type: Number /*required: true */ },
   impactFactorPublications: { type: Number /*required: true */ },

@@ -53,21 +53,21 @@ exports.studentSignUpNeeds = async (user) => {
 };
 
 exports.studentUpdateNeeds = async (req) => {
-  const user = req.body;
+  const body = req.body;
   needs = {};
   needs.user = await User.findById({
-    _id: req.params.id,
+    _id: req.user._id,
   });
   needs.student_id = needs.user.student_id;
   needs.supervisor = await Faculty.findOne(
     {
-      username: user.supervisorName,
+      username: body.supervisorName,
     },
     { _id: 1 }
   );
   needs.coSupervisor = await Faculty.findOne(
     {
-      username: user.coSupervisorName,
+      username: body.coSupervisorName,
     },
     { _id: 1 }
   );
