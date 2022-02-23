@@ -6,9 +6,11 @@ import { useSelector } from "react-redux";
 const Home = () => {
   const { user } = useSelector((state) => state.auth);
   const userRole = user.user.userRole[0].role;
-  const userProgram = user.user.student.program_id.programShortName;
-  // console.log(userRole);
-
+  let userProgram;
+  if (userRole === "STUDENT") {
+    userProgram = user.user.student.program_id.programShortName;
+    // console.log(userRole);
+  }
   return (
     <div style={{ textAlign: "center" }}>
       {userRole === "STUDENT" && (
