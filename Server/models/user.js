@@ -12,7 +12,7 @@ const userSchema = new Schema({
   userRole: [
     {
       role: { type: String },
-      enable: { type: Boolean },
+      enable: { type: Boolean, default: true },
     },
   ],
 });

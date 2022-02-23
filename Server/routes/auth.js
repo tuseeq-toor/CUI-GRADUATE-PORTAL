@@ -77,7 +77,7 @@ router.post("/signup", async (req, res, next) => {
             email: user.email,
             username: user.username,
             faculty_id: faculty._id,
-            userRole: { role: user.userRole },
+            userRole: { $push: { role: user.userRole } },
           }),
           req.body.password,
           (err, user) => {
@@ -94,7 +94,6 @@ router.post("/signup", async (req, res, next) => {
                 res.json({
                   success: true,
                   status: "Registration Successful!",
-                  user: req.user,
                 });
               });
             }
@@ -130,7 +129,7 @@ router.post("/login", passport.authenticate("local"), async (req, res) => {
       });
     } else {
       if (user.faculty_id) {
-        let faculty = await Faculty.findOne({ _id: user.faculty_id });
+        let faculty = await Faculty.findOne({ _id: user.faculty_id }, {});
         user_info.faculty = faculty;
         user_info.userRole = user.userRole;
         res.statusCode = 200;
