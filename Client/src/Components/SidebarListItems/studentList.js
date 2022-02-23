@@ -42,7 +42,7 @@ export const MsStudentListitems = [
   },
   {
     text: "Submission",
-    icon: <PollIcon />,
+    icon: null,
     active: false,
     subMenu: [
       {
@@ -63,17 +63,6 @@ export const MsStudentListitems = [
     icon: <AddBoxIcon />,
     path: "/Dashboard/EditProfile",
   },
-
-  /* {
-    text: "View Notification",
-    icon: <ManageAccountsIcon />,
-    path: "/Dashboard/ViewNotification",
-  },
-  {
-    text: "View Announcement",
-    icon: <ManageAccountsIcon />,
-    path: "/Dashboard/ViewAnnouncement",
-  }, */
 
   {
     text: "Change Password",
@@ -117,17 +106,6 @@ export const PhdStudentListitems = [
     icon: <AddBoxIcon />,
     path: "/Dashboard/EditProfile",
   },
-
-  /* {
-    text: "View Notification",
-    icon: <ManageAccountsIcon />,
-    path: "/Dashboard/ViewNotification",
-  },
-  {
-    text: "View Announcement",
-    icon: <ManageAccountsIcon />,
-    path: "/Dashboard/ViewAnnouncement",
-  }, */
 
   {
     text: "Change Password",

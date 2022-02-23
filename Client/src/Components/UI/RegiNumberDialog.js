@@ -6,46 +6,54 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import InputLabel from "@mui/material/InputLabel";
-import OutlinedInput from "@mui/material/OutlinedInput";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import { Link } from "@mui/material";
-import { preventOverflow } from "@popperjs/core";
+
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 export default function DialogSelect(props) {
   const [open, setOpen] = React.useState(false);
-
-  let data = {
-    session: "--",
-    year: "--",
-    discipline: "--",
-    rollNo: "--",
-  };
-
-  const handleChange = (event) => {
-    /* props.onRegNum({ data[event.target.name]: event.target.value }); */
-    data[event.target.name] = event.target.value;
-    console.log(data);
-  };
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = (event, reason) => {
-    /* const data = new FormData(event.currentTarget);
-    const a = data.get("age"); */
-    // props.onProgram(data.program);
-
-    props.onRegNum(data);
     if (reason !== "backdropClick") {
       setOpen(false);
     }
   };
+
+  const validationSchema = yup.object({
+    year: yup
+      .string()
+      .matches(/^[2][2-9]$/, "The year should be between 22-29")
+      .required("Year is required"),
+    rollNo: yup
+      .string()
+      .matches(/^[0-9][0-9][0-9]$/, "Roll Number cannot exceed three digits")
+      .required("Roll No. is required"),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      session: "",
+      year: "",
+      discipline: "",
+      rollNo: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values, reason) => {
+      props.onRegNum(values);
+      if (reason !== "backdropClick") {
+        setOpen(false);
+      }
+      // console.log(values);
+    },
+  });
 
   return (
     <div>
@@ -53,7 +61,7 @@ export default function DialogSelect(props) {
         Enter Registration Number Here
       </Button>
       <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
-        <DialogTitle>Fill the form</DialogTitle>
+        <DialogTitle>Enter registration Number</DialogTitle>
         <DialogContent>
           <Box component="form" sx={{ display: "flex", flexWrap: "wrap" }}>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -64,9 +72,9 @@ export default function DialogSelect(props) {
                 name="session"
                 variant="standard"
                 defaultValue=""
-                /* value="" */
                 label="session"
-                onChange={handleChange}
+                value={formik.values.session}
+                onChange={formik.handleChange}
               >
                 {/* <MenuItem value="">
                   <em>-</em>
@@ -75,16 +83,22 @@ export default function DialogSelect(props) {
                 <MenuItem value={"FA"}>FA</MenuItem>
               </Select>
             </FormControl>
-            <TextField
-              sx={{ m: 1, maxWidth: 120 }}
-              autoComplete="given-name"
-              name="year"
-              variant="standard"
-              placeholder="00"
-              id="year"
-              label="Year"
-              onChange={handleChange}
-            />
+            <FormControl>
+              <TextField
+                type="text"
+                sx={{ m: 1, maxWidth: 120 }}
+                autoComplete="given-name"
+                variant="standard"
+                placeholder="00"
+                id="year"
+                name="year"
+                label="Year"
+                value={formik.values.year}
+                onChange={formik.handleChange}
+                error={formik.touched.year && Boolean(formik.errors.year)}
+                helperText={formik.touched.year && formik.errors.year}
+              />
+            </FormControl>
 
             <FormControl sx={{ m: 1, width: 120 }}>
               <InputLabel id="demo-simple-select-label">Discipline</InputLabel>
@@ -93,30 +107,36 @@ export default function DialogSelect(props) {
                 id="discipline"
                 name="discipline"
                 variant="standard"
-                /* value="" */
                 label="Discipline"
-                onChange={handleChange}
+                value={formik.values.discipline}
+                onChange={formik.handleChange}
               >
                 <MenuItem value={"CS"}>CS</MenuItem>
                 <MenuItem value={"SE"}>SE</MenuItem>
                 <MenuItem value={"IS"}>IS</MenuItem>
               </Select>
             </FormControl>
-            <TextField
-              sx={{ m: 1, width: 120 }}
-              autoComplete="given-name"
-              name="rollNo"
-              variant="standard"
-              placeholder="000"
-              id="rollNo"
-              label="Roll No."
-              onChange={handleChange}
-            />
+            <FormControl>
+              <TextField
+                sx={{ m: 1, width: 120 }}
+                autoComplete="given-name"
+                type="text"
+                variant="standard"
+                placeholder="000"
+                id="rollNo"
+                label="Roll No."
+                name="rollNo"
+                value={formik.values.rollNo}
+                onChange={formik.handleChange}
+                error={formik.touched.rollNo && Boolean(formik.errors.rollNo)}
+                helperText={formik.touched.rollNo && formik.errors.rollNo}
+              />
+            </FormControl>
           </Box>
         </DialogContent>
         <DialogActions>
+          <Button onClick={formik.handleSubmit}>Ok</Button>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Ok</Button>
         </DialogActions>
       </Dialog>
     </div>

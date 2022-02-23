@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const notificationSchema = new Schema({
   Notification: { type: String, required: true },
   sendTo: { type: mongoose.Types.ObjectId, ref: "Student" },
-  createdBy: { type: mongoose.Types.ObjectId, ref: "User" },
+  createdBy: { type: mongoose.Types.ObjectId, ref: "Faculty" },
   creationDate: { type: Date, required: true },
   isActive: { type: Boolean, required: true },
   isRead: { type: Boolean },

@@ -62,11 +62,11 @@ router.get("/:id", auth.verifyUser, auth.checkStudent, (req, res) => {
 //update student profile route== students/:id
 
 router.put("/:id", auth.checkStudent, async (req, res) => {
-  const user = req.body;
+  const body = req.body;
   let needs = await helpers.studentUpdateNeeds(req);
   await User.updateOne(
-    { _id: req.params.id },
-    { $set: { username: user.username } }
+    { _id: req.user._id },
+    { $set: { username: body.username } }
   )
     .then(async () => {
       await Student.findOneAndUpdate(

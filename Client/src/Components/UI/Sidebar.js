@@ -59,13 +59,14 @@ export const Sidebar = () => {
   if (userRole === "STUDENT") {
     userProgram = user.user.student.program_id.programShortName;
   }
+  console.log(userProgram);
 
-  console.log(isLoggedIn);
+  // console.log(isLoggedIn);
   const [open, setOpen] = React.useState(false);
 
   const handleClick = (item) => {
     setOpen(!item);
-    console.log(open);
+    // console.log(open);
   };
 
   const navigate = useNavigate();
@@ -103,12 +104,12 @@ export const Sidebar = () => {
               onClick={() => {
                 item.active = !item.active;
                 setOpen(!open);
-                console.log(item.active);
+                // console.log(item.active);
               }}
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
               {item.active ? <ExpandLess /> : <ExpandMore />}
+              {/* <ListItemIcon>{item.icon}</ListItemIcon> */}
+              <ListItemText primary={item.text} />
             </ListItem>
             <Collapse in={item.active} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
@@ -148,7 +149,7 @@ export const Sidebar = () => {
 
   return (
     <div>
-      {console.log(isLoggedIn)}
+      {/* {console.log(isLoggedIn)} */}
       {isLoggedIn && userRole === "ADMIN" && adminListitems.map(checkUser)}
       {isLoggedIn && userRole === "GAC" && gacListitems.map(checkUser)}
       {isLoggedIn &&

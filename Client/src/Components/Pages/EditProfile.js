@@ -9,7 +9,12 @@ import Button from "@mui/material/Button";
 import { useSelector } from "react-redux";
 
 export default function EditProfile() {
-  const { userProgram } = useSelector((state) => state.user);
+  const { isLoggedIn, user } = useSelector((state) => state.auth);
+
+  const userProgram = user.user.student.program_id.programShortName;
+
+  console.log(userProgram);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     alert("Submitted");

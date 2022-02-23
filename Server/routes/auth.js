@@ -6,6 +6,7 @@ var passport = require("passport");
 const helpers = require("../helpers/helpers");
 const Faculty = require("../models/faculty");
 const auth = require("../auth/authenticate");
+const { transporter } = require("../helpers/mailing");
 
 router.post("/signup", async (req, res, next) => {
   const user = req.body;
