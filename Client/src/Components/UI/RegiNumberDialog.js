@@ -6,87 +6,54 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import InputLabel from "@mui/material/InputLabel";
-import OutlinedInput from "@mui/material/OutlinedInput";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import { Link } from "@mui/material";
-import { preventOverflow } from "@popperjs/core";
+
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 export default function DialogSelect(props) {
   const [open, setOpen] = React.useState(false);
-  const [isError, setIsError] = React.useState({
-    yearError: false,
-    rollNoError: false,
-  });
-  let errorsInitState = {
-    yearError: "",
-    rollNoError: "",
-  };
-  const [errors, setErrors] = React.useState({
-    yearError: "",
-    rollNoError: "",
-  });
-
-  let data = {
-    session: "",
-    year: "",
-    discipline: "",
-    rollNo: "",
-  };
-
-  const handleChange = (event) => {
-    /* props.onRegNum({ data[event.target.name]: event.target.value }); */
-    data[event.target.name] = event.target.value;
-    console.log(data);
-  };
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = (event, reason) => {
-    /* const data = new FormData(event.currentTarget);
-    const a = data.get("age"); */
-    // props.onProgram(data.program);
-
     if (reason !== "backdropClick") {
       setOpen(false);
     }
   };
 
-  // const handleSubmit = (event, reason) => {
-  //   event.preventDefault();
-  //   setErrors({ yearError: "", rollNoError: "" });
-  //   setIsError({ yearError: false, rollNoError: false });
+  const validationSchema = yup.object({
+    year: yup
+      .string()
+      .matches(/^[2][2-9]$/, "The year should be between 22-29")
+      .required("Year is required"),
+    rollNo: yup
+      .string()
+      .matches(/^[0-9][0-9][0-9]$/, "Roll Number cannot exceed three digits")
+      .required("Roll No. is required"),
+  });
 
-  //   if (!data.year.match(/[2-3][2-9]/)) {
-  //     setIsError({ yearError: true, rollNoError: true });
-  //     setErrors({
-  //       ...errors,
-  //       yearError: "The year should be between 22-39",
-  //     });
-  //   }
-
-  //   if (!data.rollNo.match(/[0-9][0-9][0-9]/)) {
-  //     setIsError({ yearError: true, rollNoError: true });
-  //     setErrors({
-  //       rollNoError: "Roll Number cannot exceed three digits",
-  //     });
-  // }
-
-  // if (!errors.yearError && !errors.rollNoError)
-  //   setErrors({ yearError: "", rollNoError: "" });
-
-  // if (!errors.yearError && !errors.rollNoError) {
-  //   props.onRegNum(data);
-  // if (reason !== "backdropClick") {
-  //   setOpen(false);
-  // }
-  // }
+  const formik = useFormik({
+    initialValues: {
+      session: "",
+      year: "",
+      discipline: "",
+      rollNo: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values, reason) => {
+      props.onRegNum(values);
+      if (reason !== "backdropClick") {
+        setOpen(false);
+      }
+      // console.log(values);
+    },
+  });
 
   return (
     <div>
@@ -105,9 +72,9 @@ export default function DialogSelect(props) {
                 name="session"
                 variant="standard"
                 defaultValue=""
-                /* value="" */
                 label="session"
-                onChange={handleChange}
+                value={formik.values.session}
+                onChange={formik.handleChange}
               >
                 {/* <MenuItem value="">
                   <em>-</em>
@@ -118,18 +85,18 @@ export default function DialogSelect(props) {
             </FormControl>
             <FormControl>
               <TextField
-                type="number"
+                type="text"
                 sx={{ m: 1, maxWidth: 120 }}
-                error={isError.yearError}
-                helperText={errors.yearError}
-                required
                 autoComplete="given-name"
-                name="year"
                 variant="standard"
                 placeholder="00"
                 id="year"
+                name="year"
                 label="Year"
-                onChange={handleChange}
+                value={formik.values.year}
+                onChange={formik.handleChange}
+                error={formik.touched.year && Boolean(formik.errors.year)}
+                helperText={formik.touched.year && formik.errors.year}
               />
             </FormControl>
 
@@ -140,9 +107,9 @@ export default function DialogSelect(props) {
                 id="discipline"
                 name="discipline"
                 variant="standard"
-                /* value="" */
                 label="Discipline"
-                onChange={handleChange}
+                value={formik.values.discipline}
+                onChange={formik.handleChange}
               >
                 <MenuItem value={"CS"}>CS</MenuItem>
                 <MenuItem value={"SE"}>SE</MenuItem>
@@ -151,24 +118,24 @@ export default function DialogSelect(props) {
             </FormControl>
             <FormControl>
               <TextField
-                type="number"
-                error={isError.rollNoError}
-                helperText={errors.rollNoError}
-                required
                 sx={{ m: 1, width: 120 }}
                 autoComplete="given-name"
-                name="rollNo"
+                type="text"
                 variant="standard"
                 placeholder="000"
                 id="rollNo"
                 label="Roll No."
-                onChange={handleChange}
+                name="rollNo"
+                value={formik.values.rollNo}
+                onChange={formik.handleChange}
+                error={formik.touched.rollNo && Boolean(formik.errors.rollNo)}
+                helperText={formik.touched.rollNo && formik.errors.rollNo}
               />
             </FormControl>
-            <Button type="submit" /* onClick={handleSubmit} */>Ok</Button>
           </Box>
         </DialogContent>
         <DialogActions>
+          <Button onClick={formik.handleSubmit}>Ok</Button>
           <Button onClick={handleClose}>Cancel</Button>
         </DialogActions>
       </Dialog>

@@ -12,44 +12,26 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-/* import Link from "react-router-dom" */
-import axios from "axios";
+
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser, setUserProgram } from "../../Store/user";
 import { Login } from "../../Store/authSlice";
-
-/* function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-} */
+import { useFormik } from "formik";
+import * as yup from "yup";
+import { FormControl } from "@mui/material";
 
 const theme = createTheme();
 
 export default function SignIn() {
   /* const user = useSelector((state) => state.changeUser); */
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
-  const handleSubmit = (event) => {
+
+  /*   const handleSubmit = (event) => {
     event.preventDefault();
 
     // eslint-disable-next-line no-console
-
-    /* const password = data.get("password"); */
     const data = new FormData(event.currentTarget);
     const userEmail = data.get("email");
     const userPassword = data.get("password");
@@ -68,44 +50,46 @@ export default function SignIn() {
       .catch((err) => {
         console.log(err);
       });
-    /* axios
-      .post("http://localhost:3000/auth/login", {
-        email: userEmail,
-        password: userPassword,
-      })
-      .then((res) => {
-        const userRole = res.data.user.userRole[0].role;
-        dispatch(setUser(userRole));
-        navigate("/Dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      }); */
 
-    /* if (email === "admin") {
-      props.onLogin("GAC");
-      navigate("/Dashboard");
-    } */
-    /* if (email === "gac") {
-      props.onLogIn("GAC");
-    }
-    if (email === "go") {
-      props.onLogIn("GO");
-    }
-    if (email === "ms") {
-      props.onLogIn("MS_COR");
-    }
-    if (email === "phd") {
-      props.onLogIn("PHD_COR");
-    }
-    if (email === "stud") {
-      props.onLogIn("STUD");
-    } */
     console.log({
       email: data.get("email"),
       password: data.get("password"),
     });
-  };
+  }; */
+
+  const validationSchema = yup.object({
+    email: yup
+      .string("Enter your email")
+      .email("Enter a valid email")
+      .required("Email is required"),
+    password: yup
+      .string("Enter your password")
+      .min(4, "Password should be of minimum 8 characters length")
+      .required("Password is required"),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      console.log(values);
+
+      dispatch(
+        Login({ userEmail: values.email, userPassword: values.password })
+      )
+        // .unwrap()
+        .then((res) => {
+          console.log(res);
+          navigate("/Dashboard");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  });
 
   return (
     <ThemeProvider theme={theme}>
@@ -119,9 +103,6 @@ export default function SignIn() {
             alignItems: "center",
           }}
         >
-          {/* <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar> */}
           <img
             style={{
               width: "250px",
@@ -133,54 +114,70 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
-          >
-            <TextField
-              margin="normal"
-              required
+          <Box onSubmit={formik.handleSubmit} component="form" sx={{ mt: 1 }}>
+            <FormControl>
+              <TextField
+                margin="normal"
+                /* autoComplete="email"
+              autoFocus
               fullWidth
               id="email"
               label="Email Address"
               name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
+              type="email" */
+                fullWidth
+                id="email"
+                name="email"
+                label="Email"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={formik.touched.email && formik.errors.email}
+              />
+              <TextField
+                margin="normal"
+                /*required
               fullWidth
-              name="password"
-              label="Password"
-              type="password"
               id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link to="#" variant="body2">
-                  Forgot password?
-                </Link>
+              label="Password"
+              name="password"
+              type="password" */
+                fullWidth
+                id="password"
+                name="password"
+                label="Password"
+                type="password"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.password && Boolean(formik.errors.password)
+                }
+                helperText={formik.touched.password && formik.errors.password}
+                autoComplete="current-password"
+              />
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Remember me"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign In
+              </Button>
+              <Grid container>
+                <Grid item xs>
+                  <Link to="#" variant="body2">
+                    Forgot password?
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <Link to="/SignUp">{"Don't have an account? Sign Up"}</Link>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Link to="/SignUp">{"Don't have an account? Sign Up"}</Link>
-              </Grid>
-            </Grid>
+            </FormControl>
           </Box>
         </Box>
       </Container>

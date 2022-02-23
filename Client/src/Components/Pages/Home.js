@@ -4,20 +4,17 @@ import ViewNotification from "./ViewNotification";
 import { useSelector } from "react-redux";
 
 const Home = () => {
-  const { isLoggedIn, user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
   const userRole = user.user.userRole[0].role;
-  console.log(userRole);
-  let userProgram;
-  if (userRole === "STUDENT") {
-    userProgram = user.user.student.program_id.programShortName;
-  }
+  const userProgram = user.user.student.program_id.programShortName;
+  // console.log(userRole);
 
   return (
     <div style={{ textAlign: "center" }}>
       {userRole === "STUDENT" && (
         <>
           <h1>Welcome!</h1>
-          <p> Your are logged in as a Student</p>
+          <p> {`Your are logged in as a ${userProgram} Student`}</p>
           <h3> Notification </h3>
           <ViewNotification />
           <h3> Announcement </h3>
