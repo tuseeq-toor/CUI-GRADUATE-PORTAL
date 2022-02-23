@@ -107,8 +107,9 @@ export const Sidebar = () => {
                 // console.log(item.active);
               }}
             >
-              {item.active ? <ExpandLess /> : <ExpandMore />}
-              {/* <ListItemIcon>{item.icon}</ListItemIcon> */}
+              <ListItemIcon>
+                {item.active ? <ExpandLess /> : <ExpandMore />}
+              </ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItem>
             <Collapse in={item.active} timeout="auto" unmountOnExit>
