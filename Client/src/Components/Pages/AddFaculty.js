@@ -2,9 +2,9 @@ import React from "react";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import { Checkbox, FormControlLabel } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 
 export default function AddStudent() {
   const validationSchema = yup.object({
@@ -30,8 +30,11 @@ export default function AddStudent() {
       designation: "",
       department: "",
       campus: "",
-      rolesChecked: [],
-      new: "",
+      isAdmin: false,
+      isGac: false,
+      isGo: false,
+      isMsCor: false,
+      isPhdCor: false,
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
@@ -186,45 +189,45 @@ export default function AddStudent() {
         >
           <FormControlLabel
             control={
-              <Checkbox
-                type="checkbox"
-                name="rolesChecked"
-                value="ADMIN"
-                color="secondary"
-              />
+              <Checkbox color="secondary" checked={formik.values.isAdmin} />
             }
             label="Admin"
+            name="isAdmin"
+            onChange={formik.handleChange}
           />
           <FormControlLabel
             control={
-              <Checkbox
-                name="rolesChecked"
-                value={formik.values.rolesChecked}
-                color="secondary"
-              />
+              <Checkbox color="secondary" checked={formik.values.isGac} />
             }
             label="GAC"
+            name="isGac"
+            onChange={formik.handleChange}
           />
           <FormControlLabel
             control={
-              <Checkbox name="rolesChecked" value="GO" color="secondary" />
+              <Checkbox color="secondary" checked={formik.values.isGo} />
             }
             label="GO"
+            name="isGo"
+            onChange={formik.handleChange}
           />
           <FormControlLabel
             control={
-              <Checkbox name="rolesChecked" value="MS" color="secondary" />
+              <Checkbox color="secondary" checked={formik.values.isMsCor} />
             }
-            label="MS Cor"
+            label="MS"
+            name="isMsCor"
+            onChange={formik.handleChange}
           />
           <FormControlLabel
             control={
-              <Checkbox name="rolesChecked" value="PhD" color="secondary" />
+              <Checkbox color="secondary" checked={formik.values.isPhdCor} />
             }
-            label="PhD Cor"
+            label="PhD"
+            name="isPhdCor"
+            onChange={formik.handleChange}
           />
         </div>
-
         <Button
           margin="normal"
           type="submit"
