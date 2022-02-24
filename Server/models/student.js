@@ -24,7 +24,7 @@ const studentSchema = new Schema({
 
   thesisRegistration: { type: Number /*required: true */ },
   specialization: { type: String /*required: true */ },
-  isActive: { type: Boolean },
+  isActive: { type: Boolean, default: true },
   coursesPassed: { type: String },
 
   synopsisSession_id: { type: ObjectId, ref: "Session" },

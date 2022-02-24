@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const facultySchema = new Schema({
-  username: { type: String },
   firstName: { type: String },
   lastName: { type: String },
   fullName: { type: String, Default: this.firstName + this.lastName },
@@ -11,12 +10,13 @@ const facultySchema = new Schema({
   country: { type: String },
   city: { type: String },
   email: { type: String },
+  department: { type: String },
+  campus: { type: String },
   // department_id: { type: Schema.Types.ObjectId, ref: "Department" },
   // campus_id: { type: Schema.Types.ObjectId, ref: "Campus" },
-  userType: { type: String },
 
-  enable: { type: Boolean },
-  status: { type: String },
+  enable: { type: Boolean, default: true },
+  isActive: { type: Boolean, default: true },
   designation: { type: String },
   priority: { type: Number },
   isSubscribed: { type: Boolean },

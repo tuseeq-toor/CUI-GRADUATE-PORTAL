@@ -1,14 +1,11 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const connection = require("./config/connection");
 const userRouter = require("./routes/users");
-const studentRouter = require("./routes/students");
+const studentRouter = require("./routes/student");
 const authRouter = require("./routes/auth");
-var session = require("express-session");
-var FileStore = require("session-file-store")(session);
+const fileUpload = require("express-fileupload");
 var passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-var authorize = require("./auth/authenticate");
+
 const cors = require("cors");
 const logger = require("morgan");
 
@@ -16,6 +13,7 @@ const app = express();
 require("dotenv").config();
 app.use(logger("dev"));
 
+app.use(fileUpload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());

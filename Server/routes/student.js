@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 const Student = require("../models/student");
-var passport = require("passport");
 const auth = require("../auth/authenticate");
 const helpers = require("../helpers/helpers");
 const SynopsisSubmission = require("../models/synopsisSubmission");
@@ -12,7 +11,7 @@ const Announcement = require("../models/announcement");
 //studentDashboard Route == /students
 
 router.get("/", auth.verifyUser, auth.checkStudent, (req, res) => {
-  User.find({ _id: req.user._id })
+  User.find({ _id: req.user._id }, { hash: 1, salt: 1, password: 1 })
     .populate({
       path: "student_id",
       populate: [
@@ -58,10 +57,23 @@ router.get("/:id", auth.verifyUser, auth.checkStudent, (req, res) => {
       res.status(500).json({ success: false, message: err.message });
     });
 });
+//get supervisors and coSupervisors
+router.get("/supervisors", auth.verifyUser, auth.checkStudent, (req, res) => {
+  User.find({ "userRole.role": "SUPERVISOR" })
+    .select(username)
+    .then((supervisors) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json({ success: true, supervisors });
+    })
+    .catch((err) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(500).json({ success: false, message: err.message });
+    });
+});
 
 //update student profile route== students/:id
 
-router.put("/:id", auth.checkStudent, async (req, res) => {
+router.put("/:id", auth.verifyUser, auth.checkStudent, async (req, res) => {
   const body = req.body;
   let needs = await helpers.studentUpdateNeeds(req);
   await User.updateOne(
@@ -73,18 +85,16 @@ router.put("/:id", auth.checkStudent, async (req, res) => {
         { _id: needs.student_id },
         {
           $set: {
-            ...user,
+            ...body,
             supervisor_id: needs.supervisor._id,
             coSupervisor_id: needs.supervisor._id,
           },
         },
         { upsert: true }
       )
-        .then((student) => {
+        .then((faculty) => {
           res.setHeader("Content-Type", "application/json");
-          res
-            .status(200)
-            .json({ beforeUpdate: student, afterUpdate: req.body });
+          res.status(200).json({ beforeUpdate: faculty, afterUpdate: body });
         })
         .catch((err) => {
           res.setHeader("Content-Type", "application/json");
@@ -99,14 +109,34 @@ router.put("/:id", auth.checkStudent, async (req, res) => {
 
 router.post(
   "/submit-synopsis",
+  auth.verifyUser,
   auth.checkStudent,
 
-  (req, res, next) => {
+  (req, res) => {
     const body = req.body;
-    const student = req.user._id;
 
-    SynopsisSubmission.create({ ...body, student_id: student })
-      .then((synopsis) => {
+    const studentId = req.user._id;
+    // var registrationNo;
+    // User.find({ _id: studentId })
+    //   .populate("student_id", registrationNo)
+    //   .exec()
+    //   .then((regNo) => {
+    //     registrationNo = regNo;
+    //   });
+    const { synopsisFileName, synopsisPresentationFileName } = req.files;
+    SynopsisSubmission.create({
+      ...body,
+      synopsisFileName,
+      synopsisPresentationFileName,
+      student_id: studentId,
+    })
+      .then(async (synopsis) => {
+        await file.mv(
+          `${__dirname}/server/public/uploads/${synopsisFileName.name}`
+        );
+        await file.mv(
+          `${__dirname}/server/public/uploads/${synopsisPresentationFileName.name}`
+        );
         res.setHeader("Content-Type", "application/json");
         res.status(200).json({ success: true, message: "Submitted" });
       })
