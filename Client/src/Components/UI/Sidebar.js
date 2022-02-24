@@ -52,11 +52,18 @@ import { gacListitems } from "../SidebarListItems/gacList";
 export const Sidebar = () => {
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   console.log(user);
-  const userRole = user.user.userRole[0].role;
+  // const userRole = user.user.userRole[0].role;
+  const userRole = user.user.userRole;
+  let roles = [];
+  userRole.forEach((item) => {
+    if (item.enable) {
+      roles.push(item.role);
+    }
+  });
   console.log(userRole);
 
   let userProgram;
-  if (userRole === "STUDENT") {
+  if (roles[0] === "STUDENT") {
     userProgram = user.user.student.program_id.programShortName;
   }
   console.log(userProgram);
@@ -151,14 +158,14 @@ export const Sidebar = () => {
   return (
     <div>
       {/* {console.log(isLoggedIn)} */}
-      {isLoggedIn && userRole === "ADMIN" && adminListitems.map(checkUser)}
-      {isLoggedIn && userRole === "GAC" && gacListitems.map(checkUser)}
+      {isLoggedIn && roles[0] === "ADMIN" && adminListitems.map(checkUser)}
+      {isLoggedIn && roles[0] === "GAC" && gacListitems.map(checkUser)}
       {isLoggedIn &&
-        userRole === "STUDENT" &&
+        roles[0] === "STUDENT" &&
         userProgram === "MS" &&
         MsStudentListitems.map(checkUser)}
       {isLoggedIn &&
-        userRole === "STUDENT" &&
+        roles[0] === "STUDENT" &&
         userProgram === "PhD" &&
         PhdStudentListitems.map(checkUser)}
       {/* {props.onUser === "ADMIN" && adminListitems.map(checkUser)} */}

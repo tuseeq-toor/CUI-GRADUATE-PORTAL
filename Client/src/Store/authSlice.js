@@ -63,6 +63,21 @@ export const Signup = createAsyncThunk(
   }
 );
 
+export const addFaculty = createAsyncThunk(
+  "auth/addFaculty",
+  async (faculty, thunkAPI) => {
+    console.log(faculty);
+    try {
+      var res = await authService.addFaculty(faculty);
+      console.log("thunk" + res);
+      return res;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue();
+    }
+  }
+);
+
 const initialState = user
   ? { isLoggedIn: true, user, status: "" }
   : { isLoggedIn: false, user: null, status: "" };
@@ -84,6 +99,8 @@ const authSlice = createSlice({
       state.status = action.payload.status;
     },
     [Signup.rejected]: (state) => {},
+    [addFaculty.fulfilled]: (state, action) => {},
+    [addFaculty.rejected]: (state) => {},
   },
 });
 export default authSlice.reducer;

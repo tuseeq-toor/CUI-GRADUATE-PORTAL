@@ -61,9 +61,23 @@ const signup = async (
     console.log(error);
   }
 };
+const addFaculty = async (faculty) => {
+  console.log("api" + faculty);
+  try {
+    const res = await API.post("auth/signup", faculty);
+    if (res) {
+      console.log("Api " + res);
+      localStorage.setItem("user", JSON.stringify(res.data));
+      return res.data;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const authService = {
   login,
   signup,
+  addFaculty,
 };
 export default authService;
