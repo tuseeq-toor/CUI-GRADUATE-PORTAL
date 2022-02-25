@@ -13,6 +13,8 @@ import { supervisor } from "../DummyData/facultyData";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
+import studentService from "../../API/students";
+
 export default function SynopsisSubmission() {
   const validationSchema = yup.object({
     synopsisTitle: yup.string(),
@@ -34,13 +36,16 @@ export default function SynopsisSubmission() {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      console.log(values);
+      // console.log(values);
+
+      studentService.submitSynopsis(values);
     },
   });
 
   return (
     <Box
       component="form"
+      encType="multipart/form-data"
       onSubmit={formik.handleSubmit}
       noValidate
       sx={{ mt: 1 }}
@@ -55,6 +60,8 @@ export default function SynopsisSubmission() {
         label="Synopsis Title"
         color="secondary"
         variant="outlined"
+        value={formik.values.synopsisTitle}
+        onChange={formik.handleChange}
       />
       <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
         <FormControl fullWidth color="secondary">
@@ -63,9 +70,9 @@ export default function SynopsisSubmission() {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             name="supervisor"
-            //value={Program}
             label="Supervisor"
-            //onChange={handleChange}
+            value={formik.values.supervisor}
+            onChange={formik.handleChange}
           >
             {supervisor.map((item) => {
               return <MenuItem value={item}>{item}</MenuItem>;
@@ -80,9 +87,9 @@ export default function SynopsisSubmission() {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             name="coSupervisor"
-            //value={Program}
+            value={formik.values.coSupervisor}
+            onChange={formik.handleChange}
             label="Co-Supervisor"
-            //onChange={handleChange}
           >
             {supervisor.map((item) => {
               return <MenuItem value={item}>{item}</MenuItem>;
@@ -97,6 +104,8 @@ export default function SynopsisSubmission() {
         label="Synopsis Track"
         color="secondary"
         variant="outlined"
+        value={formik.values.synopsisTrack}
+        onChange={formik.handleChange}
       />
       <div className="mt-4">Synopsis Document:</div>
       <input
@@ -104,8 +113,9 @@ export default function SynopsisSubmission() {
         type="file"
         min={0}
         name="synopsisDocument"
-        // value={saveModal.tutionFeePaid}
-        // onChange={this.changeHandler}
+        onChange={(event) => {
+          formik.setFieldValue("file", event.currentTarget.files[0]);
+        }}
       />
       <div className="col-md-2 col-sm-4 mt-4">Synopsis Presentation :</div>
       <input
@@ -113,8 +123,7 @@ export default function SynopsisSubmission() {
         type="file"
         min={0}
         name="synopsisPresentation"
-        // value={saveModal.tutionFeePaid}
-        // onChange={this.changeHandler}
+        // onChange={formik.handleChange}
       />
       <Button
         type="submit"

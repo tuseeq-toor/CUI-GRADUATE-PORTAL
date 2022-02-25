@@ -114,7 +114,7 @@ router.post(
 
   (req, res) => {
     const body = req.body;
-
+    console.log(body.file);
     const studentId = req.user._id;
     // var registrationNo;
     // User.find({ _id: studentId })
@@ -123,7 +123,7 @@ router.post(
     //   .then((regNo) => {
     //     registrationNo = regNo;
     //   });
-    const { synopsisFileName, synopsisPresentationFileName } = req.files;
+    // const synopsisFileName = req.files;
     SynopsisSubmission.create({
       ...body,
       synopsisFileName,
@@ -134,9 +134,9 @@ router.post(
         await file.mv(
           `${__dirname}/server/public/uploads/${synopsisFileName.name}`
         );
-        await file.mv(
-          `${__dirname}/server/public/uploads/${synopsisPresentationFileName.name}`
-        );
+        // await file.mv(
+        //   `${__dirname}/server/public/uploads/${synopsisPresentationFileName.name}`
+        // );
         res.setHeader("Content-Type", "application/json");
         res.status(200).json({ success: true, message: "Submitted" });
       })
@@ -148,6 +148,7 @@ router.post(
 );
 router.post(
   "/submit-thesis",
+  auth.verifyUser,
   auth.checkStudent,
 
   (req, res, next) => {

@@ -1,16 +1,20 @@
 import { API } from "./auth";
 
-const submitSynopsis = () => {
-  API.post("/submit-synopsis", {
-    email: userEmail,
-    password: userPassword,
+const submitSynopsis = (data) => {
+  console.log(data + "apisubmit");
+  API.post("students/submit-synopsis", data, {
+    headers: { "Content-Type": "multipart/form-data" },
   })
     .then((res) => {
-      const data = res.data.user;
-      console.log(data);
-      navigate("/Dashboard");
+      console.log(res);
     })
     .catch((err) => {
       console.log(err);
     });
 };
+
+const studentService = {
+  submitSynopsis,
+};
+
+export default studentService;
