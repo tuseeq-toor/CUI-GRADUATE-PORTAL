@@ -55,6 +55,7 @@ import ViewPhDStudentDetail from "../Components/Pages/ViewPhDStudentDetail";
 
 import ManageNotification from "../Components/Pages/managenotification";
 import { Sidebar } from "../Components/UI/Sidebar";
+import AvatarMenu from "../Components/UI/AvatarMenu";
 
 const drawerWidth = 320;
 
@@ -249,8 +250,7 @@ const DashboardContent = (props) => {
             </Typography>
             <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
-                <Avatar alt="Remy Sharp" src="" />
-                {/* <NotificationsIcon /> */}
+                <AvatarMenu />
               </Badge>
             </IconButton>
           </Toolbar>

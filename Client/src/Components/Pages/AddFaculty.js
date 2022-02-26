@@ -2,11 +2,21 @@ import React from "react";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { useFormik } from "formik";
+import { Checkbox, FormControlLabel, valueToPercent } from "@mui/material";
+import { Field, useFormik } from "formik";
 import * as yup from "yup";
-import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { addFaculty } from "../../Store/authSlice";
 
 export default function AddStudent() {
+  const dispatch = useDispatch();
+
+  const [admin, setAdmin] = React.useState(false);
+  const [gac, setGac] = React.useState(false);
+  const [go, setGo] = React.useState(false);
+  const [ms, setMs] = React.useState(false);
+  const [phd, setPhd] = React.useState(false);
+  const [supervisor, setSupervisor] = React.useState(false);
   const validationSchema = yup.object({
     firstName: yup.string(),
     lastName: yup.string(),
@@ -18,7 +28,32 @@ export default function AddStudent() {
     department: yup.string(),
     campus: yup.string(),
   });
-
+  const userRole = [
+    {
+      role: "ADMIN",
+      enable: admin,
+    },
+    {
+      role: "GAC",
+      enable: gac,
+    },
+    {
+      role: "GO",
+      enable: go,
+    },
+    {
+      role: "MS",
+      enable: ms,
+    },
+    {
+      role: "PhD",
+      enable: phd,
+    },
+    {
+      role: "SUPERVISOR",
+      enable: supervisor,
+    },
+  ];
   const formik = useFormik({
     initialValues: {
       firstName: "",
@@ -30,12 +65,23 @@ export default function AddStudent() {
       designation: "",
       department: "",
       campus: "",
-      rolesChecked: [],
-      new: "",
+      userRole: [],
+      password: "dummy",
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
+      values.userRole = userRole;
       console.log(values);
+      dispatch(addFaculty(values))
+        // .unwrap()
+        .then((res) => {
+          console.log(res);
+
+          /* navigate("/"); */
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   });
 
@@ -180,51 +226,48 @@ export default function AddStudent() {
           style={{
             margin: ".25rem .75rem .25rem",
             display: "flex",
+            flexWrap: "wrap",
             gap: "2.5rem",
             alignItems: "center",
           }}
         >
           <FormControlLabel
-            control={
-              <Checkbox
-                type="checkbox"
-                name="rolesChecked"
-                value="ADMIN"
-                color="secondary"
-              />
-            }
+            control={<Checkbox color="secondary" />}
             label="Admin"
+            name="isAdmin"
+            onChange={() => setAdmin(!admin)}
           />
           <FormControlLabel
-            control={
-              <Checkbox
-                name="rolesChecked"
-                value={formik.values.rolesChecked}
-                color="secondary"
-              />
-            }
+            control={<Checkbox color="secondary" />}
             label="GAC"
+            name="isGac"
+            onChange={() => setGac(!gac)}
           />
           <FormControlLabel
-            control={
-              <Checkbox name="rolesChecked" value="GO" color="secondary" />
-            }
+            control={<Checkbox color="secondary" />}
             label="GO"
+            name="isGo"
+            onChange={() => setGo(!go)}
           />
           <FormControlLabel
-            control={
-              <Checkbox name="rolesChecked" value="MS" color="secondary" />
-            }
-            label="MS Cor"
+            control={<Checkbox color="secondary" />}
+            label="MS"
+            name="isMsCor"
+            onChange={() => setMs(!ms)}
           />
           <FormControlLabel
-            control={
-              <Checkbox name="rolesChecked" value="PhD" color="secondary" />
-            }
-            label="PhD Cor"
+            control={<Checkbox color="secondary" />}
+            label="PhD"
+            name="isPhdCor"
+            onChange={() => setPhd(!phd)}
+          />
+          <FormControlLabel
+            control={<Checkbox color="secondary" />}
+            label="Supervisor"
+            name="isSupervisor"
+            onChange={() => setSupervisor(!supervisor)}
           />
         </div>
-
         <Button
           margin="normal"
           type="submit"

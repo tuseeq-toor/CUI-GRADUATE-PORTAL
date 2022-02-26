@@ -40,37 +40,46 @@ import { Link, useLocation } from "react-router-dom";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import "./ActiveTab.css";
-import { adminListitems } from "../SidebarListItems/adminList";
+
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   MsStudentListitems,
   PhdStudentListitems,
 } from "../SidebarListItems/studentList";
+import { adminListitems } from "../SidebarListItems/adminList";
 import { gacListitems } from "../SidebarListItems/gacList";
+import { goListitems } from "../SidebarListItems/goList";
+import { msListitems } from "../SidebarListItems/msList";
+import { phdListitems } from "../SidebarListItems/phdList";
+import { USERROLES } from "../../Store/roles";
 
 export const Sidebar = () => {
-  const { isLoggedIn, user } = useSelector((state) => state.auth);
-  console.log(user);
-  const userRole = user.user.userRole[0].role;
-  console.log(userRole);
-
-  let userProgram;
-  if (userRole === "STUDENT") {
-    userProgram = user.user.student.program_id.programShortName;
-  }
-  console.log(userProgram);
-
-  // console.log(isLoggedIn);
-  const [open, setOpen] = React.useState(false);
-
-  const handleClick = (item) => {
-    setOpen(!item);
-    // console.log(open);
-  };
-
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
+  const [open, setOpen] = React.useState(false);
+  const { isLoggedIn, user } = useSelector((state) => state.auth);
+  const { Roles } = useSelector((state) => state.userRoles);
+
+  const userRole = user.user.userRole;
+
+  let roles = [];
+  userRole.forEach((item) => {
+    if (item.enable) {
+      roles.push(item.role);
+    }
+  });
+  React.useEffect(() => {
+    dispatch(USERROLES(roles));
+  }, []);
+  console.log("fghf" + Roles);
+  console.log(roles);
+
+  let userProgram;
+  if (roles[0] === "STUDENT") {
+    userProgram = user.user.student.program_id.programShortName;
+  }
 
   const checkUser = (item) => {
     return (
@@ -149,437 +158,22 @@ export const Sidebar = () => {
   };
 
   return (
-    <div>
-      {/* {console.log(isLoggedIn)} */}
-      {isLoggedIn && userRole === "ADMIN" && adminListitems.map(checkUser)}
-      {isLoggedIn && userRole === "GAC" && gacListitems.map(checkUser)}
+    <>
       {isLoggedIn &&
-        userRole === "STUDENT" &&
+        roles[0].includes("ADMIN") &&
+        adminListitems.map(checkUser)}
+      {isLoggedIn && Roles[0] === "GAC" && gacListitems.map(checkUser)}
+      {isLoggedIn && Roles[0] === "GO" && goListitems.map(checkUser)}
+      {isLoggedIn && Roles[0] === "MS" && msListitems.map(checkUser)}
+      {isLoggedIn && Roles[0] === "PhD" && phdListitems.map(checkUser)}
+      {isLoggedIn &&
+        roles.includes("STUDENT") &&
         userProgram === "MS" &&
         MsStudentListitems.map(checkUser)}
       {isLoggedIn &&
-        userRole === "STUDENT" &&
+        roles.includes("STUDENT") &&
         userProgram === "PhD" &&
         PhdStudentListitems.map(checkUser)}
-      {/* {props.onUser === "ADMIN" && adminListitems.map(checkUser)} */}
-
-      {/* <div className={props.onTab === "MANAGE PROGRAM" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("MANAGE PROGRAM");
-          }}
-        >
-          <ListItemIcon>
-            <PollIcon className={props.onTab === "MANAGE PROGRAM" && "icon"} />
-          </ListItemIcon>
-          <ListItemText primary="Manage Programs" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "ADD PROGRAM" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("ADD PROGRAM");
-          }}
-        >
-          <ListItemIcon>
-            <AddBoxIcon className={props.onTab === "ADD PROGRAM" && "icon"} />
-          </ListItemIcon>
-          <ListItemText primary="Add Programs" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "MANAGE SESSION" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("MANAGE SESSION");
-          }}
-        >
-          <ListItemIcon>
-            <ManageAccountsIcon
-              className={props.onTab === "MANAGE SESSION" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Manage Session" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "ADD SESSION" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("ADD SESSION");
-          }}
-        >
-          <ListItemIcon>
-            <AddCircleIcon
-              className={props.onTab === "ADD SESSION" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Add Sessions" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "VIEW FACULTY" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("VIEW FACULTY");
-          }}
-        >
-          <ListItemIcon>
-            <PreviewIcon className={props.onTab === "VIEW FACULTY" && "icon"} />
-          </ListItemIcon>
-          <ListItemText primary="View Faculty" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "MANAGE STUDENTS" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("MANAGE STUDENTS");
-          }}
-        >
-          <ListItemIcon>
-            <LayersIcon
-              className={props.onTab === "MANAGE STUDENTS" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Manage tudents" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "ADD STUDENTS" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("ADD STUDENTS");
-          }}
-        >
-          <ListItemIcon>
-            <PersonAddIcon
-              className={props.onTab === "ADD STUDENTS" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Add Student" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "MANAGE PROGRESS REPORT" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("MANAGE PROGRESS REPORT");
-          }}
-        >
-          <ListItemIcon>
-            <DonutSmallIcon
-              className={props.onTab === "MANAGE PROGRESS REPORT" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Manage Progress Report" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "ADD PROGRESS REPORT" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("ADD PROGRESS REPORT");
-          }}
-        >
-          <ListItemIcon>
-            <AutoStoriesIcon
-              className={props.onTab === "ADD PROGRESS REPORT" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Add Progress Report" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "MANAGE SUPERVISORY COMMITTEE" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("MANAGE SUPERVISORY COMMITTEE");
-          }}
-        >
-          <ListItemIcon>
-            <DashboardIcon
-              className={
-                props.onTab === "MANAGE SUPERVISORY COMMITTEE" && "icon"
-              }
-            />
-          </ListItemIcon>
-          <ListItemText primary="Manage Supervisory Committee" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "ADD SUPERVISORY COMMITTEE" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("ADD SUPERVISORY COMMITTEE");
-          }}
-        >
-          <ListItemIcon>
-            <AddModeratorIcon
-              className={props.onTab === "ADD SUPERVISORY COMMITTEE" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Add Supervisory Committee" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "EVALUATE SYNOPSIS (MS)" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("EVALUATE SYNOPSIS (MS)");
-          }}
-        >
-          <ListItemIcon>
-            <AnalyticsIcon
-              className={props.onTab === "EVALUATE SYNOPSIS (MS)" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Evaluate Synopsis (MS)" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "EVALUATE SYNOPSIS (PhD)" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("EVALUATE SYNOPSIS (PhD)");
-          }}
-        >
-          <ListItemIcon>
-            <MapIcon
-              className={props.onTab === "EVALUATE SYNOPSIS (PhD)" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Evaluate Synopsis (PhD)" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "MANAGE NOTIFICATION" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("MANAGE NOTIFICATION");
-          }}
-        >
-          <ListItemIcon>
-            <EditNotificationsIcon
-              className={props.onTab === "MANAGE NOTIFICATION" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Manage Notification" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "SEND NOTIFICATION (PhD)" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("SEND NOTIFICATION (PhD)");
-          }}
-        >
-          <ListItemIcon>
-            <CampaignIcon
-              className={props.onTab === "SEND NOTIFICATION (PhD)" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Send Notification (PhD)" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "SEND NOTIFICATION (MS)" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("SEND NOTIFICATION (MS)");
-          }}
-        >
-          <ListItemIcon>
-            <NotificationsActiveIcon
-              className={props.onTab === "SEND NOTIFICATION (MS)" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Send Notification (MS)" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "SEND NOTIFICATION TO ALL" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("SEND NOTIFICATION TO ALL");
-          }}
-        >
-          <ListItemIcon>
-            <ContactMailIcon
-              className={props.onTab === "SEND NOTIFICATION TO ALL" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Send Notification to All" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "VIEW MS STUDENT DETAILS" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("VIEW MS STUDENT DETAILS");
-          }}
-        >
-          <ListItemIcon>
-            <PageviewIcon
-              className={props.onTab === "VIEW MS STUDENT DETAILS" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="View MS Student Details" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "VIEW PhD STUDENT DETAILS" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("VIEW PhD STUDENT DETAILS");
-          }}
-        >
-          <ListItemIcon>
-            <ContentPasteSearchIcon
-              className={props.onTab === "VIEW PhD STUDENT DETAILS" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="View PhD Student Details" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "SUPERVISOR'S REPORT" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("SUPERVISOR'S REPORT");
-          }}
-        >
-          <ListItemIcon>
-            <PeopleIcon
-              className={props.onTab === "SUPERVISOR'S REPORT" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Supervisor's Report" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "PROGRAM-WISE REPORT" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("PROGRAM-WISE REPORT");
-          }}
-        >
-          <ListItemIcon>
-            <LeaderboardIcon
-              className={props.onTab === "PROGRAM-WISE REPORT" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Program-Wise Report" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "THESIS-WISE REPORT" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("THESIS-WISE REPORT");
-          }}
-        >
-          <ListItemIcon>
-            <TableChartIcon
-              className={props.onTab === "THESIS-WISE REPORT" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Thesis-Wise Report" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "SYNOPSIS-WISE REPORT" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("SYNOPSIS-WISE REPORT");
-          }}
-        >
-          <ListItemIcon>
-            <PieChartIcon
-              className={props.onTab === "SYNOPSIS-WISE REPORT" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Synopsis-Wise Report" />
-        </ListItem>
-      </div>
-
-      <div
-        className={
-          props.onTab === "VIEW SUPERVISOR/PROGRAM-WISE REPORT" && "tab"
-        }
-      >
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("VIEW SUPERVISOR/PROGRAM-WISE REPORT");
-          }}
-        >
-          <ListItemIcon>
-            <FindInPageIcon
-              className={
-                props.onTab === "VIEW SUPERVISOR/PROGRAM-WISE REPORT" && "icon"
-              }
-            />
-          </ListItemIcon>
-          <ListItemText primary="View Supervisor/Program-Wise Report" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "SESSION-WISE REPORT" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("SESSION-WISE REPORT");
-          }}
-        >
-          <ListItemIcon>
-            <ScreenSearchDesktopIcon
-              className={props.onTab === "SESSION-WISE REPORT" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Session-Wise Report" />
-        </ListItem>
-      </div>
-
-      <div className={props.onTab === "CHANGE PASSWORD" && "tab"}>
-        <ListItem
-          button
-          onClick={() => {
-            props.onActiveTab("CHANGE PASSWORD");
-          }}
-        >
-          <ListItemIcon>
-            <ChangeCircleIcon
-              className={props.onTab === "CHANGE PASSWORD" && "icon"}
-            />
-          </ListItemIcon>
-          <ListItemText primary="Change Password" />
-        </ListItem>
-      </div> */}
-    </div>
+    </>
   );
 };
