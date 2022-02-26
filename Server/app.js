@@ -1,10 +1,10 @@
 const express = require("express");
 const connection = require("./config/connection");
 const userRouter = require("./routes/users");
-const studentRouter = require("./routes/student");
+const studentRouter = require("./routes/students");
 const authRouter = require("./routes/auth");
-const fileUpload = require("express-fileupload");
 var passport = require("passport");
+const fileUpload = require("express-fileupload");
 
 const cors = require("cors");
 const logger = require("morgan");
@@ -13,7 +13,6 @@ const app = express();
 require("dotenv").config();
 app.use(logger("dev"));
 
-app.use(fileUpload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
@@ -31,7 +30,7 @@ connection(); //establishing database connection
 // );
 app.use(passport.initialize());
 // app.use(passport.session());
-
+app.use(fileUpload());
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/students", studentRouter);

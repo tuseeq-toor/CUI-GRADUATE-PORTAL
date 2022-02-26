@@ -14,7 +14,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 exports.getToken = function (user) {
-  return jwt.sign(user, process.env.SECRET_KEY, { expiresIn: 3600 });
+  return jwt.sign(user, process.env.SECRET_KEY, { expiresIn: 36000 });
 };
 var opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
@@ -39,12 +39,12 @@ passport.use(
 exports.verifyUser = passport.authenticate("jwt", { session: false });
 
 module.exports.checkStudent = (req, res, next) => {
-  console.log(req.user._id);
-  User.findOne({ _id: req.user._id }, (err, user) => {
-    if (!req.user) {
-      res.statusCode = 401;
-      res.json({ success: false, message: "You are not authenticated!" });
-    } else {
+  console.log("check Student" + req.user);
+  if (!req.user) {
+    res.statusCode = 401;
+    res.json({ success: false, message: "You are not authenticated!" });
+  } else {
+    User.findOne({ _id: req.user._id }, (err, user) => {
       if (err) {
         return next(err);
       } else if (
@@ -54,8 +54,8 @@ module.exports.checkStudent = (req, res, next) => {
       } else {
         res.send("You are not allowed to perform this operation");
       }
-    }
-  });
+    });
+  }
 };
 module.exports.checkAdmin = (req, res, next) => {
   console.log(req.user._id);
