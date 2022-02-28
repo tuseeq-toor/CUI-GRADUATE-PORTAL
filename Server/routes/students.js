@@ -114,7 +114,7 @@ router.post(
 
   (req, res) => {
     const body = req.body;
-    console.log(body.file);
+    console.log(body);
     const studentId = req.user._id;
     // var registrationNo;
     // User.find({ _id: studentId })
@@ -123,11 +123,11 @@ router.post(
     //   .then((regNo) => {
     //     registrationNo = regNo;
     //   });
-    // const synopsisFileName = req.files;
+    const { synopsisFileName } = req.body;
     SynopsisSubmission.create({
       ...body,
       synopsisFileName,
-      synopsisPresentationFileName,
+      // synopsisPresentationFileName,
       student_id: studentId,
     })
       .then(async (synopsis) => {

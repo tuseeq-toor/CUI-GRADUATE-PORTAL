@@ -36,7 +36,7 @@ export default function SynopsisSubmission() {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      // console.log(values);
+      console.log(values);
 
       studentService.submitSynopsis(values);
     },
@@ -114,7 +114,10 @@ export default function SynopsisSubmission() {
         min={0}
         name="synopsisDocument"
         onChange={(event) => {
-          formik.setFieldValue("file", event.currentTarget.files[0]);
+          formik.setFieldValue(
+            "synopsisDocument",
+            event.currentTarget.files[0]
+          );
         }}
       />
       <div className="col-md-2 col-sm-4 mt-4">Synopsis Presentation :</div>

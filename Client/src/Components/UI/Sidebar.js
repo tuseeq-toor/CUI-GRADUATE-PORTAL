@@ -52,35 +52,23 @@ import { gacListitems } from "../SidebarListItems/gacList";
 import { goListitems } from "../SidebarListItems/goList";
 import { msListitems } from "../SidebarListItems/msList";
 import { phdListitems } from "../SidebarListItems/phdList";
-import { USERROLES } from "../../Store/roles";
 
 export const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
+  const [list, setList] = React.useState([]);
   const { isLoggedIn, user } = useSelector((state) => state.auth);
-  const { Roles } = useSelector((state) => state.userRoles);
+  const { currentRole } = useSelector((state) => state.userRoles);
 
   const userRole = user.user.userRole;
-
   let roles = [];
   userRole.forEach((item) => {
     if (item.enable) {
       roles.push(item.role);
     }
   });
-  React.useEffect(() => {
-    dispatch(USERROLES(roles));
-  }, []);
-  console.log("fghf" + Roles);
-  console.log(roles);
-
-  let userProgram;
-  if (roles[0] === "STUDENT") {
-    userProgram = user.user.student.program_id.programShortName;
-  }
-
   const checkUser = (item) => {
     return (
       <>
@@ -157,12 +145,60 @@ export const Sidebar = () => {
     );
   };
 
+  let userProgram;
+  if (roles[0] === "STUDENT") {
+    userProgram = user.user.student.program_id.programShortName;
+  }
+  React.useEffect(() => {
+    checkrole(currentRole);
+  }, [currentRole]);
+
+  React.useEffect(() => {
+    checkrole(roles[0]);
+  }, []);
+
+  const checkrole = (role) => {
+    console.log("function casll");
+
+    console.log("rolesss==" + roles[0]);
+    switch (role) {
+      case "ADMIN":
+        console.log("hello");
+        setList(adminListitems);
+        break;
+
+      case "GAC":
+        setList(gacListitems);
+        break;
+
+      case "GO":
+        setList(goListitems);
+        break;
+
+      case "MS":
+        setList(msListitems);
+        break;
+      case "PhD":
+        setList(phdListitems);
+        break;
+      case "STUDENT":
+        if (userProgram === "MS") {
+          setList(MsStudentListitems);
+        } else if (userProgram === "PhD") {
+          setList(PhdStudentListitems);
+        }
+        break;
+      default:
+    }
+  };
   return (
     <>
-      {isLoggedIn &&
-        roles[0].includes("ADMIN") &&
-        adminListitems.map(checkUser)}
-      {isLoggedIn && Roles[0] === "GAC" && gacListitems.map(checkUser)}
+      {
+        isLoggedIn && list.map(checkUser)
+        /* isLoggedIn && checkrole() */
+        // roles[0].includes("ADMIN") && adminListitems.map(checkUser)
+      }
+      {/* {isLoggedIn && Roles[0] === "GAC" && gacListitems.map(checkUser)}
       {isLoggedIn && Roles[0] === "GO" && goListitems.map(checkUser)}
       {isLoggedIn && Roles[0] === "MS" && msListitems.map(checkUser)}
       {isLoggedIn && Roles[0] === "PhD" && phdListitems.map(checkUser)}
@@ -173,7 +209,7 @@ export const Sidebar = () => {
       {isLoggedIn &&
         roles.includes("STUDENT") &&
         userProgram === "PhD" &&
-        PhdStudentListitems.map(checkUser)}
+        PhdStudentListitems.map(checkUser)} */}
     </>
   );
 };

@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-let initialState = { Roles: [] };
+let initialState = { currentRole: "" };
 export const userRoleSlice = createSlice({
   name: "userRoles",
   initialState,
   reducers: {
     USERROLES: (state, action) => {
-      state.Roles = action.payload;
+      state.currentRole = action.payload;
     },
     // UPDATE_USERROLES: (state, action) => {
     //   state.Roles.push(action.payload);
