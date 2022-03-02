@@ -39,7 +39,6 @@ passport.use(
 exports.verifyUser = passport.authenticate("jwt", { session: false });
 
 module.exports.checkStudent = (req, res, next) => {
-  console.log("check Student" + req.user);
   if (!req.user) {
     res.statusCode = 401;
     res.json({ success: false, message: "You are not authenticated!" });

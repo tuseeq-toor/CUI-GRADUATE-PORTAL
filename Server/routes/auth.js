@@ -75,9 +75,9 @@ router.post("/signup", async (req, res, next) => {
         User.register(
           new User({
             email: user.email,
-            username: user.username,
+            username: user.fullName,
             faculty_id: faculty._id,
-            userRole: { $push: { role: user.userRole } },
+            userRole: user.rolesChecked,
           }),
           req.body.password,
           (err, user) => {

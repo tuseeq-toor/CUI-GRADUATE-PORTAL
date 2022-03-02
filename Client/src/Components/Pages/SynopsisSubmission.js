@@ -8,7 +8,7 @@ import {
   Select,
 } from "@mui/material";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { supervisor } from "../DummyData/facultyData";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -16,13 +16,22 @@ import * as yup from "yup";
 import studentService from "../../API/students";
 
 export default function SynopsisSubmission() {
+  const [supervisors, setSupervisors] = useState([]);
+  const getSupervisors = async () => {
+    let data = await studentService.getSupervisors();
+    console.table("SubmissionM", data.supervisors);
+    setSupervisors(data.supervisors);
+  };
+  useEffect(() => {
+    getSupervisors();
+  }, []);
   const validationSchema = yup.object({
     synopsisTitle: yup.string(),
     supervisor: yup.string(),
     coSupervisor: yup.string(),
     synopsisTrack: yup.string(),
-    synopsisDocument: yup.string(),
-    synopsisPresentation: yup.string(),
+    // synopsisDocument: yup.string(),
+    // synopsisPresentation: yup.string(),
   });
 
   const formik = useFormik({
@@ -31,14 +40,22 @@ export default function SynopsisSubmission() {
       supervisor: "",
       coSupervisor: "",
       synopsisTrack: "",
-      synopsisDocument: "",
-      synopsisPresentation: "",
+      synopsisDocument: [],
+      synopsisPresentation: [],
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
+      console.log(values);
+      let formData = new FormData();
+      formData.append("synopsisTitle", values.synopsisTitle);
+      formData.append("supervisor", values.supervisor);
+      formData.append("coSupervisor", values.coSupervisor);
+      formData.append("synopsisTrack", values.synopsisTrack);
+      formData.append("synopsisDocument", values.synopsisDocument[0]);
+      formData.append("synopsisPresentation", values.synopsisPresentation[0]);
       // console.log(values);
-
-      studentService.submitSynopsis(values);
+      studentService.submitSynopsis(formData);
+      // studentService.uploadFile(formData);
     },
   });
 
@@ -74,8 +91,12 @@ export default function SynopsisSubmission() {
             value={formik.values.supervisor}
             onChange={formik.handleChange}
           >
-            {supervisor.map((item) => {
-              return <MenuItem value={item}>{item}</MenuItem>;
+            {supervisors.map((item) => {
+              return (
+                <MenuItem key={item._id} value={item._id}>
+                  {item.username}
+                </MenuItem>
+              );
             })}
           </Select>
         </FormControl>
@@ -91,8 +112,12 @@ export default function SynopsisSubmission() {
             onChange={formik.handleChange}
             label="Co-Supervisor"
           >
-            {supervisor.map((item) => {
-              return <MenuItem value={item}>{item}</MenuItem>;
+            {supervisors.map((item) => {
+              return (
+                <MenuItem key={item._id} value={item._id}>
+                  {item.username}
+                </MenuItem>
+              );
             })}
           </Select>
         </FormControl>
@@ -111,19 +136,21 @@ export default function SynopsisSubmission() {
       <input
         className=" form-control-sm  col-md-10 col-sm-8"
         type="file"
-        min={0}
         name="synopsisDocument"
+        min={1}
         onChange={(event) => {
-          formik.setFieldValue("file", event.currentTarget.files[0]);
+          formik.setFieldValue("synopsisDocument", event.currentTarget.files);
         }}
       />
       <div className="col-md-2 col-sm-4 mt-4">Synopsis Presentation :</div>
       <input
         className=" form-control-sm  col-md-10 col-sm-8"
         type="file"
-        min={0}
+        min={1}
         name="synopsisPresentation"
-        // onChange={formik.handleChange}
+        onChange={(event) => {
+          formik.setFieldValue("synopsisPresentation", event.target.files);
+        }}
       />
       <Button
         type="submit"

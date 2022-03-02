@@ -1,12 +1,7 @@
 import axios from "axios";
 
-const { token } = JSON.parse(localStorage.getItem("user"));
-console.log(token);
 export const API = axios.create({
   baseURL: "http://localhost:3000/",
-  headers: {
-    authorization: `Bearer ${token}`,
-  },
 });
 
 const login = async (userEmail, userPassword) => {

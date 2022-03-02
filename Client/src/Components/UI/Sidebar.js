@@ -51,7 +51,6 @@ import { gacListitems } from "../SidebarListItems/gacList";
 
 export const Sidebar = () => {
   const { isLoggedIn, user } = useSelector((state) => state.auth);
-  console.log(user);
   const userRole = user.user.userRole[0].role;
   console.log(userRole);
 
