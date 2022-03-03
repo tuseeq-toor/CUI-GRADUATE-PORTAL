@@ -17,6 +17,7 @@ import studentService from "../../API/students";
 
 export default function SynopsisSubmission() {
   const [supervisors, setSupervisors] = useState([]);
+  const [error, setError] = useState();
   const getSupervisors = async () => {
     let data = await studentService.getSupervisors();
     console.table("SubmissionM", data.supervisors);
@@ -30,8 +31,9 @@ export default function SynopsisSubmission() {
     supervisor: yup.string(),
     coSupervisor: yup.string(),
     synopsisTrack: yup.string(),
-    // synopsisDocument: yup.string(),
-    // synopsisPresentation: yup.string(),
+    synopsisDocument: yup.string(),
+
+    synopsisPresentation: yup.string(),
   });
 
   const formik = useFormik({
@@ -44,7 +46,7 @@ export default function SynopsisSubmission() {
       synopsisPresentation: [],
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       console.log(values);
       let formData = new FormData();
       formData.append("synopsisTitle", values.synopsisTitle);
@@ -54,7 +56,9 @@ export default function SynopsisSubmission() {
       formData.append("synopsisDocument", values.synopsisDocument[0]);
       formData.append("synopsisPresentation", values.synopsisPresentation[0]);
       // console.log(values);
-      studentService.submitSynopsis(formData);
+      let res = await studentService.submitSynopsis(formData);
+      setError(res);
+      console.log(res);
       // studentService.uploadFile(formData);
     },
   });

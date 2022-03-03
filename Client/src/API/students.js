@@ -13,20 +13,21 @@ const getToken = () => {
 export const API_STUD = axios.create({
   baseURL: "http://localhost:3000/",
 });
-const submitSynopsis = (data) => {
+const submitSynopsis = async (data) => {
   let token = getToken();
-  console.log(data + "apisubmit");
-  API_STUD.post("students/submit-synopsis", data, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
+  try {
+    console.log(data + "apisubmit");
+    const res = await API_STUD.post("students/submit-synopsis", data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
+    console.log(res);
+    return res;
+  } catch (error) {
+    console.log(error.response);
+    return error.response.data.message;
+  }
 };
 const getSupervisors = async () => {
   let token = getToken();

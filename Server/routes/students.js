@@ -9,6 +9,7 @@ const helpers = require("../helpers/helpers");
 const SynopsisSubmission = require("../models/synopsisSubmission");
 const Notification = require("../models/notification");
 const Announcement = require("../models/announcement");
+const path = require("path");
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "public/uploads");
@@ -17,14 +18,27 @@ var storage = multer.diskStorage({
     cb(null, Date.now() + "-" + file.originalname);
   },
 });
-// var upload = multer({ storage: storage }).fields([
-//   { name: "synopsisDocument" },
-//   { name: "synopsisPresentation" },
-// ]);
-var upload = multer({ storage: storage }).fields([
-  { name: "synopsisDocument" },
-  { name: "synopsisPresentation" },
-]);
+function checkFileType(file, cb) {
+  // Allowed ext
+  const filetypes = /docx|pdf/;
+  // Check ext
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  // Check mime
+  const mimetype = filetypes.test(file.mimetype);
+
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb("Error: Pdf Only!", false);
+  }
+}
+var upload = multer({
+  storage: storage,
+  limits: { fileSize: 10000000 },
+  fileFilter: (req, file, cb) => {
+    checkFileType(file, cb);
+  },
+}).fields([{ name: "synopsisDocument" }, { name: "synopsisPresentation" }]);
 //studentDashboard Route == /students
 
 router.get("/", auth.verifyUser, auth.checkStudent, (req, res) => {
@@ -142,12 +156,15 @@ router.post(
       console.log(req.body);
       console.log(req.files);
       if (err instanceof multer.MulterError) {
-        console.log(err);
-        return res.status(500).json(err);
-      } else if (err) {
-        console.log(err);
+        console.log("mul", err);
+        res.setHeader("Content-Type", "application/json");
 
         return res.status(500).json(err);
+      } else if (err) {
+        console.log("500", err);
+        res.setHeader("Content-Type", "application/json");
+
+        return res.status(500).json({ err, message: "File not supported" });
       } else {
         let s_id = await User.findById({ _id: supervisor }, { faculty_id: 1 });
         let cs_id = await User.findById(
