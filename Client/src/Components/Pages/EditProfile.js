@@ -6,6 +6,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
+import StudentImage from "../UI/StudentImage";
 import { useSelector } from "react-redux";
 
 export default function EditProfile() {
@@ -36,6 +37,27 @@ export default function EditProfile() {
   };
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <label style={{ display: "flex", flexDirection: "column" }}>
+          <div>Edit Profile Picture:</div>
+
+          <input
+            style={{ margin: ".5rem" }}
+            type="file"
+            min={0}
+            name="synopsisPresentation"
+            // onChange={formik.handleChange}
+          />
+        </label>
+        <StudentImage />
+      </div>
+
       <TextField
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
@@ -68,7 +90,7 @@ export default function EditProfile() {
         variant="outlined"
       />
 
-      <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
+      {/* <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
         <FormControl fullWidth color="secondary">
           <InputLabel id="demo-simple-select-label">Program</InputLabel>
           <Select
@@ -84,7 +106,7 @@ export default function EditProfile() {
             <MenuItem value={15}>MS (IS)</MenuItem>
           </Select>
         </FormControl>
-      </Box>
+      </Box> */}
 
       <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
         <FormControl fullWidth color="secondary">
