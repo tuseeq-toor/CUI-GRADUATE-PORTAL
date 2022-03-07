@@ -54,6 +54,7 @@ import { useSelector } from "react-redux";
 import ManageMsDeadline from "../../Pages/ManageMsDeadline";
 import ManageSynopsisScheduleBulk from "../../Pages/ManageSynopsisScheduleBulk";
 import ManageThesisScheduleBulk from "../../Pages/ManageThesisScheduleBulk";
+import ManageSupervisoryCommitteeStudent from "../../Pages/ManageSupervisoryCommitteeStudent";
 const AdminRoutes = (props) => {
   const { isLoggedIn } = useSelector((state) => state.auth);
   console.log(isLoggedIn);
@@ -125,6 +126,10 @@ const AdminRoutes = (props) => {
         <Route
           path="/Dashboard/AddProgressReport"
           element={<AddProgressReport />}
+        />
+        <Route
+          path="/Dashboard/ManageCommittee"
+          element={<ManageSupervisoryCommitteeStudent />}
         />
         <Route
           path="/Dashboard/ManageSupervisoryCommittee"
