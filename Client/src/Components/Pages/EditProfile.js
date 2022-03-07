@@ -10,7 +10,7 @@ import StudentImage from "../UI/StudentImage";
 import { useSelector } from "react-redux";
 
 export default function EditProfile() {
-  const { isLoggedIn, user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
   const userProgram = user.user.student.program_id.programShortName;
 
@@ -37,27 +37,6 @@ export default function EditProfile() {
   };
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <label style={{ display: "flex", flexDirection: "column" }}>
-          <div>Edit Profile Picture:</div>
-
-          <input
-            style={{ margin: ".5rem" }}
-            type="file"
-            min={0}
-            name="synopsisPresentation"
-            // onChange={formik.handleChange}
-          />
-        </label>
-        <StudentImage />
-      </div>
-
       <TextField
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
@@ -330,6 +309,18 @@ export default function EditProfile() {
             color="secondary"
             variant="outlined"
           />
+          <label style={{ display: "flex", flexDirection: "column" }}>
+            <div>Edit Profile Picture:</div>
+
+            <input
+              style={{ margin: ".5rem" }}
+              type="file"
+              min={0}
+              name="synopsisPresentation"
+              // onChange={formik.handleChange}
+            />
+            {}
+          </label>
         </>
       )}
 
