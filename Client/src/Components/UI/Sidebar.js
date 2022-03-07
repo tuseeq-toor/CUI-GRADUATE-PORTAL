@@ -54,6 +54,24 @@ import { msListitems } from "../SidebarListItems/msList";
 import { phdListitems } from "../SidebarListItems/phdList";
 
 export const Sidebar = () => {
+  const { isLoggedIn, user } = useSelector((state) => state.auth);
+  const userRole = user.user.userRole[0].role;
+  console.log(userRole);
+
+  let userProgram;
+  if (userRole === "STUDENT") {
+    userProgram = user.user.student.program_id.programShortName;
+  }
+  console.log(userProgram);
+
+  // console.log(isLoggedIn);
+  const [open, setOpen] = React.useState(false);
+
+  const handleClick = (item) => {
+    setOpen(!item);
+    // console.log(open);
+  };
+
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();

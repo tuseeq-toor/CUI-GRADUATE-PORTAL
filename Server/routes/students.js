@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const mongoose = require("mongoose");
 const User = require("../models/user");
 const Student = require("../models/student");
 const auth = require("../auth/authenticate");
@@ -7,7 +9,36 @@ const helpers = require("../helpers/helpers");
 const SynopsisSubmission = require("../models/synopsisSubmission");
 const Notification = require("../models/notification");
 const Announcement = require("../models/announcement");
+const path = require("path");
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "public/uploads");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+function checkFileType(file, cb) {
+  // Allowed ext
+  const filetypes = /docx|pdf/;
+  // Check ext
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  // Check mime
+  const mimetype = filetypes.test(file.mimetype);
 
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb("Error: Pdf Only!", false);
+  }
+}
+var upload = multer({
+  storage: storage,
+  limits: { fileSize: 10000000 },
+  fileFilter: (req, file, cb) => {
+    checkFileType(file, cb);
+  },
+}).fields([{ name: "synopsisDocument" }, { name: "synopsisPresentation" }]);
 //studentDashboard Route == /students
 
 router.get("/", auth.verifyUser, auth.checkStudent, (req, res) => {
@@ -44,10 +75,27 @@ router.get("/", auth.verifyUser, auth.checkStudent, (req, res) => {
     });
 });
 
+router.get("/supervisors", auth.verifyUser, auth.checkStudent, (req, res) => {
+  console.log("supervisors");
+  User.find(
+    { "userRole.role": "SUPERVISOR", "userRole.enable": true },
+    { username: 1 }
+  )
+
+    .then((supervisors) => {
+      console.log("here");
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json({ success: true, supervisors });
+    })
+    .catch((err) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(500).json({ success: false, message: err.message });
+    });
+});
 //signleStudent by ID route== students/:id
 
 router.get("/:id", auth.verifyUser, auth.checkStudent, (req, res) => {
-  Student.find({ _id: req.params.id })
+  Student.find({ _id: req.params._id })
     .then((students) => {
       res.setHeader("Content-Type", "application/json");
       res.status(200).json(students);
@@ -58,18 +106,6 @@ router.get("/:id", auth.verifyUser, auth.checkStudent, (req, res) => {
     });
 });
 //get supervisors and coSupervisors
-router.get("/supervisors", auth.verifyUser, auth.checkStudent, (req, res) => {
-  User.find({ "userRole.role": "SUPERVISOR" })
-    .select(username)
-    .then((supervisors) => {
-      res.setHeader("Content-Type", "application/json");
-      res.status(200).json({ success: true, supervisors });
-    })
-    .catch((err) => {
-      res.setHeader("Content-Type", "application/json");
-      res.status(500).json({ success: false, message: err.message });
-    });
-});
 
 //update student profile route== students/:id
 
@@ -111,39 +147,53 @@ router.post(
   "/submit-synopsis",
   auth.verifyUser,
   auth.checkStudent,
-
-  (req, res) => {
-    const body = req.body;
-    console.log(body);
+  async (req, res) => {
     const studentId = req.user._id;
-    // var registrationNo;
-    // User.find({ _id: studentId })
-    //   .populate("student_id", registrationNo)
-    //   .exec()
-    //   .then((regNo) => {
-    //     registrationNo = regNo;
-    //   });
-    const { synopsisFileName } = req.body;
-    SynopsisSubmission.create({
-      ...body,
-      synopsisFileName,
-      // synopsisPresentationFileName,
-      student_id: studentId,
-    })
-      .then(async (synopsis) => {
-        await file.mv(
-          `${__dirname}/server/public/uploads/${synopsisFileName.name}`
+    upload(req, res, async function (err) {
+      const { synopsisTitle, supervisor, coSupervisor, synopsisTrack } =
+        req.body;
+
+      console.log(req.body);
+      console.log(req.files);
+      if (err instanceof multer.MulterError) {
+        console.log("mul", err);
+
+        res.setHeader("Content-Type", "application/json");
+
+        return res.status(500).json(err);
+      } else if (err) {
+        console.log("500", err);
+        res.setHeader("Content-Type", "application/json");
+
+        return res.status(500).json({ err, message: "File not supported" });
+      } else {
+        let s_id = await User.findById({ _id: supervisor }, { faculty_id: 1 });
+        let cs_id = await User.findById(
+          { _id: coSupervisor },
+          { faculty_id: 1 }
         );
-        // await file.mv(
-        //   `${__dirname}/server/public/uploads/${synopsisPresentationFileName.name}`
-        // );
-        res.setHeader("Content-Type", "application/json");
-        res.status(200).json({ success: true, message: "Submitted" });
-      })
-      .catch((err) => {
-        res.setHeader("Content-Type", "application/json");
-        res.status(500).json({ success: false, message: err.message });
-      });
+
+        SynopsisSubmission.create({
+          student_id: studentId,
+          supervisor_id: s_id.faculty_id,
+          coSupervisor_id: cs_id.faculty_id,
+          synopsisTitle,
+          SpecilizationTrack: synopsisTrack,
+          isActive: false,
+          synopsisFileName: `public/uploads/${req.files["synopsisDocument"][0].filename}`,
+          synopsisPresentationFileName: `public/uploads/${req.files["synopsisPresentation"][0].filename}`,
+        })
+          .then((synopsis) => {
+            res.setHeader("Content-Type", "application/json");
+            res.status(200).json({ success: true, message: "Submitted" });
+          })
+          .catch((err) => {
+            console.log(err.message);
+            res.setHeader("Content-Type", "application/json");
+            res.status(500).json({ success: false, message: err.message });
+          });
+      }
+    });
   }
 );
 router.post(

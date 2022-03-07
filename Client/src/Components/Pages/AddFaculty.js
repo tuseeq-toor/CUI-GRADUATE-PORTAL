@@ -20,6 +20,7 @@ export default function AddStudent() {
   const validationSchema = yup.object({
     firstName: yup.string(),
     lastName: yup.string(),
+    fullName: yup.string(),
     fatherName: yup.string(),
     nationality: yup.string(),
     city: yup.string(),
@@ -58,6 +59,7 @@ export default function AddStudent() {
     initialValues: {
       firstName: "",
       lastName: "",
+      fullName: this.firstName + " " + this.lastName,
       fatherName: "",
       nationality: "",
       city: "",
