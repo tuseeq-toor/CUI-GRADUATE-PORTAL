@@ -55,7 +55,7 @@ import { phdListitems } from "../SidebarListItems/phdList";
 
 export const Sidebar = () => {
   const { isLoggedIn, user } = useSelector((state) => state.auth);
-  const userRole = user.user.userRole[0].role;
+  const userRole = user.user.userRole;
   console.log(userRole);
 
   let userProgram;
@@ -75,12 +75,9 @@ export const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const [open, setOpen] = React.useState(false);
   const [list, setList] = React.useState([]);
-  const { isLoggedIn, user } = useSelector((state) => state.auth);
   const { currentRole } = useSelector((state) => state.userRoles);
 
-  const userRole = user.user.userRole;
   let roles = [];
   userRole.forEach((item) => {
     if (item.enable) {
@@ -163,7 +160,6 @@ export const Sidebar = () => {
     );
   };
 
-  let userProgram;
   if (roles[0] === "STUDENT") {
     userProgram = user.user.student.program_id.programShortName;
   }

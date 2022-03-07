@@ -60,7 +60,6 @@ export default function SynopsisSubmission() {
       setError(res);
       console.log(res);
       // studentService.uploadFile(formData);
-
     },
   });
 
@@ -144,14 +143,7 @@ export default function SynopsisSubmission() {
         name="synopsisDocument"
         min={1}
         onChange={(event) => {
-<<<<<<< HEAD
           formik.setFieldValue("synopsisDocument", event.currentTarget.files);
-=======
-          formik.setFieldValue(
-            "synopsisDocument",
-            event.currentTarget.files[0]
-          );
->>>>>>> 29dd92a139536a58f7775dbf62f6e427a467bdab
         }}
       />
       <div className="col-md-2 col-sm-4 mt-4">Synopsis Presentation :</div>
