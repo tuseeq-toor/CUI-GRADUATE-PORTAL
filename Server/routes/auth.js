@@ -77,6 +77,7 @@ router.post("/signup", async (req, res, next) => {
             email: user.email,
             username: user.fullName,
             faculty_id: faculty._id,
+
             userRole: user.rolesChecked,
           }),
           req.body.password,

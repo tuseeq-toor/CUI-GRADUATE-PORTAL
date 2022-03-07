@@ -157,6 +157,7 @@ router.post(
       console.log(req.files);
       if (err instanceof multer.MulterError) {
         console.log("mul", err);
+
         res.setHeader("Content-Type", "application/json");
 
         return res.status(500).json(err);

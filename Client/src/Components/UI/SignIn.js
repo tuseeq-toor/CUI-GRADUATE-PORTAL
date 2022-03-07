@@ -15,7 +15,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setUser, setUserProgram } from "../../Store/user";
 import { Login } from "../../Store/authSlice";
 import { useFormik } from "formik";
 import * as yup from "yup";
