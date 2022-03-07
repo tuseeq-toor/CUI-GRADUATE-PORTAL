@@ -116,89 +116,89 @@ const DashboardContent = (props) => {
 
   const [activeTab, setActiveTab] = React.useState("HOME");
 
-  const checkActiveTab = (tab) => {
-    if (tab === "HOME") {
-      return <h1 style={{ textAlign: "center" }}>Welcome! Admin</h1>;
-    }
-    if (tab === "MANAGE PROGRAM") {
-      return <ManagePrograms />;
-    }
-    if (tab === "ADD PROGRAM") {
-      return <AddManageProgram />;
-    }
-    if (tab === "MANAGE SESSION") {
-      return <ManageSession />;
-    }
-    if (tab === "ADD SESSION") {
-      return <AddSession />;
-    }
-    if (tab === "VIEW FACULTY") {
-      return <ViewFaculty />;
-    }
-    if (tab === "MANAGE STUDENTS") {
-      return <ManageStudent />;
-    }
-    if (tab === "ADD STUDENTS") {
-      return <AddStudent />;
-    }
-    if (tab === "MANAGE PROGRESS REPORT") {
-      return <ManageProgressReport />;
-    }
-    if (tab === "ADD PROGRESS REPORT") {
-      return <AddProgressReport />;
-    }
-    if (tab === "MANAGE SUPERVISORY COMMITTEE") {
-      return <ManageSupervisoryCommittee />;
-    }
-    if (tab === "ADD SUPERVISORY COMMITTEE") {
-      return <AddManageSupervisoryCommittee />;
-    }
-    if (tab === "EVALUATE SYNOPSIS (MS)") {
-      return <EvaluateSynopsisMS />;
-    }
-    if (tab === "EVALUATE SYNOPSIS (PhD)") {
-      return <EvaluateSynopsisPhD />;
-    }
-    if (tab === "MANAGE NOTIFICATION") {
-      return <ManageNotification />;
-    }
-    if (tab === "SEND NOTIFICATION (MS)") {
-      return <SendNotificationMS />;
-    }
-    if (tab === "SEND NOTIFICATION (PhD)") {
-      return <SendNotification />;
-    }
-    if (tab === "SEND NOTIFICATION TO ALL") {
-      return <SendNotificationAll />;
-    }
-    if (tab === "VIEW MS STUDENT DETAILS") {
-      return <ViewMSStudentDetail />;
-    }
-    if (tab === "VIEW PhD STUDENT DETAILS") {
-      return <ViewPhDStudentDetail />;
-    }
-    if (tab === "SUPERVISOR'S REPORT") {
-      return <SupervisorReports />;
-    }
-    if (tab === "PROGRAM-WISE REPORT") {
-      return <ProgramWiseReports />;
-    }
-    if (tab === "SYNOPSIS-WISE REPORT") {
-      return <SynopsisWiseReports />;
-    }
-    if (tab === "THESIS-WISE REPORT") {
-      return <ThesisWiseReports />;
-    }
-    if (tab === "VIEW SUPERVISOR/PROGRAM-WISE REPORT") {
-      return <SupervisorWiseReports />;
-    }
-    if (tab === "SESSION-WISE REPORT") {
-      return <SessionWiseReports />;
-    }
-    if (tab === "CHANGE PASSWORD") {
-      return <ChangePassword />;
-    }
-  };
+  // const checkActiveTab = (tab) => {
+  //   if (tab === "HOME") {
+  //     return <h1 style={{ textAlign: "center" }}>Welcome! Admin</h1>;
+  //   }
+  //   if (tab === "MANAGE PROGRAM") {
+  //     return <ManagePrograms />;
+  //   }
+  //   if (tab === "ADD PROGRAM") {
+  //     return <AddManageProgram />;
+  //   }
+  //   if (tab === "MANAGE SESSION") {
+  //     return <ManageSession />;
+  //   }
+  //   if (tab === "ADD SESSION") {
+  //     return <AddSession />;
+  //   }
+  //   if (tab === "VIEW FACULTY") {
+  //     return <ViewFaculty />;
+  //   }
+  //   if (tab === "MANAGE STUDENTS") {
+  //     return <ManageStudent />;
+  //   }
+  //   if (tab === "ADD STUDENTS") {
+  //     return <AddStudent />;
+  //   }
+  //   if (tab === "MANAGE PROGRESS REPORT") {
+  //     return <ManageProgressReport />;
+  //   }
+  //   if (tab === "ADD PROGRESS REPORT") {
+  //     return <AddProgressReport />;
+  //   }
+  //   if (tab === "MANAGE SUPERVISORY COMMITTEE") {
+  //     return <ManageSupervisoryCommittee />;
+  //   }
+  //   if (tab === "ADD SUPERVISORY COMMITTEE") {
+  //     return <AddManageSupervisoryCommittee />;
+  //   }
+  //   if (tab === "EVALUATE SYNOPSIS (MS)") {
+  //     return <EvaluateSynopsisMS />;
+  //   }
+  //   if (tab === "EVALUATE SYNOPSIS (PhD)") {
+  //     return <EvaluateSynopsisPhD />;
+  //   }
+  //   if (tab === "MANAGE NOTIFICATION") {
+  //     return <ManageNotification />;
+  //   }
+  //   if (tab === "SEND NOTIFICATION (MS)") {
+  //     return <SendNotificationMS />;
+  //   }
+  //   if (tab === "SEND NOTIFICATION (PhD)") {
+  //     return <SendNotification />;
+  //   }
+  //   if (tab === "SEND NOTIFICATION TO ALL") {
+  //     return <SendNotificationAll />;
+  //   }
+  //   if (tab === "VIEW MS STUDENT DETAILS") {
+  //     return <ViewMSStudentDetail />;
+  //   }
+  //   if (tab === "VIEW PhD STUDENT DETAILS") {
+  //     return <ViewPhDStudentDetail />;
+  //   }
+  //   if (tab === "SUPERVISOR'S REPORT") {
+  //     return <SupervisorReports />;
+  //   }
+  //   if (tab === "PROGRAM-WISE REPORT") {
+  //     return <ProgramWiseReports />;
+  //   }
+  //   if (tab === "SYNOPSIS-WISE REPORT") {
+  //     return <SynopsisWiseReports />;
+  //   }
+  //   if (tab === "THESIS-WISE REPORT") {
+  //     return <ThesisWiseReports />;
+  //   }
+  //   if (tab === "VIEW SUPERVISOR/PROGRAM-WISE REPORT") {
+  //     return <SupervisorWiseReports />;
+  //   }
+  //   if (tab === "SESSION-WISE REPORT") {
+  //     return <SessionWiseReports />;
+  //   }
+  //   if (tab === "CHANGE PASSWORD") {
+  //     return <ChangePassword />;
+  //   }
+  // };
 
   return (
     <ThemeProvider theme={mdTheme}>

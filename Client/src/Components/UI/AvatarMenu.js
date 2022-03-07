@@ -17,19 +17,19 @@ import { Divider } from "@mui/material";
 
 const AvatarMenu = () => {
   const { user } = useSelector((state) => state.auth);
-  const { Roles } = useSelector((state) => state.userRoles);
+  const { currentRole } = useSelector((state) => state.userRoles);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const dispatch = useDispatch();
 
   const userRole = user.user.userRole;
   // let roles = ["ADMIN", "GAC", "GO"];
-  // let roles = Roles;
-  /* userRole.forEach((item) => {
+  let roles = [];
+  userRole.forEach((item) => {
     if (item.enable) {
       roles.push(item.role);
     }
-  }); */
-  console.log(Roles + "in Avatar");
+  });
+  console.log(currentRole + "in Avatar");
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -68,16 +68,17 @@ const AvatarMenu = () => {
           <MenuItem key="settings" onClick={handleCloseUserMenu}>
             <Typography textAlign="center">Settings</Typography>
           </MenuItem>
-          {Roles.length >= 1 && (
+          {roles.length >= 1 && (
             <>
               <MenuItem key="dashboards" disabled sx={{ color: "inherit" }}>
                 <Typography textAlign="center">Dashboards</Typography>
               </MenuItem>
               <Divider />
-              {Roles.map((role, index, roles) => (
+              {roles.map((role, index, roles) => (
                 <MenuItem
                   key={role}
                   onClick={() => {
+                    dispatch(USERROLES(role));
                     setAnchorElUser(null);
                   }}
                 >
