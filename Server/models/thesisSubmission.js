@@ -13,7 +13,7 @@ const thesisSubmissionSchema = new Schema({
   plagiarismReport: { type: String /* required: true */ },
   SpecilizationTrack: { type: String /*required: true */ },
   externalExaminer: { type: String /* required: true */ },
-  thesisPresentationFileName: { type: String /* required: true */ },
+  // thesisPresentationFileName: { type: String /* required: true */ },
   creationDate: { type: Date /* required: true */ },
   isActive: { type: Boolean /* required: true */ },
   ipAddress: { type: String /* required: true */ },

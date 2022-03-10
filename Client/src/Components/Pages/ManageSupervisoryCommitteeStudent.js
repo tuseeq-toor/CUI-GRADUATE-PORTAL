@@ -37,8 +37,8 @@ export default function ManageSupervisoryCommitteeStudent() {
   const [error, setError] = useState([]);
   const getSupervisors = async () => {
     let data = await studentService.getSupervisors();
-    console.table("SubmissionM", data.supervisors);
-    setSupervisors(data.supervisors);
+    console.table("SubmissionM", data?.supervisors);
+    setSupervisors(data?.supervisors);
   };
   useEffect(() => {
     getSupervisors();

@@ -11,7 +11,7 @@ const getToken = () => {
 };
 
 export const API_STUD = axios.create({
-  baseURL: "http://localhost:3000/",
+  baseURL: process.env.REACT_APP_URL,
 });
 const submitSynopsis = async (data) => {
   let token = getToken();
@@ -26,7 +26,23 @@ const submitSynopsis = async (data) => {
     return res;
   } catch (error) {
     console.log(error.response);
-    return error.response.data.message;
+    return error.response;
+  }
+};
+const submitThesis = async (data) => {
+  let token = getToken();
+  try {
+    console.log(data + "thesisApiSubmit");
+    const res = await API_STUD.post("students/submit-thesis", data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(res);
+    return res;
+  } catch (error) {
+    console.log(error.response);
+    return error.response;
   }
 };
 const getSupervisors = async () => {
@@ -58,6 +74,7 @@ const studentService = {
   submitSynopsis,
   uploadFile,
   getSupervisors,
+  submitThesis,
 };
 
 export default studentService;
