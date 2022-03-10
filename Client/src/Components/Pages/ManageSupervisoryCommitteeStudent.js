@@ -14,52 +14,57 @@ import {
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 
-const superviseHeader = [
-  {
-    field: "id",
-    headerName: "ID",
-    width: 300,
-  },
-  {
-    field: "facultyMember",
-    headerName: "Faculty Member",
-    width: 300,
-  },
-  {
-    field: "designation",
-    headerName: "Designation",
-    width: 300,
-  },
-  {
-    field: "actions",
-    headerName: "Action",
-    width: 300,
-    renderCell: (props) => (
-      <Button
-        onClick={() => {
-          /* const index = array.indexOf(5);
-          if (index > -1) {
-            array.splice(index, 1); // 2nd parameter means remove one item only
-          } */
-          console.log(props.row);
-        }}
-        variant="contained"
-        color="secondary"
-        size="small"
-        style={{ marginLeft: 0 }}
-      >
-        Delete
-      </Button>
-    ),
-  },
-];
-
 export default function ManageSupervisoryCommitteeStudent() {
   const [supervisorsList, setSupervisorsList] = useState([]);
   const [selectedSupervisor, setSelectedSupervisor] = useState({});
   const [supervisors, setSupervisors] = useState([]);
   const [superviseData, setSuperviseData] = useState([]);
   const [error, setError] = useState(false);
+  const superviseHeader = [
+    {
+      field: "id",
+      headerName: "ID",
+      width: 300,
+    },
+    {
+      field: "facultyMember",
+      headerName: "Faculty Member",
+      width: 300,
+    },
+    {
+      field: "designation",
+      headerName: "Designation",
+      width: 300,
+    },
+    {
+      field: "actions",
+      headerName: "Action",
+      width: 300,
+      renderCell: (props) => (
+        <Button
+          onClick={() => {
+            const index = superviseData.indexOf(props.row.facultyMember);
+            const index2 = supervisorsList.indexOf(props.row.id);
+            if (index > -1) {
+              superviseData.splice(index, 1); // 2nd parameter means remove one item only
+            }
+            if (index2 > -1) {
+              supervisorsList.splice(index, 1); // 2nd parameter means remove one item only
+            }
+            console.log(supervisorsList);
+            console.log(superviseData);
+            console.log(props.row);
+          }}
+          variant="contained"
+          color="secondary"
+          size="small"
+          style={{ marginLeft: 0 }}
+        >
+          Delete
+        </Button>
+      ),
+    },
+  ];
   const getSupervisors = async () => {
     let data = await studentService.getSupervisors();
     /* console.table("SubmissionM", data.supervisors); */
