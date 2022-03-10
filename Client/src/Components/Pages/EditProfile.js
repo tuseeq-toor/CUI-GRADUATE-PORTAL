@@ -8,6 +8,8 @@ import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
 import StudentImage from "../UI/StudentImage";
 import { useSelector } from "react-redux";
+import * as yup from "yup";
+import { useFormik } from "formik";
 
 export default function EditProfile() {
   const { user } = useSelector((state) => state.auth);
@@ -15,6 +17,38 @@ export default function EditProfile() {
   const userProgram = user.user.student.program_id.programShortName;
 
   console.log(userProgram);
+
+  const validationSchema = yup.object({
+    firstName: yup.string(),
+    lastName: yup.string(),
+    fullName: yup.string(),
+    fatherName: yup.string(),
+    nationality: yup.string(),
+    city: yup.string(),
+    email: yup.string(),
+    designation: yup.string(),
+    department: yup.string(),
+    campus: yup.string(),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      fullName: this.firstName + " " + this.lastName,
+      fatherName: "",
+      nationality: "",
+      city: "",
+      email: "",
+      designation: "",
+      department: "",
+      campus: "",
+      userRole: [],
+      password: "dummy",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {},
+  });
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -41,6 +75,7 @@ export default function EditProfile() {
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
         label="Name"
+        name="name"
         color="secondary"
         variant="outlined"
       />
@@ -49,6 +84,7 @@ export default function EditProfile() {
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
         label="Father's Name"
+        name="fatherName"
         color="secondary"
         variant="outlined"
       />
@@ -57,6 +93,7 @@ export default function EditProfile() {
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
         label="Email"
+        name="email"
         color="secondary"
         variant="outlined"
       />
@@ -65,6 +102,7 @@ export default function EditProfile() {
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
         label="Mobile"
+        name="mobile"
         color="secondary"
         variant="outlined"
       />
@@ -94,6 +132,7 @@ export default function EditProfile() {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             //value={Program}
+            name="supervisor"
             label="Supervisor"
             //onChange={handleChange}
           >
@@ -152,6 +191,7 @@ export default function EditProfile() {
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             //value={Program}
+            name="coSupervisor"
             label="Co-Supervisor"
             //onChange={handleChange}
           >
@@ -208,6 +248,7 @@ export default function EditProfile() {
         sx={{ width: "100%", marginBottom: "15px" }}
         label="Synopsis Title"
         color="secondary"
+        name="synopsisTitle"
         variant="outlined"
       />
 
@@ -217,6 +258,7 @@ export default function EditProfile() {
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
+            name="program"
             label="Program"
           >
             <MenuItem value={12}>N/A</MenuItem>
@@ -230,6 +272,7 @@ export default function EditProfile() {
         sx={{ width: "100%", marginBottom: "15px" }}
         label="Thesis Registration"
         color="secondary"
+        name="ThesisRegistration"
         variant="outlined"
       />
 
@@ -237,6 +280,7 @@ export default function EditProfile() {
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
         label="Thesis Track"
+        name="thesisTrack"
         color="secondary"
         variant="outlined"
       />
@@ -245,6 +289,7 @@ export default function EditProfile() {
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
         label="Area of Specialization"
+        name="specialization"
         color="secondary"
         variant="outlined"
       />
@@ -257,6 +302,7 @@ export default function EditProfile() {
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
+            name="passingSemester"
             label="Comprehensive Passing Semester"
           >
             <MenuItem value="1">N/A</MenuItem>
@@ -293,22 +339,25 @@ export default function EditProfile() {
             sx={{ width: "100%", marginBottom: "15px" }}
             label="Total Publication (during PhD)"
             color="secondary"
+            name="publications"
             variant="outlined"
           />
           <TextField
             id="standard-basic"
             sx={{ width: "100%", marginBottom: "15px" }}
             label="Impact Factor Publications (after synopsis approval)"
+            name="impactFactor"
             color="secondary"
             variant="outlined"
           />
-          <TextField
+          {/* <TextField
             id="standard-basic"
             sx={{ width: "100%", marginBottom: "15px" }}
             label="Other Issue"
+
             color="secondary"
             variant="outlined"
-          />
+          /> */}
           <label style={{ display: "flex", flexDirection: "column" }}>
             <div>Edit Profile Picture:</div>
 
@@ -316,7 +365,7 @@ export default function EditProfile() {
               style={{ margin: ".5rem" }}
               type="file"
               min={0}
-              name="synopsisPresentation"
+              name="profilePic"
               // onChange={formik.handleChange}
             />
             {}
