@@ -54,29 +54,28 @@ import { msListitems } from "../SidebarListItems/msList";
 import { phdListitems } from "../SidebarListItems/phdList";
 
 export const Sidebar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const [list, setList] = React.useState([]);
+  const { currentRole } = useSelector((state) => state.userRoles);
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const userRole = user.user.userRole;
   console.log(userRole);
 
   let userProgram;
-  if (userRole === "STUDENT") {
-    userProgram = user.user.student.program_id.programShortName;
-  }
-  console.log(userProgram);
+  // if (userRole === "STUDENT") {
+  //   userProgram = user.user.student.program_id.programShortName;
+  // }
+  // console.log(userProgram);
 
-  // console.log(isLoggedIn);
+  console.log(isLoggedIn);
   const [open, setOpen] = React.useState(false);
 
   const handleClick = (item) => {
     setOpen(!item);
     // console.log(open);
   };
-
-  const navigate = useNavigate();
-  const location = useLocation();
-  const dispatch = useDispatch();
-  const [list, setList] = React.useState([]);
-  const { currentRole } = useSelector((state) => state.userRoles);
 
   let roles = [];
   userRole.forEach((item) => {

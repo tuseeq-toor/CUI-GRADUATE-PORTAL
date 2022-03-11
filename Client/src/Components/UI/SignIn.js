@@ -171,7 +171,7 @@ export default function SignIn() {
                     Forgot password?
                   </Link>
                 </Grid>
-                <Grid item>
+                <Grid sx={{ ml: 2 }} item>
                   <Link to="/SignUp">{"Don't have an account? Sign Up"}</Link>
                 </Grid>
               </Grid>

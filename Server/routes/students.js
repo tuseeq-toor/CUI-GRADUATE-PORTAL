@@ -10,6 +10,7 @@ const SynopsisSubmission = require("../models/synopsisSubmission");
 const Notification = require("../models/notification");
 const Announcement = require("../models/announcement");
 const path = require("path");
+const thesisSubmission = require("../models/thesisSubmission");
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "public/uploads");
@@ -20,7 +21,7 @@ var storage = multer.diskStorage({
 });
 function checkFileType(file, cb) {
   // Allowed ext
-  const filetypes = /docx|pdf/;
+  const filetypes = /docx|pdf|doc/;
   // Check ext
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
   // Check mime
@@ -29,16 +30,46 @@ function checkFileType(file, cb) {
   if (mimetype && extname) {
     return cb(null, true);
   } else {
-    cb("Error: Pdf Only!", false);
+    cb("Error: Please upload pdf or word files", false);
   }
 }
-var upload = multer({
+var uploadSynopsis = multer({
   storage: storage,
   limits: { fileSize: 10000000 },
   fileFilter: (req, file, cb) => {
     checkFileType(file, cb);
   },
 }).fields([{ name: "synopsisDocument" }, { name: "synopsisPresentation" }]);
+
+var uploadThesis = multer({
+  storage: storage,
+  limits: { fileSize: 10000000 },
+  fileFilter: (req, file, cb) => {
+    checkFileType(file, cb);
+  },
+}).fields([{ name: "thesisDocument" }, { name: "synopsisNotification" }]);
+
+var uploadProfile = multer({
+  storage: storage,
+  limits: { fileSize: 10000000 },
+  fileFilter: (req, file, cb) => {
+    // Allowed ext
+    const filetypes = /jpeg|png|jgp/;
+    // Check ext
+    const extname = filetypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
+    // Check mime
+    const mimetype = filetypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb("Error: File Format not Supported", false);
+    }
+  },
+}).single("profilePic");
+
 //studentDashboard Route == /students
 
 router.get("/", auth.verifyUser, auth.checkStudent, (req, res) => {
@@ -110,37 +141,57 @@ router.get("/:id", auth.verifyUser, auth.checkStudent, (req, res) => {
 //update student profile route== students/:id
 
 router.put("/:id", auth.verifyUser, auth.checkStudent, async (req, res) => {
-  const body = req.body;
-  let needs = await helpers.studentUpdateNeeds(req);
-  await User.updateOne(
-    { _id: req.user._id },
-    { $set: { username: body.username } }
-  )
-    .then(async () => {
-      await Student.findOneAndUpdate(
-        { _id: needs.student_id },
-        {
-          $set: {
-            ...body,
-            supervisor_id: needs.supervisor._id,
-            coSupervisor_id: needs.supervisor._id,
-          },
-        },
-        { upsert: true }
+  uploadProfile(req, res, async function (err) {
+    const body = req.body;
+
+    console.log(req.body);
+    console.log(req.files);
+    if (err instanceof multer.MulterError) {
+      console.log("mul", err);
+
+      res.setHeader("Content-Type", "application/json");
+
+      return res.status(500).json({ success: false, message: err });
+    } else if (err) {
+      console.log("500", err);
+      res.setHeader("Content-Type", "application/json");
+
+      return res.status(500).json({ success: false, message: err });
+    } else {
+      let needs = await helpers.studentUpdateNeeds(req);
+      await User.updateOne(
+        { _id: req.user._id },
+        { $set: { username: body.username } }
       )
-        .then((faculty) => {
-          res.setHeader("Content-Type", "application/json");
-          res.status(200).json({ beforeUpdate: faculty, afterUpdate: body });
+        .then(async () => {
+          await Student.findOneAndUpdate(
+            { _id: needs.student_id },
+            {
+              $set: {
+                ...body,
+                supervisor_id: needs.supervisor._id,
+                coSupervisor_id: needs.supervisor._id,
+              },
+            },
+            { upsert: true }
+          )
+            .then((faculty) => {
+              res.setHeader("Content-Type", "application/json");
+              res
+                .status(200)
+                .json({ beforeUpdate: faculty, afterUpdate: body });
+            })
+            .catch((err) => {
+              res.setHeader("Content-Type", "application/json");
+              res.status(500).json({ success: false, message: err.message });
+            });
         })
         .catch((err) => {
           res.setHeader("Content-Type", "application/json");
           res.status(500).json({ success: false, message: err.message });
         });
-    })
-    .catch((err) => {
-      res.setHeader("Content-Type", "application/json");
-      res.status(500).json({ success: false, message: err.message });
-    });
+    }
+  });
 });
 
 router.post(
@@ -149,7 +200,7 @@ router.post(
   auth.checkStudent,
   async (req, res) => {
     const studentId = req.user._id;
-    upload(req, res, async function (err) {
+    uploadSynopsis(req, res, async function (err) {
       const { synopsisTitle, supervisor, coSupervisor, synopsisTrack } =
         req.body;
 
@@ -160,12 +211,12 @@ router.post(
 
         res.setHeader("Content-Type", "application/json");
 
-        return res.status(500).json(err);
+        return res.status(500).json({ success: false, message: err });
       } else if (err) {
         console.log("500", err);
         res.setHeader("Content-Type", "application/json");
 
-        return res.status(500).json({ err, message: "File not supported" });
+        return res.status(500).json({ success: false, message: err });
       } else {
         let s_id = await User.findById({ _id: supervisor }, { faculty_id: 1 });
         let cs_id = await User.findById(
@@ -196,25 +247,61 @@ router.post(
     });
   }
 );
+
 router.post(
   "/submit-thesis",
   auth.verifyUser,
   auth.checkStudent,
+  async (req, res) => {
+    const studentId = req.user._id;
+    uploadThesis(req, res, async function (err) {
+      const { thesisTitle, supervisor, coSupervisor, thesisTrack } = req.body;
 
-  (req, res, next) => {
-    const body = req.body;
-    const student = req.user._id;
-    SynopsisSubmission.create({ ...body, student_id: student })
-      .then((synopsis) => {
+      console.log(req.body);
+      console.log(req.files);
+      if (err instanceof multer.MulterError) {
+        console.log("mul", err);
+
         res.setHeader("Content-Type", "application/json");
-        res.status(200).json({ success: true, message: "Submitted" });
-      })
-      .catch((err) => {
+
+        return res.status(500).json({ success: false, message: err });
+      } else if (err) {
+        console.log("500", err);
         res.setHeader("Content-Type", "application/json");
-        res.status(500).json({ success: false, message: err.message });
-      });
+
+        return res.status(500).json({ success: false, message: err });
+      } else {
+        let s_id = await User.findById({ _id: supervisor }, { faculty_id: 1 });
+        let cs_id = await User.findById(
+          { _id: coSupervisor },
+          { faculty_id: 1 }
+        );
+
+        thesisSubmission
+          .create({
+            student_id: studentId,
+            supervisor_id: s_id.faculty_id,
+            coSupervisor_id: cs_id.faculty_id,
+            thesisTitle,
+            SpecilizationTrack: thesisTrack,
+            isActive: false,
+            thesisFileName: `public/uploads/${req.files["thesisDocument"][0].filename}`,
+            synopsisNotification: `public/uploads/${req.files["synopsisNotification"][0].filename}`,
+          })
+          .then((synopsis) => {
+            res.setHeader("Content-Type", "application/json");
+            res.status(200).json({ success: true, message: "Submitted" });
+          })
+          .catch((err) => {
+            console.log(err.message);
+            res.setHeader("Content-Type", "application/json");
+            res.status(500).json({ success: false, message: err.message });
+          });
+      }
+    });
   }
 );
+
 //view notifications
 router.get("/notifications", auth.checkStudent, (req, res) => {
   Notification.find({ student_id: req.user._id })
