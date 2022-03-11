@@ -11,6 +11,7 @@ const Notification = require("../models/notification");
 const Announcement = require("../models/announcement");
 const path = require("path");
 const thesisSubmission = require("../models/thesisSubmission");
+const session = require("../models/session");
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "public/uploads");
@@ -112,6 +113,8 @@ router.get("/supervisors", auth.verifyUser, auth.checkStudent, (req, res) => {
     { "userRole.role": "SUPERVISOR", "userRole.enable": true },
     { username: 1 }
   )
+    .populate("faculty_id")
+    .exec()
 
     .then((supervisors) => {
       console.log("here");
@@ -303,8 +306,8 @@ router.post(
 );
 
 //view notifications
-router.get("/notifications", auth.checkStudent, (req, res) => {
-  Notification.find({ student_id: req.user._id })
+router.get("/notifications", auth.verifyUser, auth.checkStudent, (req, res) => {
+  Notification.find({ sentTo: req.user._id })
     .then((notifications) => {
       res.setHeader("Content-Type", "application/json");
       res.status(200).json({ success: true, notifications });
@@ -315,11 +318,28 @@ router.get("/notifications", auth.checkStudent, (req, res) => {
     });
 });
 //view announcements
-router.get("/announcements", auth.checkStudent, (req, res) => {
+router.get("/announcements", auth.verifyUser, auth.checkStudent, (req, res) => {
   Announcement.find()
     .then((announcements) => {
       res.setHeader("Content-Type", "application/json");
       res.status(200).json({ success: true, announcements });
+    })
+    .catch((err) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(500).json({ success: false, message: err.message });
+    });
+});
+
+//get student session
+
+router.get("/session/:stud_id", (req, res) => {
+  Student.findOne({ synopsisSession_id: req.params.stud_id })
+    .populate(synopsisSession_id)
+    .select({ title: 1 })
+    .exec()
+    .then((session) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json({ success: true, session });
     })
     .catch((err) => {
       res.setHeader("Content-Type", "application/json");

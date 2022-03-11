@@ -41,22 +41,23 @@ export default function ManageSupervisoryCommitteeStudent() {
       renderCell: (props) => (
         <Button
           onClick={() => {
-            const index = superviseData.indexOf(props.row.facultyMember);
-            const index2 = supervisorsList.forEach((item) => {
-              if (item._id === props.row.id) {
-                return superviseData.indexOf(props.row.id);
-              }
-            });
-            if (index > -1) {
-              superviseData.splice(index, 1); // 2nd parameter means remove one item only
-            }
-            if (index2 > -1) {
-              supervisorsList.splice(index, 1); // 2nd parameter means remove one item only
-            }
-            console.log("index of row" + index2);
-            console.log(supervisorsList);
-            console.log(superviseData);
-            console.log(props.row);
+            // const index = superviseData.indexOf(props.row.facultyMember);
+            // const index2 = supervisorsList.indexOf(props.row.id);
+            console.log("SuperviseList", supervisorsList);
+            console.log("SuperviseData", superviseData);
+
+            var data = superviseData.filter((obj) => obj.id !== props.row.id);
+            var list = supervisorsList.filter((id) => id !== props.row.id);
+            console.log("Data", data);
+            console.log("List", list);
+            setSupervisorsList(list);
+            setSuperviseData(data);
+            console.log("SuperviseList", supervisorsList);
+            console.log("SuperviseData", superviseData);
+            // if (index2 > -1) {
+            //   supervisorsList.splice(index2, 1); // 2nd parameter means remove one item only
+            // }
+            // console.log("SupersiveRow", props.row);
           }}
           variant="contained"
           color="secondary"
