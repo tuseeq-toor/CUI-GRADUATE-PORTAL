@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 
 import studentService from "../../API/students";
-import { useFormik } from "formik";
-import * as yup from "yup";
 import DataTable from "../UI/TableUI";
 import {
   Box,
@@ -44,7 +42,11 @@ export default function ManageSupervisoryCommitteeStudent() {
         <Button
           onClick={() => {
             const index = superviseData.indexOf(props.row.facultyMember);
-            const index2 = supervisorsList.indexOf(props.row.id);
+            const index2 = supervisorsList.map((item) => {
+              if (item._id === props.row.id) {
+                return superviseData.indexOf(props.row.id);
+              }
+            });
             if (index > -1) {
               superviseData.splice(index, 1); // 2nd parameter means remove one item only
             }
