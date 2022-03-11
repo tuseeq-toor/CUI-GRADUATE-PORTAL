@@ -42,7 +42,7 @@ export default function ManageSupervisoryCommitteeStudent() {
         <Button
           onClick={() => {
             const index = superviseData.indexOf(props.row.facultyMember);
-            const index2 = supervisorsList.map((item) => {
+            const index2 = supervisorsList.forEach((item) => {
               if (item._id === props.row.id) {
                 return superviseData.indexOf(props.row.id);
               }
@@ -53,6 +53,7 @@ export default function ManageSupervisoryCommitteeStudent() {
             if (index2 > -1) {
               supervisorsList.splice(index, 1); // 2nd parameter means remove one item only
             }
+            console.log("index of row" + index2);
             console.log(supervisorsList);
             console.log(superviseData);
             console.log(props.row);
