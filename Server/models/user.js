@@ -8,7 +8,7 @@ const userSchema = new Schema({
   password: { type: String },
   student_id: { type: Schema.Types.ObjectId, ref: "Student" },
   faculty_id: { type: Schema.Types.ObjectId, ref: "Faculty" },
-
+  isActive: { type: Boolean, default: true },
   userRole: [
     {
       role: { type: String },
