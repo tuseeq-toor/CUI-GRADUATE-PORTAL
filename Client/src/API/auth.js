@@ -67,7 +67,6 @@ const addFaculty = async (faculty) => {
     const res = await API.post("auth/signup", faculty);
     if (res) {
       console.log("Api " + res);
-      localStorage.setItem("user", JSON.stringify(res.data));
       return res.data;
     }
   } catch (error) {

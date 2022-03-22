@@ -70,42 +70,53 @@ router.post("/signup", async (req, res, next) => {
         });
     }
   } else {
-    Faculty.create(user)
-      .then((faculty) => {
-        User.register(
-          new User({
-            email: user.email,
-            username: user.fullName,
-            faculty_id: faculty._id,
-
-            userRole: user.rolesChecked,
-          }),
-          req.body.password,
-          (err, user) => {
-            if (err) {
-              res.statusCode = 500;
-              res.setHeader("Content-Type", "application/json");
-              res.json({ err });
-            } else {
-              passport.authenticate("local")(req, res, () => {
-                res.statusCode = 200;
-                res.setHeader("Content-Type", "application/json");
-                console.log("faculty role" + user.userRole);
-
-                res.json({
-                  success: true,
-                  status: "Registration Successful!",
-                });
-              });
-            }
-          }
-        );
-      })
-      .catch((err) => {
-        res.statusCode = 500;
-        res.setHeader("Content-Type", "application/json");
-        res.json({ err });
+    let exists = await Faculty.findOne({ email: user.email });
+    if (exists) {
+      res.statusCode = 409;
+      console.log("conflict");
+      res.setHeader("Content-Type", "application/json");
+      res.json({
+        success: false,
+        message: "Faculty with the same email already exists",
       });
+    } else {
+      Faculty.create(user)
+        .then((faculty) => {
+          User.register(
+            new User({
+              email: user.email,
+              username: user.fullName,
+              faculty_id: faculty._id,
+
+              userRole: user.userRole,
+            }),
+            req.body.password,
+            (err, user) => {
+              if (err) {
+                res.statusCode = 500;
+                res.setHeader("Content-Type", "application/json");
+                res.json({ err });
+              } else {
+                passport.authenticate("local")(req, res, () => {
+                  res.statusCode = 200;
+                  res.setHeader("Content-Type", "application/json");
+                  console.log("faculty role" + user.userRole);
+
+                  res.json({
+                    success: true,
+                    status: "Registration Successful!",
+                  });
+                });
+              }
+            }
+          );
+        })
+        .catch((err) => {
+          res.statusCode = 500;
+          res.setHeader("Content-Type", "application/json");
+          res.json({ err });
+        });
+    }
   }
 });
 
