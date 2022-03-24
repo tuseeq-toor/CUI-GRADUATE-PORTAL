@@ -64,10 +64,6 @@ export const Sidebar = () => {
   console.log(userRole);
 
   let userProgram;
-  // if (userRole === "STUDENT") {
-  //   userProgram = user.user.student.program_id.programShortName;
-  // }
-  // console.log(userProgram);
 
   console.log(isLoggedIn);
   const [open, setOpen] = React.useState(false);
@@ -188,10 +184,10 @@ export const Sidebar = () => {
         setList(goListitems);
         break;
 
-      case "MS":
+      case "MS_COR":
         setList(msListitems);
         break;
-      case "PhD":
+      case "PHD_COR":
         setList(phdListitems);
         break;
       case "STUDENT":

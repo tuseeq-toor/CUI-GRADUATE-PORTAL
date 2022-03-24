@@ -10,7 +10,8 @@ import { addFaculty } from "../../Store/authSlice";
 
 export default function AddStudent() {
   const dispatch = useDispatch();
-
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
   const [admin, setAdmin] = React.useState(false);
   const [gac, setGac] = React.useState(false);
   const [go, setGo] = React.useState(false);
@@ -43,11 +44,11 @@ export default function AddStudent() {
       enable: go,
     },
     {
-      role: "MS",
+      role: "MS_COR",
       enable: ms,
     },
     {
-      role: "PhD",
+      role: "PHD_COR",
       enable: phd,
     },
     {
@@ -59,7 +60,7 @@ export default function AddStudent() {
     initialValues: {
       firstName: "",
       lastName: "",
-      fullName: this.firstName + " " + this.lastName,
+      fullName: "",
       fatherName: "",
       nationality: "",
       city: "",
@@ -72,6 +73,7 @@ export default function AddStudent() {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
+      values.fullName = `${values.firstName} ${values.lastName}`;
       values.userRole = userRole;
       console.log(values);
       dispatch(addFaculty(values))
@@ -104,7 +106,10 @@ export default function AddStudent() {
           color="secondary"
           variant="outlined"
           value={formik.values.firstName}
-          onChange={formik.handleChange}
+          onChange={(e) => {
+            formik.handleChange(e);
+            setFirstName(e.target.value);
+          }}
           error={formik.touched.firstName && Boolean(formik.errors.firstName)}
           helperText={formik.touched.firstName && formik.errors.firstName}
         />
@@ -118,7 +123,10 @@ export default function AddStudent() {
           color="secondary"
           variant="outlined"
           value={formik.values.lastName}
-          onChange={formik.handleChange}
+          onChange={(e) => {
+            formik.handleChange(e);
+            setLastName(e.target.value);
+          }}
           error={formik.touched.lastName && Boolean(formik.errors.lastName)}
           helperText={formik.touched.lastName && formik.errors.lastName}
         />
