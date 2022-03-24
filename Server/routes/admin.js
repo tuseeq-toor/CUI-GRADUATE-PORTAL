@@ -7,6 +7,7 @@ const helpers = require("../helpers/helpers");
 const SynopsisSubmission = require("../models/synopsisSubmission");
 const Notification = require("../models/notification");
 const Announcement = require("../models/announcement");
+const Session = require("../models/session");
 
 router.get("/", auth.verifyUser, auth.checkAdmin, (req, res) => {
   User.find({ _id: req.user._id }, { hash: 1, salt: 1, password: 1 })
@@ -15,6 +16,18 @@ router.get("/", auth.verifyUser, auth.checkAdmin, (req, res) => {
     .then((admin) => {
       res.setHeader("Content-Type", "application/json");
       res.status(200).json(admin);
+    })
+    .catch((err) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(500).json({ success: false, message: err.message });
+    });
+});
+
+router.post("/add-session", auth.verifyUser, auth.checkAdmin, (req, res) => {
+  Session.create(req.body)
+    .then((session) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json(session);
     })
     .catch((err) => {
       res.setHeader("Content-Type", "application/json");
