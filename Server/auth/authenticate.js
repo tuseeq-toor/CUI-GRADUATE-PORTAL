@@ -47,7 +47,7 @@ module.exports.checkStudent = (req, res, next) => {
       if (err) {
         return next(err);
       } else if (
-        user.userRole.some((userrole) => userrole.role === "STUDENT")
+        user.userRole.some((userrole) => (userrole.role === "STUDENT" && userrole.enable===true))
       ) {
         return next();
       } else {
@@ -82,7 +82,7 @@ module.exports.checkGAC = (req, res, next) => {
     } else {
       if (err) {
         return next(err);
-      } else if (user.userRole.some((userrole) => userrole.role === "GAC")) {
+      } else if (user.userRole.some((userrole) => (userrole.role === "GAC" && userrole.enable===true))) {
         return next();
       } else {
         res.send("You are not allowed to perform this operation");

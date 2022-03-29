@@ -61,17 +61,6 @@ exports.studentUpdateNeeds = async (req) => {
     _id: req.user._id,
   });
   needs.student_id = needs.user.student_id;
-  // needs.supervisor = await Faculty.findOne(
-  //   {
-  //     username: body.supervisorName,
-  //   },
-  //   { _id: 1 }
-  // );
-  // needs.coSupervisor = await Faculty.findOne(
-  //   {
-  //     username: body.coSupervisorName,
-  //   },
-  //   { _id: 1 }
-  // );
+console.log("update needs",needs)
   return needs;
 };
