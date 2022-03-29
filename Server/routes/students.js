@@ -143,12 +143,10 @@ router.get("/:id", auth.verifyUser, auth.checkStudent, (req, res) => {
 
 //update student profile route== students/:id
 
-router.put("/:id", auth.verifyUser, auth.checkStudent, async (req, res) => {
+router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
   uploadProfile(req, res, async function (err) {
     const body = req.body;
 
-    console.log(req.body);
-    console.log(req.files);
     if (err instanceof multer.MulterError) {
       console.log("mul", err);
 
@@ -156,24 +154,29 @@ router.put("/:id", auth.verifyUser, auth.checkStudent, async (req, res) => {
 
       return res.status(500).json({ success: false, message: err });
     } else if (err) {
-      console.log("500", err);
       res.setHeader("Content-Type", "application/json");
 
       return res.status(500).json({ success: false, message: err });
     } else {
       let needs = await helpers.studentUpdateNeeds(req);
-      await User.updateOne(
+      await User.findOneAndUpdate(
         { _id: req.user._id },
-        { $set: { username: body.username } }
+        { $set: { username: body.name } }
       )
         .then(async () => {
           await Student.findOneAndUpdate(
             { _id: needs.student_id },
             {
               $set: {
-                ...body,
-                supervisor_id: needs.supervisor._id,
-                coSupervisor_id: needs.supervisor._id,
+                username: body.name,
+                fatherName: body.fatherName,
+                mobile: body.mobile,
+                supervisor_id: body.supervisor,
+                coSupervisor_id: body.coSupervisor,
+                synopsisTitle: body.synopsisTitle,
+                thesisRegistration: body.thesisRegistration,
+                thesisTrack: body.thesisTrack,
+                profilePic: `public/uploads/${req.file.filename}`,
               },
             },
             { upsert: true }

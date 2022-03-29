@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -9,27 +9,18 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import gacService from "../../API/gac";
 
 export default function EvaluateSynopsisMS() {
   const handleSubmit = (event) => {
     event.preventDefault();
     alert("Submitted");
-    const data = new FormData(event.currentTarget);
-    const userEmail = data.get("email");
-    const userPassword = data.get("password");
-    /* axios.post("http://localhost:3000/auth/login", {
-        email: userEmail,
-        password: userPassword,
-      })
-      .then((res) => {
-        const data = res.data.user;
-	console.log(data);
-        navigate("/Dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      }); */
   };
+  const [filterStudents, setFilterStudents] = useState()
+  useEffect(() => {
+    const std = gacService.getStudents();
+    console.log(std)
+  }, [])
 
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
@@ -515,6 +506,7 @@ export default function EvaluateSynopsisMS() {
           </Button>
         </div>
       </div>
+      {console.log(filterStudents)}
     </Box>
   );
 }

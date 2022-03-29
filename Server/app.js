@@ -3,6 +3,7 @@ const connection = require("./config/connection");
 const multer = require("multer");
 const userRouter = require("./routes/users");
 const studentRouter = require("./routes/students");
+const gacRouter = require("./routes/gac");
 const authRouter = require("./routes/auth");
 var passport = require("passport");
 const path = require("path");
@@ -63,6 +64,7 @@ app.use(passport.initialize());
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/students", studentRouter);
+app.use("/gac", gacRouter);
 
 //Server listening
 app.listen(process.env.PORT || 3000, () => {

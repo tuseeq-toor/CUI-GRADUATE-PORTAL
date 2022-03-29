@@ -59,6 +59,23 @@ const getSupervisors = async () => {
     console.log(error);
   }
 };
+const updateProfile = async (formData) => {
+  let token = getToken();
+  try {
+    const { data } = await API_STUD.patch(`/students`,formData, {
+      
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
 
 const uploadFile = (data) => {
   console.log(data);
@@ -75,6 +92,7 @@ const studentService = {
   uploadFile,
   getSupervisors,
   submitThesis,
+  updateProfile
 };
 
 export default studentService;
