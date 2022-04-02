@@ -6,24 +6,13 @@ import Checkbox from "@mui/material/Checkbox";
 import { Button, Box } from "@mui/material";
 
 export default function AddSession() {
+
+  const [title,setTitle] = 
+  const handleChange=()=> {
+
+  }
   const handleSubmit = (event) => {
-    event.preventDefault();
-    alert("Submitted");
-    const data = new FormData(event.currentTarget);
-    const userEmail = data.get("email");
-    const userPassword = data.get("password");
-    /* axios.post("http://localhost:3000/auth/login", {
-        email: userEmail,
-        password: userPassword,
-      })
-      .then((res) => {
-        const data = res.data.user;
-	console.log(data);
-        navigate("/Dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      }); */
+  
   };
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
@@ -33,6 +22,7 @@ export default function AddSession() {
         label="Session Title"
         color="secondary"
         variant="outlined"
+        onChange={handleChange}
       />
 
       <TextField
