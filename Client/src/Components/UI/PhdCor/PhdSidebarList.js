@@ -191,13 +191,13 @@ export const PhdSidebarList = (props) => {
       <ListItem
         button
         onClick={() => {
-          props.onActiveTab("MANAGE SYNOPSIS SCHEDULE (BULK)");
+          props.onActiveTab("Create a Schedule");
         }}
       >
         <ListItemIcon>
           <PeopleIcon />
         </ListItemIcon>
-        <ListItemText primary="Manage Synopsis Schedule (Bulk)" />
+        <ListItemText primary="Create a Schedule" />
       </ListItem>
 
       <ListItem

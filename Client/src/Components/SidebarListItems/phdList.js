@@ -119,9 +119,9 @@ export const phdListitems = [
         path: "/Dashboard/ManageSynopsisSchedule",
       },
       {
-        text: "Manage Schedule (Bulk)",
+        text: "Create a Schedule",
         icon: <LayersIcon />,
-        path: "/Dashboard/ManageSynopsisScheduleBulk",
+        path: "/Dashboard/CreateSynopsisSchedule",
       },
       {
         text: " Synopsis PhD",
@@ -159,9 +159,9 @@ export const phdListitems = [
         path: "/Dashboard/ManageThesisSchedule",
       },
       {
-        text: "Manage Schedule (Bulk)",
+        text: "Create a Schedule",
         icon: <LayersIcon />,
-        path: "/Dashboard/ManageThesisScheduleBulk",
+        path: "/Dashboard/create-schedule-ms",
       },
       {
         text: "Thesis MS",
