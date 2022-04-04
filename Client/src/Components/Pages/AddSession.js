@@ -4,46 +4,55 @@ import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { Button, Box } from "@mui/material";
-
+import sessionsService from "../../API/sessions";
 export default function AddSession() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState(false);
 
-  const handleTitle = (event) => {
-    setTitle(event.target.valve);
-  };
-  const handleDescription = (event) => {
-    setDescription(event.target.valve);
-  };
   const handleStatus = (event) => {
     setStatus(event.target.checked);
-    console.log(status);
   };
-  const handleSubmit = (event) => {
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
+    const res = await sessionsService.addSession({
+      title,
+      description,
+      status,
+    });
+    console.log("response", res);
   };
 
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
       <TextField
-        id="standard-basic"
+        id="title"
         sx={{ width: "100%", marginBottom: "15px" }}
         label="Session Title"
         name="title"
         color="secondary"
         variant="outlined"
-        onChange={handleTitle}
+        value={title}
+        onChange={(e) => {
+          setTitle(e.target.value);
+          console.log(title);
+        }}
       />
 
       <TextField
-        id="standard-basic"
+        id="desc"
         sx={{ width: "100%", marginBottom: "15px" }}
         label="Description"
         name="description"
         color="secondary"
         variant="outlined"
-        onChange={handleDescription}
+        value={description}
+        onChange={(e) => {
+          setDescription(e.target.value);
+          console.log(description);
+        }}
       />
 
       <FormGroup sx={{ marginBottom: "15px" }}>

@@ -7,10 +7,11 @@ const getToken = () => {
     return token;
   }
 };
-const API_GAC = axios.create({
+
+export const API_MSCOR = axios.create({
   baseURL: process.env.REACT_APP_URL,
 });
 
-const gacService = {};
+const mscorService = {};
 
-export default gacService;
+export default mscorService;

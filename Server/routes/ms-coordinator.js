@@ -9,22 +9,14 @@ const Notification = require("../models/notification");
 const Announcement = require("../models/announcement");
 const Session = require("../models/session");
 
-//studentDashboard Route == /students
-
-router.get("/students", auth.verifyUser, auth.checkGAC, (req, res) => {
-  Student.find({})
-    .populate("program_id")
-    .populate("synopsisSession_id")
-    .populate("supervisor_id")
-    .exec()
-    .then((student) => {
+router.post("/session", auth.verifyUser, auth.checkMSCOR, (req, res) => {
+  Session.find({})
+    .then((session) => {
       res.setHeader("Content-Type", "application/json");
-      res.status(200).json(student);
+      res.status(200).json(session);
     })
     .catch((err) => {
       res.setHeader("Content-Type", "application/json");
       res.status(500).json({ success: false, message: err.message });
     });
 });
-
-module.exports = router;

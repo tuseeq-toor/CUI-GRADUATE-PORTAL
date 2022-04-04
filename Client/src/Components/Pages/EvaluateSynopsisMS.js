@@ -9,21 +9,38 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import gacService from "../../API/gac";
+import studentService from "../../API/students";
 
 export default function EvaluateSynopsisMS() {
   const handleSubmit = (event) => {
     event.preventDefault();
     alert("Submitted");
   };
-  const [filterStudents, setFilterStudents] = useState()
+
+  const [students, setStudents] = useState([]);
+  const [selectedStudent, setSelectedStudent] = useState({});
+  const [decision, setDecision] = useState("");
+
   useEffect(() => {
-    const std = gacService.getStudents();
-    console.log(std)
-  }, [])
+    async function fetchData() {
+      const stds = await studentService.getStudents();
+      setStudents(stds);
+    }
+    fetchData();
+  }, []);
+  const handleRegistrationNo = (e) => {
+    students.map((oneStudent) => {
+      if (e.target.value === oneStudent.registrationNo) {
+        // const updated = oneStudent;
+        // updated["decision"] = decision;
+        setSelectedStudent(oneStudent);
+      }
+    });
+  };
 
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+      {console.log(selectedStudent)}
       <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
         <FormControl fullWidth color="secondary">
           <InputLabel id="demo-simple-select-label">Track</InputLabel>
@@ -79,48 +96,13 @@ export default function EvaluateSynopsisMS() {
             id="demo-simple-select"
             //value={Program}
             label="Registration No"
-            //onChange={handleChange}
+            onChange={(e) => handleRegistrationNo(e)}
           >
-            <MenuItem selected="selected" value="5944">
-              FA17-RSE-002
-            </MenuItem>
-            <MenuItem value="6001">FA19-RCS-008</MenuItem>
-            <MenuItem value="5959">FA19-RCS-017</MenuItem>
-            <MenuItem value="5951">FA19-RCS-021</MenuItem>
-            <MenuItem value="6029">FA19-RCS-023</MenuItem>
-            <MenuItem value="5987">FA19-RCS-024</MenuItem>
-            <MenuItem value="5960">FA19-RCS-026</MenuItem>
-            <MenuItem value="6101">FA19-RCS-030</MenuItem>
-            <MenuItem value="6015">FA19-RCS-033</MenuItem>
-            <MenuItem value="6048">FA19-RCS-046</MenuItem>
-            <MenuItem value="5937">FA19-RCS-050</MenuItem>
-            <MenuItem value="6055">FA19-RCS-058</MenuItem>
-            <MenuItem value="5942">FA19-RCS-066</MenuItem>
-            <MenuItem value="6007">FA19-RCS-075</MenuItem>
-            <MenuItem value="5980">FA19-RCS-089</MenuItem>
-            <MenuItem value="6086">FA20-RCS-015</MenuItem>
-            <MenuItem value="5936">FA20-RCS-020</MenuItem>
-            <MenuItem value="5930">FA20-RCS-021</MenuItem>
-            <MenuItem value="6088">FA20-RCS-034</MenuItem>
-            <MenuItem value="5978">SP18-RCS-013</MenuItem>
-            <MenuItem value="1495">SP18-RCS-034</MenuItem>
-            <MenuItem value="5950">SP19-RCS-009</MenuItem>
-            <MenuItem value="6012">SP19-RCS-014</MenuItem>
-            <MenuItem value="5963">SP19-RCS-018</MenuItem>
-            <MenuItem value="6013">SP19-RCS-021</MenuItem>
-            <MenuItem value="5974">SP19-RCS-032</MenuItem>
-            <MenuItem value="6033">SP19-RCS-045</MenuItem>
-            <MenuItem value="5966">SP19-RCS-048</MenuItem>
-            <MenuItem value="5956">SP19-RCS-051</MenuItem>
-            <MenuItem value="6011">SP19-RCS-059</MenuItem>
-            <MenuItem value="6064">SP20-RCS-005</MenuItem>
-            <MenuItem value="5932">SP20-RCS-013</MenuItem>
-            <MenuItem value="6073">SP20-RCS-016</MenuItem>
-            <MenuItem value="6014">SP20-RCS-054</MenuItem>
-            <MenuItem value="6068">SP20-RCS-065</MenuItem>
-            <MenuItem value="6066">SP20-RCS-069</MenuItem>
-            <MenuItem value="6078">SP20-RCS-070</MenuItem>
-            <MenuItem value="6016">SP20-RCS-072</MenuItem>
+            {students.map((oneStudent) => (
+              <MenuItem selected="selected" value={oneStudent.registrationNo}>
+                {oneStudent.registrationNo}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
       </Box>
@@ -415,13 +397,6 @@ export default function EvaluateSynopsisMS() {
                       A Candidate has to submit a manuscript within 1 week.
                     </td>
                     <td>
-                      {/* <input
-                            id="ContentPlaceHolder1_rbtnMinor"
-                            type="radio"
-                            name="ctl00$ContentPlaceHolder1$againcb"
-                            defaultValue="rbtnMinor"
-                            defaultChecked="checked"
-                          /> */}
                       <FormControlLabel
                         value="1"
                         control={<Radio />}
@@ -436,13 +411,6 @@ export default function EvaluateSynopsisMS() {
                     </td>
                     <td>Candidate has to re-appear in next semester. </td>
                     <td>
-                      {/* <input
-                            id="ContentPlaceHolder1_rbtnMajor"
-                            type="radio"
-                            name="ctl00$ContentPlaceHolder1$againcb"
-                            defaultValue="rbtnMajor"
-                            /* onclick="javascript:setTimeout('__doPostBack(\'ctl00$ContentPlaceHolder1$rbtnMajor\',\'\')', 0)" *
-                          /> */}
                       <FormControlLabel
                         value="2"
                         control={<Radio />}
@@ -452,41 +420,6 @@ export default function EvaluateSynopsisMS() {
                   </tr>
                 </RadioGroup>
               </FormControl>
-              {/*  <tr>
-                        <h5>Comments:</h5>
-                        <textarea style={{ width: "100%", height: "200px" }} />
-                      </tr>
-                      <tr style={{ backgroundColor: "White" }}>
-                        <td
-                          valign="top"
-                          style={{
-                            backgroundColor: "#E9ECF1",
-                            fontWeight: "bold",
-                            width: "20%",
-                          }}
-                        >
-                          Final Recommendations
-                        </td>
-                        <td>N/A</td>
-                      </tr>
-                      <tr
-                        style={{
-                          color: "#333333",
-                          backgroundColor: "#F7F6F3",
-                        }}
-                      >
-                        <td
-                          valign="top"
-                          style={{
-                            backgroundColor: "#E9ECF1",
-                            fontWeight: "bold",
-                            width: "20%",
-                          }}
-                        >
-                          Presentation Required Again?
-                        </td>
-                        <td>N/A</td>
-                      </tr> */}
             </tbody>
           </table>
           <TextField
@@ -495,6 +428,9 @@ export default function EvaluateSynopsisMS() {
             label="GAC Decision and Recommendations"
             color="secondary"
             variant="outlined"
+            onChange={(e) => {
+              setDecision(e.target.value);
+            }}
           />
           <Button
             type="submit"
@@ -506,7 +442,7 @@ export default function EvaluateSynopsisMS() {
           </Button>
         </div>
       </div>
-      {console.log(filterStudents)}
+      {console.log(decision)}
     </Box>
   );
 }

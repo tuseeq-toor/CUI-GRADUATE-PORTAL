@@ -47,7 +47,9 @@ module.exports.checkStudent = (req, res, next) => {
       if (err) {
         return next(err);
       } else if (
-        user.userRole.some((userrole) => (userrole.role === "STUDENT" && userrole.enable===true))
+        user.userRole.some(
+          (userrole) => userrole.role === "STUDENT" && userrole.enable === true
+        )
       ) {
         return next();
       } else {
@@ -65,7 +67,11 @@ module.exports.checkAdmin = (req, res, next) => {
     } else {
       if (err) {
         return next(err);
-      } else if (user.userRole.some((userrole) => userrole.role === "ADMIN")) {
+      } else if (
+        user.userRole.some(
+          (userrole) => userrole.role === "ADMIN" && userrole.enable === true
+        )
+      ) {
         return next();
       } else {
         res.send("You are not allowed to perform this operation");
@@ -82,7 +88,11 @@ module.exports.checkGAC = (req, res, next) => {
     } else {
       if (err) {
         return next(err);
-      } else if (user.userRole.some((userrole) => (userrole.role === "GAC" && userrole.enable===true))) {
+      } else if (
+        user.userRole.some(
+          (userrole) => userrole.role === "GAC" && userrole.enable === true
+        )
+      ) {
         return next();
       } else {
         res.send("You are not allowed to perform this operation");
@@ -100,7 +110,11 @@ module.exports.checkGO = (req, res, next) => {
     } else {
       if (err) {
         return next(err);
-      } else if (user.userRole.some((userrole) => userrole.role === "GO")) {
+      } else if (
+        user.userRole.some(
+          (userrole) => userrole.role === "GO" && userrole.enable === true
+        )
+      ) {
         return next();
       } else {
         res.send("You are not allowed to perform this operation");
@@ -118,7 +132,10 @@ module.exports.checkSupervisor = (req, res, next) => {
       if (err) {
         return next(err);
       } else if (
-        user.userRole.some((userrole) => userrole.role === "SUPERVISOR")
+        user.userRole.some(
+          (userrole) =>
+            userrole.role === "SUPERVISOR" && userrole.enable === true
+        )
       ) {
         return next();
       } else {
@@ -136,7 +153,11 @@ module.exports.checkMSCOR = (req, res, next) => {
     } else {
       if (err) {
         return next(err);
-      } else if (user.userRole.some((userrole) => userrole.role === "MSCOR")) {
+      } else if (
+        user.userRole.some(
+          (userrole) => userrole.role === "MS_COR" && userrole.enable === true
+        )
+      ) {
         return next();
       } else {
         res.send("You are not allowed to perform this operation");
@@ -153,7 +174,11 @@ module.exports.checkPHDCOR = (req, res, next) => {
     } else {
       if (err) {
         return next(err);
-      } else if (user.userRole.some((userrole) => userrole.role === "PHDCOR")) {
+      } else if (
+        user.userRole.some(
+          (userrole) => userrole.role === "PHD_COR" && userrole.enable === true
+        )
+      ) {
         return next();
       } else {
         res.send("You are not allowed to perform this operation");

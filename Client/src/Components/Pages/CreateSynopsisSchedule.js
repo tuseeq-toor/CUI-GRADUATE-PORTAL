@@ -13,7 +13,7 @@ import { Button } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import studentService from "../../API/students";
 
-export default function ManageSynopsisScheduleBulk() {
+export default function CreateSynopsisSchedule() {
   const [students, setStudents] = useState([]);
 
   const alertHandler = () => {
@@ -29,9 +29,13 @@ export default function ManageSynopsisScheduleBulk() {
   const handleChangeDate = (newValue) => {
     setValue(newValue);
   };
-  useEffect(async () => {
-    const stds = await studentService.getStudents();
-    setStudents(stds);
+  useEffect(() => {
+    async function fetchData() {
+      const stds = await studentService.getStudents();
+      setStudents(stds);
+    }
+
+    fetchData();
   }, []);
 
   return (

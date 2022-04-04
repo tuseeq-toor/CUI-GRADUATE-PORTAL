@@ -73,29 +73,49 @@ var uploadProfile = multer({
 
 //studentDashboard Route == /students
 
-router.get("/", auth.verifyUser, auth.checkStudent, (req, res) => {
-  User.find({ _id: req.user._id }, { hash: 1, salt: 1, password: 1 })
-    .populate({
-      path: "student_id",
-      populate: [
-        {
-          path: "program_id",
-          model: "Program",
-        },
-        {
-          path: "synopsisSession_id",
-          model: "Session",
-        },
-        {
-          path: "supervisor_id",
-          model: "Faculty",
-        },
-        {
-          path: "coSupervisor_id",
-          model: "Faculty",
-        },
-      ],
-    })
+// router.get(
+//   "/",
+//   auth.verifyUser,
+
+//   (req, res) => {
+//     User.find({ _id: req.user._id }, { hash: 0, salt: 0, password: 0 })
+//       .populate({
+//         path: "student_id",
+//         populate: [
+//           {
+//             path: "program_id",
+//             model: "Program",
+//           },
+//           {
+//             path: "synopsisSession_id",
+//             model: "Session",
+//           },
+//           {
+//             path: "supervisor_id",
+//             model: "Faculty",
+//           },
+//           {
+//             path: "coSupervisor_id",
+//             model: "Faculty",
+//           },
+//         ],
+//       })
+//       .exec()
+//       .then((student) => {
+//         res.setHeader("Content-Type", "application/json");
+//         res.status(200).json(student);
+//       })
+//       .catch((err) => {
+//         res.setHeader("Content-Type", "application/json");
+//         res.status(500).json({ success: false, message: err.message });
+//       });
+//   }
+// );
+router.get("/", auth.verifyUser, (req, res) => {
+  Student.find({})
+    .populate("program_id")
+    .populate("synopsisSession_id")
+    .populate("supervisor_id")
     .exec()
     .then((student) => {
       res.setHeader("Content-Type", "application/json");
@@ -139,7 +159,6 @@ router.get("/:id", auth.verifyUser, auth.checkStudent, (req, res) => {
       res.status(500).json({ success: false, message: err.message });
     });
 });
-//get supervisors and coSupervisors
 
 //update student profile route== students/:id
 
@@ -158,6 +177,7 @@ router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
 
       return res.status(500).json({ success: false, message: err });
     } else {
+      console.log("Req", req);
       let needs = await helpers.studentUpdateNeeds(req);
       await User.findOneAndUpdate(
         { _id: req.user._id },
@@ -176,7 +196,7 @@ router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
                 synopsisTitle: body.synopsisTitle,
                 thesisRegistration: body.thesisRegistration,
                 thesisTrack: body.thesisTrack,
-                profilePic: `public/uploads/${req.file.filename}`,
+                profilePicture: `public/uploads/${req.file.filename}`,
               },
             },
             { upsert: true }
