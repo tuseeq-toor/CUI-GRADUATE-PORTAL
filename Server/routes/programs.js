@@ -6,7 +6,7 @@ const auth = require("../auth/authenticate");
 
 const Program = require("../models/program");
 
-router.post("/", auth.verifyUser, (req, res) => {
+router.get("/", auth.verifyUser, (req, res) => {
   Program.find({})
     .then((program) => {
       res.setHeader("Content-Type", "application/json");

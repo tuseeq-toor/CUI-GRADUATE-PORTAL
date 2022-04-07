@@ -10,6 +10,8 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import studentService from "../../API/students";
+import programsService from "../../API/programs";
+import sessionsService from "../../API/sessions";
 
 export default function EvaluateSynopsisMS() {
   const handleSubmit = (event) => {
@@ -18,18 +20,24 @@ export default function EvaluateSynopsisMS() {
   };
 
   const [students, setStudents] = useState([]);
+  const [programs, setPrograms] = useState([]);
+  const [sessions, setSessions] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState({});
   const [decision, setDecision] = useState("");
 
   useEffect(() => {
     async function fetchData() {
       const stds = await studentService.getStudents();
+      const prog = await programsService.getPrograms();
+      const ses = await sessionsService.getSessions();
       setStudents(stds);
+      setPrograms(prog);
+      setSessions(ses);
     }
     fetchData();
   }, []);
   const handleRegistrationNo = (e) => {
-    students.map((oneStudent) => {
+    students.forEach((oneStudent) => {
       if (e.target.value === oneStudent.registrationNo) {
         // const updated = oneStudent;
         // updated["decision"] = decision;
@@ -63,12 +71,17 @@ export default function EvaluateSynopsisMS() {
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            //value={Program}
+            // value={programs}
             label="Program"
-            //onChange={handleChange}
+            // onChange={handleChange}
           >
-            <MenuItem value={15}>MS (SE)</MenuItem>
-            <MenuItem value={15}>MS (IS)</MenuItem>
+            {programs?.map((program) => (
+              <MenuItem selected="selected" value={program._id}>
+                {program?.programShortName}
+              </MenuItem>
+            ))}
+            {/* <MenuItem value={15}>MS (SE)</MenuItem>
+            <MenuItem value={15}>MS (IS)</MenuItem> */}
           </Select>
         </FormControl>
       </Box>
@@ -134,8 +147,9 @@ export default function EvaluateSynopsisMS() {
                   >
                     Registration No
                   </td>
-                  <td>FA17-RSE-002</td>
+                  <td>{selectedStudent?.registrationNo}</td>
                 </tr>
+                {console.log(selectedStudent)}
                 <tr style={{ backgroundColor: "White" }}>
                   <td
                     valign="top"
@@ -147,7 +161,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Name
                   </td>
-                  <td>Anam Zahra</td>
+                  <td>{selectedStudent?.username}</td>
                 </tr>
                 <tr
                   style={{
@@ -165,7 +179,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Email
                   </td>
-                  <td>FA17-RSE-002@isbstudent.comsats.edu.pk</td>
+                  <td>{selectedStudent?.email}</td>
                 </tr>
                 <tr style={{ backgroundColor: "White" }}>
                   <td
@@ -178,7 +192,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Program
                   </td>
-                  <td>MS (CS)</td>
+                  <td>{selectedStudent?.program_id?.programShortName}</td>
                 </tr>
                 <tr
                   style={{
@@ -240,11 +254,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Thesis Title
                   </td>
-                  <td>
-                    A LSTM-based Deep Neural Network-Oriented Test Case
-                    Prioritization Technique in Continuous Integration (CI)
-                    Software Development Practice.
-                  </td>
+                  <td>{selectedStudent?.thesisTitle}</td>
                 </tr>
                 <tr
                   style={{
@@ -324,7 +334,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Supervisor
                   </td>
-                  <td>Dr. Saif ur Rehman Khan</td>
+                  <td>{selectedStudent?.supervisor_id?.fullName}</td>
                 </tr>
                 <tr style={{ backgroundColor: "White" }}>
                   <td
@@ -337,7 +347,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Co-Supervisor
                   </td>
-                  <td>Dr. Inayat-ur-Rehman</td>
+                  <td>{selectedStudent?.coSupervisor_id?.fullName}</td>
                 </tr>
                 <tr
                   style={{

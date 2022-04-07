@@ -9,7 +9,7 @@ const Notification = require("../models/notification");
 const Announcement = require("../models/announcement");
 const Session = require("../models/session");
 
-router.post("/", auth.verifyUser, (req, res) => {
+router.get("/", auth.verifyUser, (req, res) => {
   Session.find({})
     .then((session) => {
       res.setHeader("Content-Type", "application/json");

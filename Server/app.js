@@ -7,6 +7,7 @@ const gacRouter = require("./routes/gac");
 const adminRouter = require("./routes/admin");
 const sessionsRouter = require("./routes/sessions");
 const programsRouter = require("./routes/programs");
+const synopsisRouter = require("./routes/synopsis");
 
 const authRouter = require("./routes/auth");
 var passport = require("passport");
@@ -62,6 +63,7 @@ app.use("/students", studentRouter);
 app.use("/gac", gacRouter);
 app.use("/sessions", sessionsRouter);
 app.use("/programs", programsRouter);
+app.use("/synopsis", synopsisRouter);
 
 //Server listening
 app.listen(process.env.PORT || 3000, () => {

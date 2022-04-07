@@ -12,31 +12,44 @@ import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { Button } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import studentService from "../../API/students";
+import synopsisService from "../../API/synopsis";
+import programsService from "../../API/programs";
 
 export default function CreateSynopsisSchedule() {
   const [students, setStudents] = useState([]);
+  const [programs, setPrograms] = useState([]);
 
-  const alertHandler = () => {
-    alert("Schedule Updated!");
-  };
-  const [age, setAge] = React.useState("");
+  const [data, setData] = React.useState({
+    student_id: "",
+    // session_id: "",
+    program_id: "",
+    defenseDate: new Date(),
+  });
 
   const handleChange = (event) => {
-    setAge(event.target.value);
+    console.log(event.target.value);
+    setData({ ...data, [event.target.name]: event.target.value });
   };
-  const [value, setValue] = React.useState(new Date());
 
   const handleChangeDate = (newValue) => {
-    setValue(newValue);
+    setData({ ...data, date: newValue });
   };
   useEffect(() => {
     async function fetchData() {
       const stds = await studentService.getStudents();
+      const prog = await programsService.getPrograms();
       setStudents(stds);
+      setPrograms(prog);
     }
 
     fetchData();
   }, []);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(data);
+    synopsisService.createSchedule(data);
+  };
 
   return (
     <>
@@ -50,7 +63,7 @@ export default function CreateSynopsisSchedule() {
         <h1>Synopsis Schedule</h1>
       </div>
       {/* Form starts here */}
-      <Box sx={{ flexGrow: 1 }}>
+      <Box component="form" noValidate sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <FormControl fullWidth>
@@ -58,13 +71,22 @@ export default function CreateSynopsisSchedule() {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={age}
+                name="session_id"
+                value={data.session_id}
                 label="Session"
-                onChange={handleChange}
+                // onChange={handleChange}
               >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                {/* {students.map((oneStudent) => (
+                  <MenuItem
+                    selected="selected"
+                    value={oneStudent.synopsisSession_id._id}
+                  >
+                    {oneStudent.synopsisSession_id.title}
+                  </MenuItem>
+                ))} */}
+                <MenuItem value={10}>SP22</MenuItem>
+                <MenuItem value={20}>FA22</MenuItem>
+                <MenuItem value={30}>FA23</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -72,8 +94,9 @@ export default function CreateSynopsisSchedule() {
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               {" "}
               <DateTimePicker
+                name="defenseDate"
                 label="Defense Date"
-                value={value}
+                value={data.defenseDate}
                 onChange={handleChangeDate}
                 renderInput={(params) => <TextField {...params} />}
               />
@@ -85,15 +108,13 @@ export default function CreateSynopsisSchedule() {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={age}
-                label="Session"
+                value={data.student_id}
+                label="Student"
+                name="student_id"
                 onChange={handleChange}
               >
                 {students.map((oneStudent) => (
-                  <MenuItem
-                    selected="selected"
-                    value={oneStudent.registrationNo}
-                  >
+                  <MenuItem selected="selected" value={oneStudent._id}>
                     {oneStudent.username}
                   </MenuItem>
                 ))}
@@ -106,27 +127,33 @@ export default function CreateSynopsisSchedule() {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={age}
-                label="Session"
+                name="program_id"
+                value={data.program_id}
+                label="Program"
                 onChange={handleChange}
               >
-                <MenuItem value={10}>Ten</MenuItem>
+                {programs.map((program) => (
+                  <MenuItem selected="selected" value={program._id}>
+                    {program.programShortName}
+                  </MenuItem>
+                ))}
+                {/* <MenuItem value={10}>Ten</MenuItem>
                 <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                <MenuItem value={30}>Thirty</MenuItem> */}
               </Select>
             </FormControl>
           </Grid>
         </Grid>
       </Box>
 
-      {/* Page-body start */}
+      {/* Pinitial-body start */}
       <div style={{ display: "flex", justifyContent: "end" }}>
         <Button
-          type="submit"
           variant="contained"
           size="large"
           color="secondary"
           style={{ marginTop: "2%", width: "20%" }}
+          onClick={handleSubmit}
         >
           Submit
         </Button>
