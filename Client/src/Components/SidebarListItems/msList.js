@@ -107,7 +107,7 @@ export const msListitems = [
         path: "/Dashboard/ManageSynopsisSchedule",
       },
       {
-        text: "",
+        text: "Create a Schedule",
         icon: <LayersIcon />,
         path: "/Dashboard/CreateSynopsisSchedule",
       },

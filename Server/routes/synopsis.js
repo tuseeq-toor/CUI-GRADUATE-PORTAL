@@ -8,6 +8,10 @@ const SynopsisSubmission = require("../models/synopsisSubmission");
 const path = require("path");
 const thesisSubmission = require("../models/thesisSubmission");
 
+const SynopsisSchedule = require("../models/synopsisSchedule");
+const SynopsisEvaluation = require("../models/synopsisEvaluation");
+const EvaluationStatus = require("../models/evaluationStatus");
+
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "public/uploads");
@@ -46,10 +50,10 @@ var uploadThesis = multer({
   },
 }).fields([{ name: "thesisDocument" }, { name: "synopsisNotification" }]);
 
-const SynopsisSchedule = require("../models/synopsisSchedule");
-
-router.get("/", auth.verifyUser, (req, res) => {
+router.get("/synopsis-schedule", auth.verifyUser, (req, res) => {
   SynopsisSchedule.find({})
+    .populate("student_id")
+    .populate("program_id")
     .then((synopsisSchedule) => {
       res.setHeader("Content-Type", "application/json");
       res.status(200).json(synopsisSchedule);
@@ -63,7 +67,7 @@ router.get("/", auth.verifyUser, (req, res) => {
 router.post(
   "/add-SynopsisSchedule",
   auth.verifyUser,
-  auth.checkAdmin,
+
   (req, res) => {
     let body = req.body;
     SynopsisSchedule.create({ ...body, scheduledBy: req.user._id })
@@ -77,6 +81,80 @@ router.post(
       });
   }
 );
+router.post(
+  "/add-evaluation",
+  auth.verifyUser,
+
+  (req, res) => {
+    let body = req.body;
+    EvaluationStatus.create(body)
+      .then((evaluationStatus) => {
+        SynopsisEvaluation.create(body)
+          .then((synopsisEvaluation) => {
+            res.setHeader("Content-Type", "application/json");
+            res.status(200).json({ synopsisEvaluation, evaluationStatus });
+          })
+          .catch((err) => {
+            res.setHeader("Content-Type", "application/json");
+            res.status(500).json({ success: false, message: err.message });
+          });
+      })
+      .catch((err) => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(500).json({ success: false, message: err.message });
+      });
+  }
+);
+router.patch(
+  "/update-evaluation",
+  auth.verifyUser,
+
+  (req, res) => {
+    let body = req.body;
+
+    SynopsisEvaluation.findOneAndUpdate(
+      { _id: body.synopsisEvaluation_id },
+      {
+        $push: {
+          recommendations: {
+            comment: body.comment,
+            evaluationStatus: body.evaluationStatus,
+            evaluator_id: req.user._id,
+          },
+        },
+      }
+    )
+      .then((synopsisSchedule) => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(200).json(synopsisSchedule);
+      })
+      .catch((err) => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(500).json({ success: false, message: err.message });
+      });
+  }
+);
+
+router.get("/synopsis-evaluation", auth.verifyUser, (req, res) => {
+  SynopsisEvaluation.find({})
+    .populate("recommendations.evaluator_id recommendations.evaluationStatus")
+    .populate({
+      path: "schedule_id",
+      populate: [
+        { path: "student_id", model: "Student" },
+        { path: "program_id", model: "Program" },
+        { path: "scheduledBy", model: "User" },
+      ],
+    })
+    .then((synopsisEvaluation) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json(synopsisEvaluation);
+    })
+    .catch((err) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(500).json({ success: false, message: err.message });
+    });
+});
 
 router.post(
   "/submit-synopsis",
@@ -131,6 +209,24 @@ router.post(
     });
   }
 );
+
+//get synopsisSubmissions
+
+router.get("/submitted-synopsis", auth.verifyUser, (req, res) => {
+  SynopsisSubmission.find({})
+    .populate("student_id")
+    .populate("supervisor_id")
+    .populate("coSupervisor_id")
+    .then((synopsisSubmission) => {
+      console.log(synopsisSubmission);
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json(synopsisSubmission);
+    })
+    .catch((err) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(500).json({ success: false, message: err.message });
+    });
+});
 
 router.post(
   "/submit-thesis",

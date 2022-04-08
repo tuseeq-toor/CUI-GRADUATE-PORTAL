@@ -12,43 +12,75 @@ import Button from "@mui/material/Button";
 import studentService from "../../API/students";
 import programsService from "../../API/programs";
 import sessionsService from "../../API/sessions";
+import synopsisService from "../../API/synopsis";
+import { setDate } from "date-fns/esm";
 
 export default function EvaluateSynopsisMS() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    alert("Submitted");
-  };
-
   const [students, setStudents] = useState([]);
+  const [schedules, setSchedule] = useState([]);
   const [programs, setPrograms] = useState([]);
   const [sessions, setSessions] = useState([]);
+  const [synopsis, setSynopsis] = useState([]);
+  const [selectedSynopsis, setSelectedSynopsis] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState({});
+  const [selectedSchedule, setSelectedSchedule] = useState({});
   const [decision, setDecision] = useState("");
+  const [data, setData] = useState({});
 
   useEffect(() => {
     async function fetchData() {
-      const stds = await studentService.getStudents();
+      // const stds = await studentService.getStudents();
+      const schd = await synopsisService.getSynopsisSchedules();
       const prog = await programsService.getPrograms();
       const ses = await sessionsService.getSessions();
-      setStudents(stds);
+      const syn = await synopsisService.getSubmittedSynopsis();
+
+      // setStudents(stds);
+      setSchedule(schd);
       setPrograms(prog);
       setSessions(ses);
+      setSynopsis(syn);
     }
     fetchData();
   }, []);
   const handleRegistrationNo = (e) => {
-    students.forEach((oneStudent) => {
-      if (e.target.value === oneStudent.registrationNo) {
+    schedules.forEach((oneSchedule) => {
+      if (e.target.value === oneSchedule.student_id.registrationNo) {
         // const updated = oneStudent;
         // updated["decision"] = decision;
-        setSelectedStudent(oneStudent);
+        var schedule = oneSchedule;
+        setSelectedSchedule(oneSchedule);
       }
+      synopsis.forEach((synopsis) => {
+        console.log("Selected Schedule", selectedSchedule);
+        console.log("Selected Synopsis", synopsis);
+        if (schedule.student_id._id === synopsis.student_id._id) {
+          console.log(true);
+          setSelectedSynopsis(synopsis);
+          setData({ ...data, schedule_id: schedule._id });
+        }
+      });
     });
   };
 
+  const handleChange = (event) => {
+    setData({ ...data, [event.target.name]: event.target.value });
+    console.log(data);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const res = await synopsisService.addEvaluation(data);
+
+    synopsisService.updateEvaluation({
+      ...data,
+      synopsisEvaluation_id: res.data.synopsisEvaluation._id,
+      evaluationStatus: res.data.evaluationStatus._id,
+    });
+    // alert(JSON.stringify(data));
+  };
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-      {console.log(selectedStudent)}
       <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
         <FormControl fullWidth color="secondary">
           <InputLabel id="demo-simple-select-label">Track</InputLabel>
@@ -111,9 +143,12 @@ export default function EvaluateSynopsisMS() {
             label="Registration No"
             onChange={(e) => handleRegistrationNo(e)}
           >
-            {students.map((oneStudent) => (
-              <MenuItem selected="selected" value={oneStudent.registrationNo}>
-                {oneStudent.registrationNo}
+            {schedules.map((oneSchedule) => (
+              <MenuItem
+                selected="selected"
+                value={oneSchedule.student_id.registrationNo}
+              >
+                {oneSchedule.student_id.registrationNo}
               </MenuItem>
             ))}
           </Select>
@@ -147,9 +182,9 @@ export default function EvaluateSynopsisMS() {
                   >
                     Registration No
                   </td>
-                  <td>{selectedStudent?.registrationNo}</td>
+                  <td>{selectedSchedule?.student_id?.registrationNo}</td>
                 </tr>
-                {console.log(selectedStudent)}
+                {console.log(selectedSchedule)}
                 <tr style={{ backgroundColor: "White" }}>
                   <td
                     valign="top"
@@ -161,7 +196,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Name
                   </td>
-                  <td>{selectedStudent?.username}</td>
+                  <td>{selectedSchedule?.student_id?.username}</td>
                 </tr>
                 <tr
                   style={{
@@ -179,7 +214,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Email
                   </td>
-                  <td>{selectedStudent?.email}</td>
+                  <td>{selectedSchedule?.student_id?.email}</td>
                 </tr>
                 <tr style={{ backgroundColor: "White" }}>
                   <td
@@ -192,7 +227,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Program
                   </td>
-                  <td>{selectedStudent?.program_id?.programShortName}</td>
+                  <td>{selectedSchedule?.program_id?.programShortName}</td>
                 </tr>
                 <tr
                   style={{
@@ -254,7 +289,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Thesis Title
                   </td>
-                  <td>{selectedStudent?.thesisTitle}</td>
+                  <td>{selectedSchedule?.student_id?.synopsisTitle}</td>
                 </tr>
                 <tr
                   style={{
@@ -272,7 +307,8 @@ export default function EvaluateSynopsisMS() {
                   >
                     Area of Specialization
                   </td>
-                  <td>Software Engineering</td>
+                  {console.log("selectedSynopsis", selectedSynopsis)}
+                  <td>{selectedSynopsis?.specializationTrack}</td>
                 </tr>
                 <tr style={{ backgroundColor: "White" }}>
                   <td
@@ -334,7 +370,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Supervisor
                   </td>
-                  <td>{selectedStudent?.supervisor_id?.fullName}</td>
+                  <td>{selectedSynopsis?.supervisor_id?.fullName}</td>
                 </tr>
                 <tr style={{ backgroundColor: "White" }}>
                   <td
@@ -347,7 +383,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Co-Supervisor
                   </td>
-                  <td>{selectedStudent?.coSupervisor_id?.fullName}</td>
+                  <td>{selectedSynopsis?.coSupervisor_id?.fullName}</td>
                 </tr>
                 <tr
                   style={{
@@ -370,7 +406,7 @@ export default function EvaluateSynopsisMS() {
                       href="Files/MS/Synopsis/Synopsis_FA17-RSE-002.pdf"
                       target="_blank"
                     >
-                      Synopsis_FA17-RSE-002.pdf
+                      {selectedSynopsis?.synopsisFileName}
                     </a>
                   </td>
                 </tr>
@@ -408,9 +444,11 @@ export default function EvaluateSynopsisMS() {
                     </td>
                     <td>
                       <FormControlLabel
-                        value="1"
+                        value="The candidate is recommended to do minor changings."
                         control={<Radio />}
                         label=""
+                        name="evaluationStatus"
+                        onChange={handleChange}
                       />
                     </td>
                   </tr>
@@ -422,9 +460,11 @@ export default function EvaluateSynopsisMS() {
                     <td>Candidate has to re-appear in next semester. </td>
                     <td>
                       <FormControlLabel
-                        value="2"
+                        value="The candidate is recommended to do major changings."
                         control={<Radio />}
                         label=""
+                        name="evaluationStatus"
+                        onChange={handleChange}
                       />
                     </td>
                   </tr>
@@ -437,16 +477,16 @@ export default function EvaluateSynopsisMS() {
             sx={{ width: "100%", marginBottom: "15px" }}
             label="GAC Decision and Recommendations"
             color="secondary"
+            name="comment"
             variant="outlined"
-            onChange={(e) => {
-              setDecision(e.target.value);
-            }}
+            onChange={handleChange}
           />
           <Button
             type="submit"
             variant="contained"
             size="large"
             color="secondary"
+            onClick={handleSubmit}
           >
             Submit
           </Button>
