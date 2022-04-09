@@ -59,19 +59,18 @@ exports.studentUpdateNeeds = async (req) => {
   needs = {};
   needs.user = await User.findById({
     _id: req.user._id,
+  }).populate({
+    path: "student_id",
+    populate: [
+      {
+        path: "program_id",
+        model: "Program",
+      },
+    ],
   });
+
   needs.student_id = needs.user.student_id;
-  // needs.supervisor = await Faculty.findOne(
-  //   {
-  //     username: body.supervisorName,
-  //   },
-  //   { _id: 1 }
-  // );
-  // needs.coSupervisor = await Faculty.findOne(
-  //   {
-  //     username: body.coSupervisorName,
-  //   },
-  //   { _id: 1 }
-  // );
+  needs.programShortName = needs.user.student_id.program_id.programShortName;
+  console.log("update needs", needs);
   return needs;
 };

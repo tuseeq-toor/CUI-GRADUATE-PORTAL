@@ -62,8 +62,8 @@ import GenerateSynopsisReport from "../Components/Pages/GenerateSynopsisReport";
 import GenerateThesisReport from "../Components/Pages/GenerateThesisReport";
 import ManageThesisSchedule from "../Components/Pages/ManageThesisSchedule";
 import EvaluateThesisMS from "../Components/Pages/EvaluateThesisMS";
-import ManageSynopsisScheduleBulk from "../Components/Pages/ManageSynopsisScheduleBulk";
-import ManageThesisScheduleBulk from "../Components/Pages/ManageThesisScheduleBulk";
+import CreateSynopsisSchedule from "../Components/Pages/CreateSynopsisSchedule";
+import CreateThesisSchedule from "../Components/Pages/CreateThesisSchedule";
 import PendingThesis from "../Components/Pages/PendingThesis";
 import { PhdSidebarList } from "../Components/UI/PhdCor/PhdSidebarList";
 
@@ -178,8 +178,8 @@ function DashboardContent() {
       return <ManageSynopsisSchedule />;
     }
 
-    if (tab === "MANAGE SYNOPSIS SCHEDULE (BULK)") {
-      return <ManageSynopsisScheduleBulk />;
+    if (tab === "Create a Schedule") {
+      return <CreateSynopsisSchedule />;
     }
 
     if (tab === "EVALUATE SYNOPSIS (PHD)") {
@@ -199,8 +199,8 @@ function DashboardContent() {
       return <ManageThesisSchedule />;
     }
 
-    if (tab === "MANAGE THESIS SCHEDULE (BULK)") {
-      return <ManageThesisScheduleBulk />;
+    if (tab === "Create a Schedule") {
+      return <CreateThesisSchedule />;
     }
     if (tab === "PENDING THESIS") {
       return <PendingThesis />;

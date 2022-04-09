@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ManageSynopsisScheduleBulk() {
+export default function CreateSchedule() {
   const alertHandler = () => {
     alert("Schedule Updated!");
   };

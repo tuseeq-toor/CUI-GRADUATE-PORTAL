@@ -64,10 +64,6 @@ export const Sidebar = () => {
   console.log(userRole);
 
   let userProgram;
-  // if (userRole === "STUDENT") {
-  //   userProgram = user.user.student.program_id.programShortName;
-  // }
-  // console.log(userProgram);
 
   console.log(isLoggedIn);
   const [open, setOpen] = React.useState(false);
@@ -188,41 +184,21 @@ export const Sidebar = () => {
         setList(goListitems);
         break;
 
-      case "MS":
+      case "MS_COR":
         setList(msListitems);
         break;
-      case "PhD":
+      case "PHD_COR":
         setList(phdListitems);
         break;
       case "STUDENT":
-        if (userProgram === "MS") {
+        if (userProgram.toLowerCase().includes("ms")) {
           setList(MsStudentListitems);
-        } else if (userProgram === "PhD") {
+        } else if (userProgram.toLowerCase().includes("phd")) {
           setList(PhdStudentListitems);
         }
         break;
       default:
     }
   };
-  return (
-    <>
-      {
-        isLoggedIn && list.map(checkUser)
-        /* isLoggedIn && checkrole() */
-        // roles[0].includes("ADMIN") && adminListitems.map(checkUser)
-      }
-      {/* {isLoggedIn && Roles[0] === "GAC" && gacListitems.map(checkUser)}
-      {isLoggedIn && Roles[0] === "GO" && goListitems.map(checkUser)}
-      {isLoggedIn && Roles[0] === "MS" && msListitems.map(checkUser)}
-      {isLoggedIn && Roles[0] === "PhD" && phdListitems.map(checkUser)}
-      {isLoggedIn &&
-        roles.includes("STUDENT") &&
-        userProgram === "MS" &&
-        MsStudentListitems.map(checkUser)}
-      {isLoggedIn &&
-        roles.includes("STUDENT") &&
-        userProgram === "PhD" &&
-        PhdStudentListitems.map(checkUser)} */}
-    </>
-  );
+  return <>{isLoggedIn && list.map(checkUser)}</>;
 };

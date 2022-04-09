@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const programSchema = new Schema({
   programShortName: { type: String /*required: true*/ },
-  programFullName: { type: String },
+  programLongName: { type: String },
   description: { type: String },
   minSemesters: { type: Number /*required: true*/ },
   maxSemesters: { type: Number /*required: true*/ },

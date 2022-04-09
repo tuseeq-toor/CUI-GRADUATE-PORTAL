@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -9,28 +9,76 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import studentService from "../../API/students";
+import programsService from "../../API/programs";
+import sessionsService from "../../API/sessions";
+import synopsisService from "../../API/synopsis";
+import { setDate } from "date-fns/esm";
 
 export default function EvaluateSynopsisMS() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    alert("Submitted");
-    const data = new FormData(event.currentTarget);
-    const userEmail = data.get("email");
-    const userPassword = data.get("password");
-    /* axios.post("http://localhost:3000/auth/login", {
-        email: userEmail,
-        password: userPassword,
-      })
-      .then((res) => {
-        const data = res.data.user;
-	console.log(data);
-        navigate("/Dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      }); */
+  const [students, setStudents] = useState([]);
+  const [schedules, setSchedule] = useState([]);
+  const [programs, setPrograms] = useState([]);
+  const [sessions, setSessions] = useState([]);
+  const [synopsis, setSynopsis] = useState([]);
+  const [selectedSynopsis, setSelectedSynopsis] = useState([]);
+  const [selectedStudent, setSelectedStudent] = useState({});
+  const [selectedSchedule, setSelectedSchedule] = useState({});
+  const [decision, setDecision] = useState("");
+  const [data, setData] = useState({});
+
+  useEffect(() => {
+    async function fetchData() {
+      // const stds = await studentService.getStudents();
+      const schd = await synopsisService.getSynopsisSchedules();
+      const prog = await programsService.getPrograms();
+      const ses = await sessionsService.getSessions();
+      const syn = await synopsisService.getSubmittedSynopsis();
+
+      // setStudents(stds);
+      setSchedule(schd);
+      setPrograms(prog);
+      setSessions(ses);
+      setSynopsis(syn);
+    }
+    fetchData();
+  }, []);
+  const handleRegistrationNo = (e) => {
+    schedules.forEach((oneSchedule) => {
+      if (e.target.value === oneSchedule.student_id.registrationNo) {
+        // const updated = oneStudent;
+        // updated["decision"] = decision;
+        var schedule = oneSchedule;
+        setSelectedSchedule(oneSchedule);
+      }
+      synopsis.forEach((synopsis) => {
+        console.log("Selected Schedule", selectedSchedule);
+        console.log("Selected Synopsis", synopsis);
+        if (schedule.student_id._id === synopsis.student_id._id) {
+          console.log(true);
+          setSelectedSynopsis(synopsis);
+          setData({ ...data, schedule_id: schedule._id });
+        }
+      });
+    });
   };
 
+  const handleChange = (event) => {
+    setData({ ...data, [event.target.name]: event.target.value });
+    console.log(data);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const res = await synopsisService.addEvaluation(data);
+
+    synopsisService.updateEvaluation({
+      ...data,
+      synopsisEvaluation_id: res.data.synopsisEvaluation._id,
+      evaluationStatus: res.data.evaluationStatus._id,
+    });
+    // alert(JSON.stringify(data));
+  };
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
       <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
@@ -55,12 +103,17 @@ export default function EvaluateSynopsisMS() {
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            //value={Program}
+            // value={programs}
             label="Program"
-            //onChange={handleChange}
+            // onChange={handleChange}
           >
-            <MenuItem value={15}>MS (SE)</MenuItem>
-            <MenuItem value={15}>MS (IS)</MenuItem>
+            {programs?.map((program) => (
+              <MenuItem selected="selected" value={program._id}>
+                {program?.programShortName}
+              </MenuItem>
+            ))}
+            {/* <MenuItem value={15}>MS (SE)</MenuItem>
+            <MenuItem value={15}>MS (IS)</MenuItem> */}
           </Select>
         </FormControl>
       </Box>
@@ -88,48 +141,16 @@ export default function EvaluateSynopsisMS() {
             id="demo-simple-select"
             //value={Program}
             label="Registration No"
-            //onChange={handleChange}
+            onChange={(e) => handleRegistrationNo(e)}
           >
-            <MenuItem selected="selected" value="5944">
-              FA17-RSE-002
-            </MenuItem>
-            <MenuItem value="6001">FA19-RCS-008</MenuItem>
-            <MenuItem value="5959">FA19-RCS-017</MenuItem>
-            <MenuItem value="5951">FA19-RCS-021</MenuItem>
-            <MenuItem value="6029">FA19-RCS-023</MenuItem>
-            <MenuItem value="5987">FA19-RCS-024</MenuItem>
-            <MenuItem value="5960">FA19-RCS-026</MenuItem>
-            <MenuItem value="6101">FA19-RCS-030</MenuItem>
-            <MenuItem value="6015">FA19-RCS-033</MenuItem>
-            <MenuItem value="6048">FA19-RCS-046</MenuItem>
-            <MenuItem value="5937">FA19-RCS-050</MenuItem>
-            <MenuItem value="6055">FA19-RCS-058</MenuItem>
-            <MenuItem value="5942">FA19-RCS-066</MenuItem>
-            <MenuItem value="6007">FA19-RCS-075</MenuItem>
-            <MenuItem value="5980">FA19-RCS-089</MenuItem>
-            <MenuItem value="6086">FA20-RCS-015</MenuItem>
-            <MenuItem value="5936">FA20-RCS-020</MenuItem>
-            <MenuItem value="5930">FA20-RCS-021</MenuItem>
-            <MenuItem value="6088">FA20-RCS-034</MenuItem>
-            <MenuItem value="5978">SP18-RCS-013</MenuItem>
-            <MenuItem value="1495">SP18-RCS-034</MenuItem>
-            <MenuItem value="5950">SP19-RCS-009</MenuItem>
-            <MenuItem value="6012">SP19-RCS-014</MenuItem>
-            <MenuItem value="5963">SP19-RCS-018</MenuItem>
-            <MenuItem value="6013">SP19-RCS-021</MenuItem>
-            <MenuItem value="5974">SP19-RCS-032</MenuItem>
-            <MenuItem value="6033">SP19-RCS-045</MenuItem>
-            <MenuItem value="5966">SP19-RCS-048</MenuItem>
-            <MenuItem value="5956">SP19-RCS-051</MenuItem>
-            <MenuItem value="6011">SP19-RCS-059</MenuItem>
-            <MenuItem value="6064">SP20-RCS-005</MenuItem>
-            <MenuItem value="5932">SP20-RCS-013</MenuItem>
-            <MenuItem value="6073">SP20-RCS-016</MenuItem>
-            <MenuItem value="6014">SP20-RCS-054</MenuItem>
-            <MenuItem value="6068">SP20-RCS-065</MenuItem>
-            <MenuItem value="6066">SP20-RCS-069</MenuItem>
-            <MenuItem value="6078">SP20-RCS-070</MenuItem>
-            <MenuItem value="6016">SP20-RCS-072</MenuItem>
+            {schedules.map((oneSchedule) => (
+              <MenuItem
+                selected="selected"
+                value={oneSchedule.student_id.registrationNo}
+              >
+                {oneSchedule.student_id.registrationNo}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
       </Box>
@@ -161,8 +182,9 @@ export default function EvaluateSynopsisMS() {
                   >
                     Registration No
                   </td>
-                  <td>FA17-RSE-002</td>
+                  <td>{selectedSchedule?.student_id?.registrationNo}</td>
                 </tr>
+                {console.log(selectedSchedule)}
                 <tr style={{ backgroundColor: "White" }}>
                   <td
                     valign="top"
@@ -174,7 +196,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Name
                   </td>
-                  <td>Anam Zahra</td>
+                  <td>{selectedSchedule?.student_id?.username}</td>
                 </tr>
                 <tr
                   style={{
@@ -192,7 +214,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Email
                   </td>
-                  <td>FA17-RSE-002@isbstudent.comsats.edu.pk</td>
+                  <td>{selectedSchedule?.student_id?.email}</td>
                 </tr>
                 <tr style={{ backgroundColor: "White" }}>
                   <td
@@ -205,7 +227,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Program
                   </td>
-                  <td>MS (CS)</td>
+                  <td>{selectedSchedule?.program_id?.programShortName}</td>
                 </tr>
                 <tr
                   style={{
@@ -267,11 +289,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Thesis Title
                   </td>
-                  <td>
-                    A LSTM-based Deep Neural Network-Oriented Test Case
-                    Prioritization Technique in Continuous Integration (CI)
-                    Software Development Practice.
-                  </td>
+                  <td>{selectedSchedule?.student_id?.synopsisTitle}</td>
                 </tr>
                 <tr
                   style={{
@@ -289,7 +307,8 @@ export default function EvaluateSynopsisMS() {
                   >
                     Area of Specialization
                   </td>
-                  <td>Software Engineering</td>
+                  {console.log("selectedSynopsis", selectedSynopsis)}
+                  <td>{selectedSynopsis?.specializationTrack}</td>
                 </tr>
                 <tr style={{ backgroundColor: "White" }}>
                   <td
@@ -351,7 +370,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Supervisor
                   </td>
-                  <td>Dr. Saif ur Rehman Khan</td>
+                  <td>{selectedSynopsis?.supervisor_id?.fullName}</td>
                 </tr>
                 <tr style={{ backgroundColor: "White" }}>
                   <td
@@ -364,7 +383,7 @@ export default function EvaluateSynopsisMS() {
                   >
                     Co-Supervisor
                   </td>
-                  <td>Dr. Inayat-ur-Rehman</td>
+                  <td>{selectedSynopsis?.coSupervisor_id?.fullName}</td>
                 </tr>
                 <tr
                   style={{
@@ -387,7 +406,7 @@ export default function EvaluateSynopsisMS() {
                       href="Files/MS/Synopsis/Synopsis_FA17-RSE-002.pdf"
                       target="_blank"
                     >
-                      Synopsis_FA17-RSE-002.pdf
+                      {selectedSynopsis?.synopsisFileName}
                     </a>
                   </td>
                 </tr>
@@ -424,17 +443,12 @@ export default function EvaluateSynopsisMS() {
                       A Candidate has to submit a manuscript within 1 week.
                     </td>
                     <td>
-                      {/* <input
-                            id="ContentPlaceHolder1_rbtnMinor"
-                            type="radio"
-                            name="ctl00$ContentPlaceHolder1$againcb"
-                            defaultValue="rbtnMinor"
-                            defaultChecked="checked"
-                          /> */}
                       <FormControlLabel
-                        value="1"
+                        value="The candidate is recommended to do minor changings."
                         control={<Radio />}
                         label=""
+                        name="evaluationStatus"
+                        onChange={handleChange}
                       />
                     </td>
                   </tr>
@@ -445,57 +459,17 @@ export default function EvaluateSynopsisMS() {
                     </td>
                     <td>Candidate has to re-appear in next semester. </td>
                     <td>
-                      {/* <input
-                            id="ContentPlaceHolder1_rbtnMajor"
-                            type="radio"
-                            name="ctl00$ContentPlaceHolder1$againcb"
-                            defaultValue="rbtnMajor"
-                            /* onclick="javascript:setTimeout('__doPostBack(\'ctl00$ContentPlaceHolder1$rbtnMajor\',\'\')', 0)" *
-                          /> */}
                       <FormControlLabel
-                        value="2"
+                        value="The candidate is recommended to do major changings."
                         control={<Radio />}
                         label=""
+                        name="evaluationStatus"
+                        onChange={handleChange}
                       />
                     </td>
                   </tr>
                 </RadioGroup>
               </FormControl>
-              {/*  <tr>
-                        <h5>Comments:</h5>
-                        <textarea style={{ width: "100%", height: "200px" }} />
-                      </tr>
-                      <tr style={{ backgroundColor: "White" }}>
-                        <td
-                          valign="top"
-                          style={{
-                            backgroundColor: "#E9ECF1",
-                            fontWeight: "bold",
-                            width: "20%",
-                          }}
-                        >
-                          Final Recommendations
-                        </td>
-                        <td>N/A</td>
-                      </tr>
-                      <tr
-                        style={{
-                          color: "#333333",
-                          backgroundColor: "#F7F6F3",
-                        }}
-                      >
-                        <td
-                          valign="top"
-                          style={{
-                            backgroundColor: "#E9ECF1",
-                            fontWeight: "bold",
-                            width: "20%",
-                          }}
-                        >
-                          Presentation Required Again?
-                        </td>
-                        <td>N/A</td>
-                      </tr> */}
             </tbody>
           </table>
           <TextField
@@ -503,18 +477,22 @@ export default function EvaluateSynopsisMS() {
             sx={{ width: "100%", marginBottom: "15px" }}
             label="GAC Decision and Recommendations"
             color="secondary"
+            name="comment"
             variant="outlined"
+            onChange={handleChange}
           />
           <Button
             type="submit"
             variant="contained"
             size="large"
             color="secondary"
+            onClick={handleSubmit}
           >
             Submit
           </Button>
         </div>
       </div>
+      {console.log(decision)}
     </Box>
   );
 }

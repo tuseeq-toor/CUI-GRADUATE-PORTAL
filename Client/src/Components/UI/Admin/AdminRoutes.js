@@ -52,8 +52,8 @@ import EvaluateThesisPhD from "../../Pages/EvaluateThesisPhD";
 import AddFaculty from "../../Pages/AddFaculty";
 import { useSelector } from "react-redux";
 import ManageMsDeadline from "../../Pages/ManageMsDeadline";
-import ManageSynopsisScheduleBulk from "../../Pages/ManageSynopsisScheduleBulk";
-import ManageThesisScheduleBulk from "../../Pages/ManageThesisScheduleBulk";
+import CreateSynopsisSchedule from "../../Pages/CreateSynopsisSchedule";
+import CreateSchedule from "../../Pages/CreateThesisScheduleMS";
 import ManageSupervisoryCommitteeStudent from "../../Pages/ManageSupervisoryCommitteeStudent";
 const AdminRoutes = (props) => {
   const { isLoggedIn } = useSelector((state) => state.auth);
@@ -81,8 +81,8 @@ const AdminRoutes = (props) => {
           element={<ManageSynopsisSchedule />}
         />
         <Route
-          path="/Dashboard/ManageSynopsisScheduleBulk"
-          element={<ManageSynopsisScheduleBulk />}
+          path="/Dashboard/CreateSynopsisSchedule"
+          element={<CreateSynopsisSchedule />}
         />
         <Route
           path="/Dashboard/GenerateSynopsisReport"
@@ -102,8 +102,8 @@ const AdminRoutes = (props) => {
           element={<ManageThesisSchedule />}
         />
         <Route
-          path="/Dashboard/ManageThesisScheduleBulk"
-          element={<ManageThesisScheduleBulk />}
+          path="/Dashboard/create-schedule-ms"
+          element={<CreateSchedule />}
         />
         <Route
           path="/Dashboard/GenerateThesisReport"

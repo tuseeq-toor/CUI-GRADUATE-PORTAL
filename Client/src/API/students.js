@@ -45,10 +45,38 @@ const submitThesis = async (data) => {
     return error.response;
   }
 };
+const getStudents = async () => {
+  let token = getToken();
+  try {
+    const { data } = await API_STUD.get("students", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 const getSupervisors = async () => {
   let token = getToken();
   try {
     const { data } = await API_STUD.get("students/supervisors", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+const updateProfile = async (formData) => {
+  let token = getToken();
+  try {
+    const { data } = await API_STUD.patch(`/students`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -75,6 +103,8 @@ const studentService = {
   uploadFile,
   getSupervisors,
   submitThesis,
+  updateProfile,
+  getStudents,
 };
 
 export default studentService;

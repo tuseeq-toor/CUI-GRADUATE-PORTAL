@@ -26,62 +26,6 @@ export const MsSidebarList = (props) => {
         <ListItemText primary="Home" />
       </ListItem>
 
-      {/* <ListItem
-        button
-        onClick={() => {
-          props.onActiveTab("MANAGE PROGRAM");
-        }}
-      >
-        <ListItemIcon>
-          <ShoppingCartIcon />
-        </ListItemIcon>
-        <ListItemText primary="Manage Programs" />
-      </ListItem>
-
-            <ListItem
-        button
-        onClick={() => {
-          props.onActiveTab("ADD PROGRAM");
-        }}
-      >
-        <ListItemIcon>
-          <PeopleIcon />
-        </ListItemIcon>
-        <ListItemText primary="Add Programs" />
-      </ListItem>
-      <ListItem
-        button
-        onClick={() => {
-          props.onActiveTab("MANAGE SESSION");
-        }}
-      >
-        <ListItemIcon>
-          <BarChartIcon />
-        </ListItemIcon>
-        <ListItemText primary="Manage Session" />
-      </ListItem>
-      <ListItem
-        button
-        onClick={() => {
-          props.onActiveTab("ADD SESSION");
-        }}
-      >
-        <ListItemIcon>
-          <LayersIcon />
-        </ListItemIcon>
-        <ListItemText primary="Add Sessions" />
-      </ListItem>
-      <ListItem
-        button
-        onClick={() => {
-          props.onActiveTab("VIEW FACULTY");
-        }}
-      >
-        <ListItemIcon>
-          <LayersIcon />
-        </ListItemIcon>
-        <ListItemText primary="View Faculty" />
-      </ListItem> */}
       <ListItem
         button
         onClick={() => {
@@ -191,13 +135,13 @@ export const MsSidebarList = (props) => {
       <ListItem
         button
         onClick={() => {
-          props.onActiveTab("MANAGE SYNOPSIS SCHEDULE (BULK)");
+          props.onActiveTab("Create a Schedule");
         }}
       >
         <ListItemIcon>
           <PeopleIcon />
         </ListItemIcon>
-        <ListItemText primary="Manage Synopsis Schedule (Bulk)" />
+        <ListItemText primary="Create a Schedule" />
       </ListItem>
 
       <ListItem
@@ -262,13 +206,13 @@ export const MsSidebarList = (props) => {
       <ListItem
         button
         onClick={() => {
-          props.onActiveTab("MANAGE THESIS SCHEDULE (BULK)");
+          props.onActiveTab("Create a Schedule");
         }}
       >
         <ListItemIcon>
           <PeopleIcon />
         </ListItemIcon>
-        <ListItemText primary="Manage Thesis Schedule (Bulk)" />
+        <ListItemText primary="Create a Schedule" />
       </ListItem>
 
       <ListItem
@@ -352,18 +296,6 @@ export const MsSidebarList = (props) => {
         </ListItemIcon>
         <ListItemText primary="Send Notification (MS)" />
       </ListItem>
-
-      {/* <ListItem
-        button
-        onClick={() => {
-          props.onActiveTab("SEND NOTIFICATION TO ALL");
-        }}
-      >
-        <ListItemIcon>
-          <LayersIcon />
-        </ListItemIcon>
-        <ListItemText primary="Send Notification to All" />
-      </ListItem> */}
 
       <ListItem
         button

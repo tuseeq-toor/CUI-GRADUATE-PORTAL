@@ -111,9 +111,10 @@ export default function DialogSelect(props) {
                 value={formik.values.discipline}
                 onChange={formik.handleChange}
               >
-                <MenuItem value={"CS"}>CS</MenuItem>
-                <MenuItem value={"SE"}>SE</MenuItem>
-                <MenuItem value={"IS"}>IS</MenuItem>
+                <MenuItem value={"PCS"}>PCS</MenuItem>
+                <MenuItem value={"RCS"}>RCS</MenuItem>
+                <MenuItem value={"RSE"}>RSE</MenuItem>
+                <MenuItem value={"RIS"}>RIS</MenuItem>
               </Select>
             </FormControl>
             <FormControl>
