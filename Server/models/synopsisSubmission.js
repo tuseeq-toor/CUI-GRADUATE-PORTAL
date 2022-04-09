@@ -8,7 +8,7 @@ const synopsisSubmissionSchema = new Schema({
   supervisor_id: { type: Schema.Types.ObjectId, ref: "Faculty" },
   coSupervisor_id: { type: Schema.Types.ObjectId, ref: "Faculty" },
   synopsisTitle: { type: String },
-  SpecilizationTrack: { type: String /*required: true */ },
+  specializationTrack: { type: String /*required: true */ },
   synopsisNotification: { type: String /* required: true */ },
   synopsisFileName: { type: String /* required: true */ },
   plagiarismReport: { type: String /* required: true */ },

@@ -9,29 +9,17 @@ import PageviewIcon from "@mui/icons-material/Pageview";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
 import MapIcon from "@mui/icons-material/Map";
 import EditNotificationsIcon from "@mui/icons-material/EditNotifications";
-import CampaignIcon from "@mui/icons-material/Campaign";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import ContactMailIcon from "@mui/icons-material/ContactMail";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
+
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import AddModeratorIcon from "@mui/icons-material/AddModerator";
 import DonutSmallIcon from "@mui/icons-material/DonutSmall";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import PreviewIcon from "@mui/icons-material/Preview";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import AddBoxIcon from "@mui/icons-material/AddBox";
-import PollIcon from "@mui/icons-material/Poll";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import ListSubheader from "@mui/material/ListSubheader";
+
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import PeopleIcon from "@mui/icons-material/People";
-import BarChartIcon from "@mui/icons-material/BarChart";
 import LayersIcon from "@mui/icons-material/Layers";
-import AssignmentIcon from "@mui/icons-material/Assignment";
 import HomeIcon from "@mui/icons-material/Home";
 import ListIcon from "@mui/icons-material/List";
 
@@ -119,9 +107,9 @@ export const msListitems = [
         path: "/Dashboard/ManageSynopsisSchedule",
       },
       {
-        text: "Manage Schedule (Bulk)",
+        text: "Create a Schedule",
         icon: <LayersIcon />,
-        path: "/Dashboard/ManageSynopsisScheduleBulk",
+        path: "/Dashboard/CreateSynopsisSchedule",
       },
       {
         text: "Synopsis MS",
@@ -159,9 +147,9 @@ export const msListitems = [
         path: "/Dashboard/ManageThesisSchedule",
       },
       {
-        text: "Manage Schedule (Bulk)",
+        text: "Create a Schedule",
         icon: <LayersIcon />,
-        path: "/Dashboard/ManageThesisScheduleBulk",
+        path: "/Dashboard/create-schedule-ms",
       },
       {
         text: "Thesis MS",
@@ -193,19 +181,6 @@ export const msListitems = [
     ],
   },
 
-  /* {
-    text: "Evaluate Synopsis",
-    icon: <ListIcon />,
-    active: false,
-    subMenu: [
-      {
-        text: " Synopsis PhD",
-        icon: <MapIcon />,
-        path: "/Dashboard/EvaluateSynopsis(PhD)",
-      },
-    ],
-  }, */
-
   {
     text: "Evaluate Thesis",
     icon: <ListIcon />,
@@ -229,12 +204,6 @@ export const msListitems = [
         icon: <EditNotificationsIcon />,
         path: "/Dashboard/ManageNotification",
       },
-
-      /*  {
-        text: "Send Notification (PhD)",
-        icon: <CampaignIcon />,
-        path: "/Dashboard/SendNotification(PhD)",
-      }, */
 
       {
         text: "Send Notification (MS)",

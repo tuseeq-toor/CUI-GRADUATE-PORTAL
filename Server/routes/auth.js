@@ -6,7 +6,7 @@ var passport = require("passport");
 const helpers = require("../helpers/helpers");
 const Faculty = require("../models/faculty");
 const auth = require("../auth/authenticate");
-const { transporter } = require("../helpers/mailing");
+const signupMail = require("../helpers/mailing");
 
 router.post("/signup", async (req, res, next) => {
   const user = req.body;
@@ -54,6 +54,7 @@ router.post("/signup", async (req, res, next) => {
                 passport.authenticate("local")(req, res, () => {
                   res.statusCode = 200;
                   res.setHeader("Content-Type", "application/json");
+                  // signupMail(user.email);
                   res.json({
                     success: true,
                     status: "Registration Successful!",

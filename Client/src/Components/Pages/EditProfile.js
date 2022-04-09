@@ -15,13 +15,11 @@ export default function EditProfile() {
   const { user } = useSelector((state) => state.auth);
   const [supervisors, setSupervisors] = useState([]);
   const [isError, setIsError] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const userProgram = user.user.student.program_id.programShortName;
 
-  console.log(userProgram);
-
-/*   const validationSchema = yup.object({
+  /*   const validationSchema = yup.object({
     firstName: yup.string(),
     lastName: yup.string(),
     fullName: yup.string(),
@@ -36,22 +34,21 @@ export default function EditProfile() {
     initialValues: {
       name: "",
       fatherName: "",
-     
-     
+
       password: "dummy",
-      mobile: '',
+      mobile: "",
       supervisor: "",
       coSupervisor: "",
       synopsisTitle: "",
       track: "",
       thesisRegistration: "",
+      totalPublications: "",
+      impactFactorPublications: "",
       thesisTrack: "",
       profilePic: [],
-
     },
     /* validationSchema: validationSchema, */
     onSubmit: async (values) => {
-
       let formData = new FormData();
 
       formData.append("name", values.name);
@@ -65,6 +62,17 @@ export default function EditProfile() {
       formData.append("thesisTrack", values.thesisTrack);
       formData.append("profilePic", values.profilePic[0]);
 
+      if (userProgram.toLowerCase().includes("phd")) {
+        formData.append("totalPublications", values.totalPublications);
+        formData.append(
+          "impactFactorPublications",
+          values.impactFactorPublications
+        );
+      }
+
+      for (var value of formData.values()) {
+        console.log(value);
+      }
       let res = await studentService.updateProfile(formData);
       if (res?.status === 500) {
         setError(res.data.message);
@@ -90,7 +98,12 @@ export default function EditProfile() {
     alert("Submitted");
   };
   return (
-    <Box component="form" onSubmit={formik.handleSubmit} noValidate sx={{ mt: 1 }}>
+    <Box
+      component="form"
+      onSubmit={formik.handleSubmit}
+      noValidate
+      sx={{ mt: 1 }}
+    >
       <TextField
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
@@ -189,9 +202,11 @@ export default function EditProfile() {
             name="track"
             label="Track"
             value={formik.values.track}
-        onChange={formik.handleChange}
+            onChange={formik.handleChange}
           >
-            <MenuItem value={""} disabled  >N/A</MenuItem>
+            <MenuItem value={""} disabled>
+              N/A
+            </MenuItem>
             <MenuItem value={"Regular"}>Regular</MenuItem>
             <MenuItem value={"Publication"}>Publication</MenuItem>
           </Select>
@@ -241,35 +256,37 @@ export default function EditProfile() {
             name="passingSemester"
             label="Comprehensive Passing Semester"
             value={formik.values.passingSemester}
-        onChange={formik.handleChange}
+            onChange={formik.handleChange}
           >
-            <MenuItem value="" disabled >N/A</MenuItem>
+            <MenuItem value="" disabled>
+              N/A
+            </MenuItem>
             <MenuItem value="SP11">SP11</MenuItem>
             <MenuItem value="FA11">FA11</MenuItem>
           </Select>
         </FormControl>
       </Box>
 
-      {userProgram !== "MS" && (
+      {userProgram.toLowerCase().includes("phd") && (
         <>
           <TextField
             id="standard-basic"
             sx={{ width: "100%", marginBottom: "15px" }}
             label="Total Publication (during PhD)"
             color="secondary"
-            name="publications"
+            name="totalPublications"
             variant="outlined"
-            value={formik.values.publications}
+            value={formik.values.totalPublications}
             onChange={formik.handleChange}
           />
           <TextField
             id="standard-basic"
             sx={{ width: "100%", marginBottom: "15px" }}
             label="Impact Factor Publications (after synopsis approval)"
-            name="impactFactor"
+            name="impactFactorPublications"
             color="secondary"
             variant="outlined"
-            value={formik.values.impactFactor}
+            value={formik.values.impactFactorPublications}
             onChange={formik.handleChange}
           />
         </>

@@ -1,6 +1,5 @@
 import * as React from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
 import MuiAppBar from "@mui/material/AppBar";
@@ -16,28 +15,19 @@ import Paper from "@mui/material/Paper";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-
-import { Outlet } from "react-router-dom";
 
 import ManageSupervisoryCommittee from "../Components/Pages/ManageSupervisoryCommittee";
 
 import ChangePassword from "../Components/Pages/ChangePassword";
-import ManagePrograms from "../Components/Pages/managePrograms";
-import AddManageProgram from "../Components/Pages/AddManageProgram";
+
 import AddManageSupervisoryCommittee from "../Components/Pages/AddManageSupervisoryCommittee";
 import AddProgressReport from "../Components/Pages/AddProgressReport";
-import AddSession from "../Components/Pages/AddSession";
 import AddStudent from "../Components/Pages/AddStudent";
 
-import Home from "../Components/Pages/Home";
 import ManageProgressReport from "../Components/Pages/ManageProgressReport";
-import ManageSession from "../Components/Pages/ManageSession";
 import ManageStudent from "../Components/Pages/ManageStudent";
 
 import ProgramWiseReports from "../Components/Pages/ProgramWiseReports";
-import SendNotification from "../Components/Pages/SendNotification";
-import SendNotificationAll from "../Components/Pages/SendNotificationAll";
 import SendNotificationMS from "../Components/Pages/SendNotificationMS";
 import EvaluateSynopsisMS from "../Components/Pages/EvaluateSynopsisMS";
 import EvaluateSynopsisPhD from "../Components/Pages/EvaluateSynopsisPhD";
@@ -50,7 +40,6 @@ import SendThesisReport from "../Components/Pages/SendThesisReport";
 
 import SynopsisWiseReports from "../Components/Pages/SynopsisWiseReports";
 import ThesisWiseReports from "../Components/Pages/ThesisWiseReports";
-import ViewFaculty from "../Components/Pages/ViewFaculty";
 import ViewMSStudentDetail from "../Components/Pages/ViewMSStudentDetail";
 import ManageMsDeadline from "../Components/Pages/ManageMsDeadline";
 import ViewSynopsisReport from "../Components/Pages/ViewSynopsisReport";
@@ -62,32 +51,10 @@ import GenerateSynopsisReport from "../Components/Pages/GenerateSynopsisReport";
 import GenerateThesisReport from "../Components/Pages/GenerateThesisReport";
 import ManageThesisSchedule from "../Components/Pages/ManageThesisSchedule";
 import EvaluateThesisMS from "../Components/Pages/EvaluateThesisMS";
-import ManageSynopsisScheduleBulk from "../Components/Pages/ManageSynopsisScheduleBulk";
-import ManageThesisScheduleBulk from "../Components/Pages/ManageThesisScheduleBulk";
+import CreateSynopsisSchedule from "../Components/Pages/CreateSynopsisSchedule";
+import CreateThesisSchedule from "../Components/Pages/CreateThesisScheduleMS";
 import PendingThesis from "../Components/Pages/PendingThesis";
 import { Avatar } from "@material-ui/core";
-
-/* import Chart from "./Chart";
-import Deposits from "./Deposits";
-import Orders from "./Orders"; */
-
-/* function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-} */
 
 const drawerWidth = 350;
 
@@ -178,8 +145,8 @@ function DashboardContent() {
       return <ManageSynopsisSchedule />;
     }
 
-    if (tab === "MANAGE SYNOPSIS SCHEDULE (BULK)") {
-      return <ManageSynopsisScheduleBulk />;
+    if (tab === "Create a Schedule") {
+      return <CreateSynopsisSchedule />;
     }
 
     if (tab === "EVALUATE SYNOPSIS (MS)") {
@@ -199,8 +166,8 @@ function DashboardContent() {
       return <ManageThesisSchedule />;
     }
 
-    if (tab === "MANAGE THESIS SCHEDULE (BULK)") {
-      return <ManageThesisScheduleBulk />;
+    if (tab === "Create a Schedule") {
+      return <CreateThesisSchedule />;
     }
     if (tab === "PENDING THESIS") {
       return <PendingThesis />;
@@ -256,8 +223,6 @@ function DashboardContent() {
   return (
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: "flex" }}>
-        {/* <CssBaseline /> */}
-
         <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
@@ -288,29 +253,15 @@ function DashboardContent() {
                 alt="Remy Sharp"
                 src="../assets/images/cui.png"
               />
-              {/* {activeTab} */}
             </Typography>
             <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
                 <Avatar alt="Remy Sharp" src="" />
-                {/* <NotificationsIcon /> */}
               </Badge>
             </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer sx={{ maxHeight: "640px" }} variant="permanent" open={open}>
-          {/* <Drawer
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            "& .MuiDrawer-paper": {
-              width: drawerWidth,
-              boxSizing: "border-box",
-            },
-          }}
-          variant="permanent"
-          anchor="left"
-        > */}
           <Toolbar
             sx={{
               display: "flex",
@@ -327,8 +278,6 @@ function DashboardContent() {
           <List wrap>
             <MsSidebarList onActiveTab={setActiveTab} />
           </List>
-          {/* <Divider />
-          <List>{secondaryListItems}</List> */}
         </Drawer>
         <Box
           component="main"
@@ -353,9 +302,7 @@ function DashboardContent() {
               }}
             >
               {checkActiveTab(activeTab)}
-              {/* <Outlet /> */}
             </Paper>
-            {/* <Copyright sx={{ pt: 4 }} /> */}
           </Container>
         </Box>
       </Box>

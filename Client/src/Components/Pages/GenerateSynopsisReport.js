@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
+import synopsisService from "../../API/synopsis";
 
 export default function GenerateSynopsisReport() {
   const alertHandler = () => {
     alert("Report Generated!");
   };
-
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     const { data } = await synopsisService.getSynopsisEvaluations();
+  //   }
+  //   fetchData();
+  // }, []);
   return (
     <div class="pcoded-content">
       {/* Page-header ends */}

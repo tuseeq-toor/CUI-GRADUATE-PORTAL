@@ -4,6 +4,11 @@ const multer = require("multer");
 const userRouter = require("./routes/users");
 const studentRouter = require("./routes/students");
 const gacRouter = require("./routes/gac");
+const adminRouter = require("./routes/admin");
+const sessionsRouter = require("./routes/sessions");
+const programsRouter = require("./routes/programs");
+const synopsisRouter = require("./routes/synopsis");
+
 const authRouter = require("./routes/auth");
 var passport = require("passport");
 const path = require("path");
@@ -49,22 +54,16 @@ app.use("/upload", (req, res) => {
   });
 });
 
-// app.use(
-//   session({
-//     name: "cui-gp-portal",
-//     secret: "12345-67890-09876-54321",
-//     saveUninitialized: false,
-//     resave: false,
-//     store: new FileStore(),
-//   })
-// );
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(passport.initialize());
-// app.use(passport.session());
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
+app.use("/admin", adminRouter);
 app.use("/students", studentRouter);
 app.use("/gac", gacRouter);
+app.use("/sessions", sessionsRouter);
+app.use("/programs", programsRouter);
+app.use("/synopsis", synopsisRouter);
 
 //Server listening
 app.listen(process.env.PORT || 3000, () => {
