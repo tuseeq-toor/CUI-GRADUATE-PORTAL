@@ -1,12 +1,8 @@
 import { flexbox } from "@mui/system";
 import React, { useEffect } from "react";
 
-import Pdf from "react-to-pdf";
-import comsatsLogo from "../../../src/cui.png";
 import synopsisService from "../../API/synopsis";
 import ReportPDF from "./ReportPDF";
-
-const ref = React.createRef();
 
 const ViewSynopsisReport = () => {
   useEffect(() => {
