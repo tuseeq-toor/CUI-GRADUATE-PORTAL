@@ -6,7 +6,7 @@ var passport = require("passport");
 const helpers = require("../helpers/helpers");
 const Faculty = require("../models/faculty");
 const auth = require("../auth/authenticate");
-const { transporter } = require("../helpers/mailing");
+const signupMail = require("../helpers/mailing");
 
 router.post("/signup", async (req, res, next) => {
   const user = req.body;
@@ -54,6 +54,7 @@ router.post("/signup", async (req, res, next) => {
                 passport.authenticate("local")(req, res, () => {
                   res.statusCode = 200;
                   res.setHeader("Content-Type", "application/json");
+                  // signupMail(user.email);
                   res.json({
                     success: true,
                     status: "Registration Successful!",
@@ -70,41 +71,53 @@ router.post("/signup", async (req, res, next) => {
         });
     }
   } else {
-    Faculty.create(user)
-      .then((faculty) => {
-        User.register(
-          new User({
-            email: user.email,
-            username: user.username,
-            faculty_id: faculty._id,
-            userRole: { $push: { role: user.userRole } },
-          }),
-          req.body.password,
-          (err, user) => {
-            if (err) {
-              res.statusCode = 500;
-              res.setHeader("Content-Type", "application/json");
-              res.json({ err });
-            } else {
-              passport.authenticate("local")(req, res, () => {
-                res.statusCode = 200;
-                res.setHeader("Content-Type", "application/json");
-                console.log("faculty role" + user.userRole);
-
-                res.json({
-                  success: true,
-                  status: "Registration Successful!",
-                });
-              });
-            }
-          }
-        );
-      })
-      .catch((err) => {
-        res.statusCode = 500;
-        res.setHeader("Content-Type", "application/json");
-        res.json({ err });
+    let exists = await Faculty.findOne({ email: user.email });
+    if (exists) {
+      res.statusCode = 409;
+      console.log("conflict");
+      res.setHeader("Content-Type", "application/json");
+      res.json({
+        success: false,
+        message: "Faculty with the same email already exists",
       });
+    } else {
+      Faculty.create(user)
+        .then((faculty) => {
+          User.register(
+            new User({
+              email: user.email,
+              username: user.fullName,
+              faculty_id: faculty._id,
+
+              userRole: user.userRole,
+            }),
+            req.body.password,
+            (err, user) => {
+              if (err) {
+                res.statusCode = 500;
+                res.setHeader("Content-Type", "application/json");
+                res.json({ err });
+              } else {
+                passport.authenticate("local")(req, res, () => {
+                  res.statusCode = 200;
+                  res.setHeader("Content-Type", "application/json");
+                  console.log("faculty role" + user.userRole);
+
+                  res.json({
+                    success: true,
+                    status: "Registration Successful!",
+                  });
+                });
+              }
+            }
+          );
+        })
+        .catch((err) => {
+          res.statusCode = 500;
+          res.setHeader("Content-Type", "application/json");
+          res.json({ err });
+        });
+    }
   }
 });
 

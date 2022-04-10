@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+/* import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "../API/auth";
 
 export const submitSynopsis = createAsyncThunk(
@@ -85,3 +85,4 @@ const authSlice = createSlice({
   },
 });
 export default authSlice.reducer;
+ */

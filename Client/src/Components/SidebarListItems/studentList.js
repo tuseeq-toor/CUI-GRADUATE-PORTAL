@@ -98,7 +98,7 @@ export const PhdStudentListitems = [
   {
     text: "Manage Supervisory Committee",
     icon: <DashboardIcon />,
-    path: "/Dashboard/ManageSupervisoryCommittee",
+    path: "/Dashboard/ManageCommittee",
   },
 
   {

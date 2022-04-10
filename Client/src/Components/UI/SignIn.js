@@ -15,7 +15,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setUser, setUserProgram } from "../../Store/user";
 import { Login } from "../../Store/authSlice";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -24,38 +23,8 @@ import { FormControl } from "@mui/material";
 const theme = createTheme();
 
 export default function SignIn() {
-  /* const user = useSelector((state) => state.changeUser); */
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  /*   const handleSubmit = (event) => {
-    event.preventDefault();
-
-    // eslint-disable-next-line no-console
-    const data = new FormData(event.currentTarget);
-    const userEmail = data.get("email");
-    const userPassword = data.get("password");
-    dispatch(Login({ userEmail, userPassword }))
-      // .unwrap()
-      .then((res) => {
-        console.log(res);
-        const userRole = res.payload.user.userRole[0].role;
-        let userProgram;
-        if (userRole === "STUDENT") {
-          userProgram = res.payload.user.student.program_id.programShortName;
-        }
-
-        navigate("/Dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-  }; */
 
   const validationSchema = yup.object({
     email: yup.string("Enter your email"),
@@ -172,7 +141,7 @@ export default function SignIn() {
                     Forgot password?
                   </Link>
                 </Grid>
-                <Grid item>
+                <Grid sx={{ ml: 2 }} item>
                   <Link to="/SignUp">{"Don't have an account? Sign Up"}</Link>
                 </Grid>
               </Grid>

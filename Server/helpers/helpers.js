@@ -23,6 +23,8 @@ const User = require("../models/user");
 
 exports.studentSignUpNeeds = async (user) => {
   needs = {};
+  let session = user.registrationNo.split("-")[0];
+  console.log("session", session);
   needs.program = await Program.findOne(
     {
       programShortName: user.program,
@@ -30,7 +32,7 @@ exports.studentSignUpNeeds = async (user) => {
     { _id: 1 }
   );
   console.log("program" + user.program);
-  console.log("needs");
+
   /*  needs.supervisor = await Faculty.findOne(
     {
       username: user.supervisorName,
@@ -43,12 +45,12 @@ exports.studentSignUpNeeds = async (user) => {
     },
     { _id: 1 }
   ); */
-  /*  needs.session = await Session.findOne(
+  needs.session = await Session.findOne(
     {
-      title: user.session,
+      title: session,
     },
     { _id: 1 }
-  ); */
+  );
   return needs;
 };
 
@@ -57,19 +59,18 @@ exports.studentUpdateNeeds = async (req) => {
   needs = {};
   needs.user = await User.findById({
     _id: req.user._id,
+  }).populate({
+    path: "student_id",
+    populate: [
+      {
+        path: "program_id",
+        model: "Program",
+      },
+    ],
   });
+
   needs.student_id = needs.user.student_id;
-  needs.supervisor = await Faculty.findOne(
-    {
-      username: body.supervisorName,
-    },
-    { _id: 1 }
-  );
-  needs.coSupervisor = await Faculty.findOne(
-    {
-      username: body.coSupervisorName,
-    },
-    { _id: 1 }
-  );
+  needs.programShortName = needs.user.student_id.program_id.programShortName;
+  console.log("update needs", needs);
   return needs;
 };
