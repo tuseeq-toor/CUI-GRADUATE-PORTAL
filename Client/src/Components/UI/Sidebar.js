@@ -1,46 +1,14 @@
-import * as React from "react";
-import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
-import ScreenSearchDesktopIcon from "@mui/icons-material/ScreenSearchDesktop";
-import FindInPageIcon from "@mui/icons-material/FindInPage";
-import PieChartIcon from "@mui/icons-material/PieChart";
-import LeaderboardIcon from "@mui/icons-material/Leaderboard";
-import TableChartIcon from "@mui/icons-material/TableChart";
-import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
-import PageviewIcon from "@mui/icons-material/Pageview";
-import AnalyticsIcon from "@mui/icons-material/Analytics";
-import MapIcon from "@mui/icons-material/Map";
-import EditNotificationsIcon from "@mui/icons-material/EditNotifications";
-import CampaignIcon from "@mui/icons-material/Campaign";
-import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import ContactMailIcon from "@mui/icons-material/ContactMail";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
-import AutoStoriesIcon from "@mui/icons-material/AutoStories";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import AddModeratorIcon from "@mui/icons-material/AddModerator";
-import DonutSmallIcon from "@mui/icons-material/DonutSmall";
-import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import PreviewIcon from "@mui/icons-material/Preview";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import AddBoxIcon from "@mui/icons-material/AddBox";
-import PollIcon from "@mui/icons-material/Poll";
+import React, { useEffect, useState } from "react";
+import "./ActiveTab.css";
+
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
-import ListSubheader from "@mui/material/ListSubheader";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import PeopleIcon from "@mui/icons-material/People";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import LayersIcon from "@mui/icons-material/Layers";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import HomeIcon from "@mui/icons-material/Home";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import "./ActiveTab.css";
-
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -52,12 +20,13 @@ import { gacListitems } from "../SidebarListItems/gacList";
 import { goListitems } from "../SidebarListItems/goList";
 import { msListitems } from "../SidebarListItems/msList";
 import { phdListitems } from "../SidebarListItems/phdList";
+import { SupervisorListitems } from "../SidebarListItems/supervisorList";
 
 export const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch();
-  const [list, setList] = React.useState([]);
+
+  const [list, setList] = useState([]);
   const { currentRole } = useSelector((state) => state.userRoles);
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const userRole = user.user.userRole;
@@ -66,12 +35,7 @@ export const Sidebar = () => {
   let userProgram;
 
   console.log(isLoggedIn);
-  const [open, setOpen] = React.useState(false);
-
-  const handleClick = (item) => {
-    setOpen(!item);
-    // console.log(open);
-  };
+  const [open, setOpen] = useState(false);
 
   let roles = [];
   userRole.forEach((item) => {
@@ -158,11 +122,11 @@ export const Sidebar = () => {
   if (roles[0] === "STUDENT") {
     userProgram = user.user.student.program_id.programShortName;
   }
-  React.useEffect(() => {
+  useEffect(() => {
     checkrole(currentRole);
   }, [currentRole]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     checkrole(roles[0]);
   }, []);
 
@@ -172,7 +136,6 @@ export const Sidebar = () => {
     console.log("rolesss==" + roles[0]);
     switch (role) {
       case "ADMIN":
-        console.log("hello");
         setList(adminListitems);
         break;
 
@@ -189,6 +152,9 @@ export const Sidebar = () => {
         break;
       case "PHD_COR":
         setList(phdListitems);
+        break;
+      case "SUPERVISOR":
+        setList(SupervisorListitems);
         break;
       case "STUDENT":
         if (userProgram.toLowerCase().includes("ms")) {

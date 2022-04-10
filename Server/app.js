@@ -64,10 +64,10 @@ app.use("/gac", gacRouter);
 app.use("/sessions", sessionsRouter);
 app.use("/programs", programsRouter);
 app.use("/synopsis", synopsisRouter);
-app.get('/',async (req,res,next)=>{
+app.get("/", async (req, res, next) => {
   console.log("Hello");
-  res.json({msg:"Hello from Server"})
-})
+  res.json({ msg: "Hello from Server" });
+});
 //Server listening
 app.listen(process.env.PORT || 3000, () => {
   console.log(`Server Running on port ${process.env.PORT}`);
