@@ -8,14 +8,17 @@ export default function ViewFaculty() {
     {
       field: "Session",
       headerName: "Name",
-      width: 200,
+      flex: 1,
+      minWidth: 200,
     },
-    { field: "Description", headerName: "Designation", width: 150 },
-    { field: "Status", headerName: "Email", width: 300 },
+    { field: "Description", headerName: "Designation", flex: 1, minWidth: 200 },
+    { field: "Status", headerName: "Email", flex: 1, minWidth: 200 },
+
     {
       field: "actions",
       headerName: "Action",
-      width: 200,
+      flex: 1,
+      minWidth: 200,
       renderCell: (props) => (
         <>
           <Button
