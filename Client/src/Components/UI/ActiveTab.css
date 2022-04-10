@@ -27,3 +27,20 @@
 .input:hover {
   border: 1px solid #212121;
 }
+
+.pdf {
+  margin: 2rem auto;
+  width: 100%;
+  max-width: 960px;
+  padding: 2rem 4% 2rem;
+  border: 1px solid darkgray;
+  border-radius: 4px;
+}
+@media print {
+  .pdf {
+    margin: 2rem auto;
+    width: 95%;
+    max-width: 960px;
+    border: none;
+  }
+}

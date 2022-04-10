@@ -61,7 +61,7 @@ export const phdListitems = [
       {
         text: "View Detail",
         icon: <PageviewIcon />,
-        path: "/Dashboard/ViewMSStudentDetails",
+        path: "/Dashboard/ViewPhDStudentDetails",
       },
     ],
   },
