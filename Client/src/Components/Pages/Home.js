@@ -16,7 +16,7 @@ const Home = () => {
       {userRole === "STUDENT" && (
         <>
           <h1>Welcome!</h1>
-          <p> {`Your are logged in as a ${userProgram} Student`}</p>
+          <p> {`Your are logged in as a ${userRole} Student`}</p>
           <h3> Notification </h3>
           <ViewNotification />
           <h3> Announcement </h3>
@@ -26,7 +26,11 @@ const Home = () => {
       {userRole === "ADMIN" && (
         <>
           <h1>Welcome!</h1>
-          <p> Your are logged in as an Administrator</p>
+          <p> {`Your are logged in as a ${userRole} Student`}</p>
+          <h3> Notification </h3>
+          <ViewNotification />
+          <h3> Announcement </h3>
+          <ViewAnnouncement />
         </>
       )}
       {userRole === "GAC" && (
@@ -44,13 +48,21 @@ const Home = () => {
       {userRole === "MS" && (
         <>
           <h1>Welcome!</h1>
-          <p> Your are logged in as MS</p>
+          <p> {`Your are logged in as a ${userRole} Student`}</p>
+          <h3> Notification </h3>
+          <ViewNotification />
+          <h3> Announcement </h3>
+          <ViewAnnouncement />
         </>
       )}
       {userRole === "PhD" && (
         <>
           <h1>Welcome!</h1>
-          <p> Your are logged in as PhD</p>
+          <p> {`Your are logged in as a ${userRole} Student`}</p>
+          <h3> Notification </h3>
+          <ViewNotification />
+          <h3> Announcement </h3>
+          <ViewAnnouncement />
         </>
       )}
       {userRole === "SUPERVISOR" && (

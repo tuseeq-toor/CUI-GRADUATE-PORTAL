@@ -1,383 +1,377 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import Button from "@mui/material/Button";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import studentService from "../../API/students";
+import programsService from "../../API/programs";
+import sessionsService from "../../API/sessions";
+import synopsisService from "../../API/synopsis";
+import { setDate } from "date-fns/esm";
+import { Autocomplete } from "@mui/material";
+import { top100Films } from "../DummyData/DummyData";
 
 export default function EvaluateThesisMS() {
-  const handleSubmit = (event) => {
+  const defaultProps = {
+    options: top100Films,
+    getOptionLabel: (option) => option.title,
+  };
+
+  const [autocompleteValue, setAutocompleteValueValue] = useState(null);
+
+  const [students, setStudents] = useState([]);
+  const [schedules, setSchedule] = useState([]);
+  const [programs, setPrograms] = useState([]);
+  const [sessions, setSessions] = useState([]);
+  const [synopsis, setSynopsis] = useState([]);
+  const [selectedSynopsis, setSelectedSynopsis] = useState([]);
+  const [selectedStudent, setSelectedStudent] = useState({});
+  const [selectedSchedule, setSelectedSchedule] = useState({});
+  const [decision, setDecision] = useState("");
+  const [data, setData] = useState({});
+
+  useEffect(() => {
+    async function fetchData() {
+      // const stds = await studentService.getStudents();
+      const schd = await synopsisService.getSynopsisSchedules();
+      const prog = await programsService.getPrograms();
+      const ses = await sessionsService.getSessions();
+      const syn = await synopsisService.getSubmittedSynopsis();
+
+      // setStudents(stds);
+      setSchedule(schd);
+      setPrograms(prog);
+      setSessions(ses);
+      setSynopsis(syn);
+    }
+    fetchData();
+  }, []);
+  const handleRegistrationNo = (e) => {
+    schedules.forEach((oneSchedule) => {
+      if (e.target.value === oneSchedule.student_id.registrationNo) {
+        // const updated = oneStudent;
+        // updated["decision"] = decision;
+        var schedule = oneSchedule;
+        setSelectedSchedule(oneSchedule);
+      }
+      synopsis.forEach((synopsis) => {
+        console.log("Selected Schedule", selectedSchedule);
+        console.log("Selected Synopsis", synopsis);
+        if (schedule.student_id._id === synopsis.student_id._id) {
+          console.log(true);
+          setSelectedSynopsis(synopsis);
+          setData({ ...data, schedule_id: schedule._id });
+        }
+      });
+    });
+  };
+
+  const handleChange = (event) => {
+    setData({ ...data, [event.target.name]: event.target.value });
+    console.log(data);
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    alert("Submitted");
-    const data = new FormData(event.currentTarget);
-    const userEmail = data.get("email");
-    const userPassword = data.get("password");
-    /*  axios.post("http://localhost:3000/auth/login", {
-        email: userEmail,
-        password: userPassword,
-      })
-      .then((res) => {
-        const data = res.data.user;
-	console.log(data);
-        navigate("/Dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      }); */
+    const res = await synopsisService.addEvaluation(data);
+
+    synopsisService.updateEvaluation({
+      ...data,
+      synopsisEvaluation_id: res.data.synopsisEvaluation._id,
+      evaluationStatus: res.data.evaluationStatus._id,
+    });
+    // alert(JSON.stringify(data));
   };
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-      <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
-        <FormControl fullWidth color="secondary">
-          <InputLabel id="demo-simple-select-label">Program</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            //value={Program}
-            label="Program"
-            //onChange={handleChange}
-          >
-            <MenuItem value={15}>MS (SE)</MenuItem>
-            <MenuItem value={15}>MS (IS)</MenuItem>
-          </Select>
-        </FormControl>
+      <Box sx={{ mb: 4 }}>
+        <Autocomplete
+          {...defaultProps}
+          id="controlled-demo"
+          value={autocompleteValue}
+          onChange={(event, newValue) => {
+            setAutocompleteValueValue(newValue);
+            console.log(autocompleteValue);
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Search"
+              variant="outlined"
+              color="secondary"
+            />
+          )}
+        />
       </Box>
 
-      <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
-        <FormControl fullWidth color="secondary">
-          <InputLabel id="demo-simple-select-label">Session</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            //value={Program}
-            label="Session"
-            //onChange={handleChange}
-          >
-            <MenuItem value={12}>Fall 2021</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-
-      <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
-        <FormControl fullWidth color="secondary">
-          <InputLabel id="demo-simple-select-label">Registration No</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            //value={Program}
-            label="Registration No"
-            //onChange={handleChange}
-          >
-            <MenuItem selected="selected" value="5944">
-              FA17-RSE-002
-            </MenuItem>
-            <MenuItem value="6001">FA19-RCS-008</MenuItem>
-            <MenuItem value="5959">FA19-RCS-017</MenuItem>
-            <MenuItem value="5951">FA19-RCS-021</MenuItem>
-            <MenuItem value="6029">FA19-RCS-023</MenuItem>
-            <MenuItem value="5987">FA19-RCS-024</MenuItem>
-            <MenuItem value="5960">FA19-RCS-026</MenuItem>
-            <MenuItem value="6101">FA19-RCS-030</MenuItem>
-            <MenuItem value="6015">FA19-RCS-033</MenuItem>
-            <MenuItem value="6048">FA19-RCS-046</MenuItem>
-            <MenuItem value="5937">FA19-RCS-050</MenuItem>
-            <MenuItem value="6055">FA19-RCS-058</MenuItem>
-            <MenuItem value="5942">FA19-RCS-066</MenuItem>
-            <MenuItem value="6007">FA19-RCS-075</MenuItem>
-            <MenuItem value="5980">FA19-RCS-089</MenuItem>
-            <MenuItem value="6086">FA20-RCS-015</MenuItem>
-            <MenuItem value="5936">FA20-RCS-020</MenuItem>
-            <MenuItem value="5930">FA20-RCS-021</MenuItem>
-            <MenuItem value="6088">FA20-RCS-034</MenuItem>
-            <MenuItem value="5978">SP18-RCS-013</MenuItem>
-            <MenuItem value="1495">SP18-RCS-034</MenuItem>
-            <MenuItem value="5950">SP19-RCS-009</MenuItem>
-            <MenuItem value="6012">SP19-RCS-014</MenuItem>
-            <MenuItem value="5963">SP19-RCS-018</MenuItem>
-            <MenuItem value="6013">SP19-RCS-021</MenuItem>
-            <MenuItem value="5974">SP19-RCS-032</MenuItem>
-            <MenuItem value="6033">SP19-RCS-045</MenuItem>
-            <MenuItem value="5966">SP19-RCS-048</MenuItem>
-            <MenuItem value="5956">SP19-RCS-051</MenuItem>
-            <MenuItem value="6011">SP19-RCS-059</MenuItem>
-            <MenuItem value="6064">SP20-RCS-005</MenuItem>
-            <MenuItem value="5932">SP20-RCS-013</MenuItem>
-            <MenuItem value="6073">SP20-RCS-016</MenuItem>
-            <MenuItem value="6014">SP20-RCS-054</MenuItem>
-            <MenuItem value="6068">SP20-RCS-065</MenuItem>
-            <MenuItem value="6066">SP20-RCS-069</MenuItem>
-            <MenuItem value="6078">SP20-RCS-070</MenuItem>
-            <MenuItem value="6016">SP20-RCS-072</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-      {/*  <div className="row">
-                <div className="col-md-12 mt-3">
-                  <div className="border">
-                    <table
-                      className="small-12 medium-12 large-12 columns table table-sm"
-                      cellSpacing={0}
-                      cellPadding={4}
-                      id="ContentPlaceHolder1_DetailsView1"
-                      style={{ color: "#333333", borderCollapse: "collapse" }}
+      <div className="row">
+        <div className="col-md-12 mt-3">
+          <div className="border">
+            <table
+              className="small-12 medium-12 large-12 columns table table-sm"
+              cellSpacing={0}
+              cellPadding={4}
+              id="ContentPlaceHolder1_DetailsView1"
+              style={{ color: "#333333", borderCollapse: "collapse" }}
+            >
+              <tbody>
+                <tr
+                  style={{
+                    color: "#333333",
+                    backgroundColor: "#F7F6F3",
+                  }}
+                >
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Registration No
+                  </td>
+                  <td>{selectedSchedule?.student_id?.registrationNo}</td>
+                </tr>
+                {console.log(selectedSchedule)}
+                <tr style={{ backgroundColor: "White" }}>
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Name
+                  </td>
+                  <td>{selectedSchedule?.student_id?.username}</td>
+                </tr>
+                <tr
+                  style={{
+                    color: "#333333",
+                    backgroundColor: "#F7F6F3",
+                  }}
+                >
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Email
+                  </td>
+                  <td>{selectedSchedule?.student_id?.email}</td>
+                </tr>
+                <tr style={{ backgroundColor: "White" }}>
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Program
+                  </td>
+                  <td>{selectedSchedule?.program_id?.programShortName}</td>
+                </tr>
+                <tr
+                  style={{
+                    color: "#333333",
+                    backgroundColor: "#F7F6F3",
+                  }}
+                >
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Course work completion
+                  </td>
+                  <td>SPRING 2019</td>
+                </tr>
+                <tr style={{ backgroundColor: "White" }}>
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Comprehensive Exam
+                  </td>
+                  <td>N/A</td>
+                </tr>
+                <tr
+                  style={{
+                    color: "#333333",
+                    backgroundColor: "#F7F6F3",
+                  }}
+                >
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Synopsis Status
+                  </td>
+                  <td>N/A</td>
+                </tr>
+                <tr style={{ backgroundColor: "White" }}>
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Thesis Title
+                  </td>
+                  <td>{selectedSchedule?.student_id?.synopsisTitle}</td>
+                </tr>
+                <tr
+                  style={{
+                    color: "#333333",
+                    backgroundColor: "#F7F6F3",
+                  }}
+                >
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Area of Specialization
+                  </td>
+                  {console.log("selectedSynopsis", selectedSynopsis)}
+                  <td>{selectedSynopsis?.specializationTrack}</td>
+                </tr>
+                <tr style={{ backgroundColor: "White" }}>
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Foreign Submission
+                  </td>
+                  <td>N/A</td>
+                </tr>
+                <tr
+                  style={{
+                    color: "#333333",
+                    backgroundColor: "#F7F6F3",
+                  }}
+                >
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    GAT Subject
+                  </td>
+                  <td>N/A</td>
+                </tr>
+                <tr style={{ backgroundColor: "White" }}>
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Status
+                  </td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr
+                  style={{
+                    color: "#333333",
+                    backgroundColor: "#F7F6F3",
+                  }}
+                >
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Supervisor
+                  </td>
+                  <td>{selectedSynopsis?.supervisor_id?.fullName}</td>
+                </tr>
+                <tr style={{ backgroundColor: "White" }}>
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Co-Supervisor
+                  </td>
+                  <td>{selectedSynopsis?.coSupervisor_id?.fullName}</td>
+                </tr>
+                <tr
+                  style={{
+                    color: "#333333",
+                    backgroundColor: "#F7F6F3",
+                  }}
+                >
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Synopsis File
+                  </td>
+                  <td>
+                    <a
+                      href="Files/MS/Synopsis/Synopsis_FA17-RSE-002.pdf"
+                      target="_blank"
                     >
-                      <tbody>
-                        <tr
-                          style={{
-                            color: "#333333",
-                            backgroundColor: "#F7F6F3",
-                          }}
-                        >
-                          <td
-                            valign="top"
-                            style={{
-                              backgroundColor: "#E9ECF1",
-                              fontWeight: "bold",
-                              width: "20%",
-                            }}
-                          >
-                            Registration No
-                          </td>
-                          <td>FA17-RSE-002</td>
-                        </tr>
-                        <tr style={{ backgroundColor: "White" }}>
-                          <td
-                            valign="top"
-                            style={{
-                              backgroundColor: "#E9ECF1",
-                              fontWeight: "bold",
-                              width: "20%",
-                            }}
-                          >
-                            Name
-                          </td>
-                          <td>Anam Zahra</td>
-                        </tr>
-                        <tr
-                          style={{
-                            color: "#333333",
-                            backgroundColor: "#F7F6F3",
-                          }}
-                        >
-                          <td
-                            valign="top"
-                            style={{
-                              backgroundColor: "#E9ECF1",
-                              fontWeight: "bold",
-                              width: "20%",
-                            }}
-                          >
-                            Email
-                          </td>
-                          <td>FA17-RSE-002@isbstudent.comsats.edu.pk</td>
-                        </tr>
-                        <tr style={{ backgroundColor: "White" }}>
-                          <td
-                            valign="top"
-                            style={{
-                              backgroundColor: "#E9ECF1",
-                              fontWeight: "bold",
-                              width: "20%",
-                            }}
-                          >
-                            Program
-                          </td>
-                          <td>MS (CS)</td>
-                        </tr>
-                        <tr
-                          style={{
-                            color: "#333333",
-                            backgroundColor: "#F7F6F3",
-                          }}
-                        >
-                          <td
-                            valign="top"
-                            style={{
-                              backgroundColor: "#E9ECF1",
-                              fontWeight: "bold",
-                              width: "20%",
-                            }}
-                          >
-                            Course work completion
-                          </td>
-                          <td>SPRING 2019</td>
-                        </tr>
-                        <tr style={{ backgroundColor: "White" }}>
-                          <td
-                            valign="top"
-                            style={{
-                              backgroundColor: "#E9ECF1",
-                              fontWeight: "bold",
-                              width: "20%",
-                            }}
-                          >
-                            Comprehensive Exam
-                          </td>
-                          <td>N/A</td>
-                        </tr>
-                        <tr
-                          style={{
-                            color: "#333333",
-                            backgroundColor: "#F7F6F3",
-                          }}
-                        >
-                          <td
-                            valign="top"
-                            style={{
-                              backgroundColor: "#E9ECF1",
-                              fontWeight: "bold",
-                              width: "20%",
-                            }}
-                          >
-                            Synopsis Status
-                          </td>
-                          <td>N/A</td>
-                        </tr>
-                        <tr style={{ backgroundColor: "White" }}>
-                          <td
-                            valign="top"
-                            style={{
-                              backgroundColor: "#E9ECF1",
-                              fontWeight: "bold",
-                              width: "20%",
-                            }}
-                          >
-                            Thesis Title
-                          </td>
-                          <td>
-                            A LSTM-based Deep Neural Network-Oriented Test Case
-                            Prioritization Technique in Continuous Integration
-                            (CI) Software Development Practice.
-                          </td>
-                        </tr>
-                        <tr
-                          style={{
-                            color: "#333333",
-                            backgroundColor: "#F7F6F3",
-                          }}
-                        >
-                          <td
-                            valign="top"
-                            style={{
-                              backgroundColor: "#E9ECF1",
-                              fontWeight: "bold",
-                              width: "20%",
-                            }}
-                          >
-                            Area of Specialization
-                          </td>
-                          <td>Software Engineering</td>
-                        </tr>
-                        <tr style={{ backgroundColor: "White" }}>
-                          <td
-                            valign="top"
-                            style={{
-                              backgroundColor: "#E9ECF1",
-                              fontWeight: "bold",
-                              width: "20%",
-                            }}
-                          >
-                            Foreign Submission
-                          </td>
-                          <td>N/A</td>
-                        </tr>
-                        <tr
-                          style={{
-                            color: "#333333",
-                            backgroundColor: "#F7F6F3",
-                          }}
-                        >
-                          <td
-                            valign="top"
-                            style={{
-                              backgroundColor: "#E9ECF1",
-                              fontWeight: "bold",
-                              width: "20%",
-                            }}
-                          >
-                            GAT Subject
-                          </td>
-                          <td>N/A</td>
-                        </tr>
-                        <tr style={{ backgroundColor: "White" }}>
-                          <td
-                            valign="top"
-                            style={{
-                              backgroundColor: "#E9ECF1",
-                              fontWeight: "bold",
-                              width: "20%",
-                            }}
-                          >
-                            Status
-                          </td>
-                          <td>&nbsp;</td>
-                        </tr>
-                        <tr
-                          style={{
-                            color: "#333333",
-                            backgroundColor: "#F7F6F3",
-                          }}
-                        >
-                          <td
-                            valign="top"
-                            style={{
-                              backgroundColor: "#E9ECF1",
-                              fontWeight: "bold",
-                              width: "20%",
-                            }}
-                          >
-                            Supervisor
-                          </td>
-                          <td>Dr. Saif ur Rehman Khan</td>
-                        </tr>
-                        <tr style={{ backgroundColor: "White" }}>
-                          <td
-                            valign="top"
-                            style={{
-                              backgroundColor: "#E9ECF1",
-                              fontWeight: "bold",
-                              width: "20%",
-                            }}
-                          >
-                            Co-Supervisor
-                          </td>
-                          <td>Dr. Inayat-ur-Rehman</td>
-                        </tr>
-                        <tr
-                          style={{
-                            color: "#333333",
-                            backgroundColor: "#F7F6F3",
-                          }}
-                        >
-                          <td
-                            valign="top"
-                            style={{
-                              backgroundColor: "#E9ECF1",
-                              fontWeight: "bold",
-                              width: "20%",
-                            }}
-                          >
-                            Synopsis File
-                          </td>
-                          <td>
-                            <a
-                              href="Files/MS/Synopsis/Synopsis_FA17-RSE-002.pdf"
-                              target="_blank"
-                            >
-                              Synopsis_FA17-RSE-002.pdf
-                            </a>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div> */}
+                      {selectedSynopsis?.synopsisFileName}
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
       <div className="row">
         <div className="col-md-12 p-4">
-          {" "}
           <table style={{ width: "100%" }} className="table table-sm">
             <tbody>
               <tr>
@@ -388,53 +382,73 @@ export default function EvaluateThesisMS() {
                   </b>
                 </th>
               </tr>
-              <tr>
-                <td>1</td>
-                <td>
-                  The candidate is recommended to do <b>minor</b> changings.
-                </td>
-                <td>A Candidate has to submit a manuscript within 1 week.</td>
-                <td>
-                  <input
-                    id="ContentPlaceHolder1_rbtnMinor"
-                    type="radio"
-                    name="ctl00$ContentPlaceHolder1$againcb"
-                    defaultValue="rbtnMinor"
-                    defaultChecked="checked"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>
-                  The candidate is recommended to do <b>major</b> changings.
-                </td>
-                <td>Candidate has to re-appear in next semester. </td>
-                <td>
-                  <input
-                    id="ContentPlaceHolder1_rbtnMajor"
-                    type="radio"
-                    name="ctl00$ContentPlaceHolder1$againcb"
-                    defaultValue="rbtnMajor"
-                    /* onclick="javascript:setTimeout('__doPostBack
-                    (\'ctl00$ContentPlaceHolder1$rbtnMajor\',\'\')', 0)" */
-                  />
-                </td>
-              </tr>
+              <FormControl>
+                <RadioGroup
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  defaultValue="female"
+                  name="radio-buttons-group"
+                >
+                  <tr>
+                    <td>1</td>
+                    <td>
+                      The candidate is recommended to do <b>minor</b> changings.
+                    </td>
+                    <td>
+                      A Candidate has to submit a manuscript within 1 week.
+                    </td>
+                    <td>
+                      <FormControlLabel
+                        value="The candidate is recommended to do minor changings."
+                        control={<Radio color="secondary" />}
+                        label=""
+                        name="evaluationStatus"
+                        onChange={handleChange}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>
+                      The candidate is recommended to do <b>major</b> changings.
+                    </td>
+                    <td>Candidate has to re-appear in next semester. </td>
+                    <td>
+                      <FormControlLabel
+                        value="The candidate is recommended to do major changings."
+                        control={<Radio color="secondary" />}
+                        label=""
+                        name="evaluationStatus"
+                        onChange={handleChange}
+                      />
+                    </td>
+                  </tr>
+                </RadioGroup>
+              </FormControl>
             </tbody>
           </table>
-          <h5>Comments:</h5>
-          <textarea style={{ width: "100%", height: "200px" }} />
+          <TextField
+            fullWidth
+            sx={{ my: 2 }}
+            multiline
+            rows={6}
+            label="GAC Decision and Recommendations"
+            color="secondary"
+            name="comment"
+            variant="outlined"
+            onChange={handleChange}
+          />
           <Button
             type="submit"
             variant="contained"
-            color="secondary"
             size="large"
+            color="secondary"
+            onClick={handleSubmit}
           >
             Submit
           </Button>
         </div>
       </div>
+      {console.log(decision)}
     </Box>
   );
 }

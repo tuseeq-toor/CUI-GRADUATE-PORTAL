@@ -64,6 +64,8 @@ const AdminRoutes = (props) => {
       <Route path="/SignUp" element={<SignUp />} />
       <Route path="/Dashboard" element={<AdminDashboard />}>
         <Route index element={<Home />} />
+        <Route path="/Dashboard/MsHome" element={<Home />} />
+        <Route path="/Dashboard/PhDHome" element={<Home />} />
         <Route path="/Dashboard/ManagePrograms" element={<ManagePrograms />} />
         <Route path="/Dashboard/AddPrograms" element={<AddManageProgram />} />
         <Route path="/Dashboard/ManageSessions" element={<ManageSession />} />
@@ -189,7 +191,7 @@ const AdminRoutes = (props) => {
           element={<ProgramWiseReports />}
         />
         <Route
-          path="/Dashboard/Synopsis-WiseReport"
+          path="/Dashboard/summary-report"
           element={<SynopsisWiseReports />}
         />
         <Route

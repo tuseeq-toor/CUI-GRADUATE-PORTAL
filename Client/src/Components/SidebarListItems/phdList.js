@@ -124,7 +124,7 @@ export const phdListitems = [
         path: "/Dashboard/CreateSynopsisSchedule",
       },
       {
-        text: " Synopsis PhD",
+        text: "Evaluate Synopsis PhD",
         icon: <MapIcon />,
         path: "/Dashboard/EvaluateSynopsis(PhD)",
       },
@@ -188,7 +188,7 @@ export const phdListitems = [
       {
         text: "Send Report",
         icon: <PersonAddIcon />,
-        path: "/Dashboard/SendThesisRepor",
+        path: "/Dashboard/SendThesisReport",
       },
     ],
   },
@@ -206,7 +206,7 @@ export const phdListitems = [
     ],
   }, */
 
-  {
+  /* {
     text: "Evaluate Thesis",
     icon: <ListIcon />,
     active: false,
@@ -217,7 +217,7 @@ export const phdListitems = [
         path: "/Dashboard/EvaluateThesis(PhD)",
       },
     ],
-  },
+  }, */
 
   {
     text: "Notification",
@@ -268,7 +268,7 @@ export const phdListitems = [
     icon: <ListIcon />,
     active: false,
     subMenu: [
-      {
+      /* {
         text: "Supervisor's Report",
         icon: <PeopleIcon />,
         path: "/Dashboard/Supervisor'sReport",
@@ -283,15 +283,15 @@ export const phdListitems = [
         text: "Thesis-Wise Report",
         icon: <TableChartIcon />,
         path: "/Dashboard/Thesis-WiseReport",
-      },
+      }, */
 
       {
-        text: "Synopsis-Wise Report",
+        text: "Summary Report",
         icon: <PieChartIcon />,
-        path: "/Dashboard/Synopsis-WiseReport",
+        path: "/Dashboard/summary-report",
       },
 
-      {
+      /* {
         text: "Supervisor/Program-Wise Report",
         icon: <FindInPageIcon />,
         path: "/Dashboard/ViewSupervisorProgram-WiseReport",
@@ -301,10 +301,10 @@ export const phdListitems = [
         text: "Session-Wise Report",
         icon: <ScreenSearchDesktopIcon />,
         path: "/Dashboard/Session-WiseReport",
-      },
+      }, */
     ],
   },
-  {
+  /* {
     text: "View Notification",
     icon: <ManageAccountsIcon />,
     path: "/Dashboard/ViewNotification",
@@ -313,7 +313,7 @@ export const phdListitems = [
     text: "View Announcement",
     icon: <ManageAccountsIcon />,
     path: "/Dashboard/ViewAnnouncement",
-  },
+  }, */
   {
     text: "Change Password",
     icon: <ChangeCircleIcon />,

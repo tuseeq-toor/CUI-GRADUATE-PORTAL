@@ -131,7 +131,7 @@ export const msListitems = [
       {
         text: "Send Report",
         icon: <PersonAddIcon />,
-        path: "/Dashboard/SendSynopsisRepor",
+        path: "/Dashboard/SendSynopsisReport",
       },
     ],
   },
@@ -152,7 +152,7 @@ export const msListitems = [
         path: "/Dashboard/create-schedule-ms",
       },
       {
-        text: "Thesis MS",
+        text: "Evaluate Thesis MS",
         icon: <AnalyticsIcon />,
         path: "/Dashboard/EvaluateThesis(MS)",
       },
@@ -176,12 +176,12 @@ export const msListitems = [
       {
         text: "Send Report",
         icon: <PersonAddIcon />,
-        path: "/Dashboard/SendThesisRepor",
+        path: "/Dashboard/SendThesisReport",
       },
     ],
   },
 
-  {
+  /* {
     text: "Evaluate Thesis",
     icon: <ListIcon />,
     active: false,
@@ -192,7 +192,7 @@ export const msListitems = [
         path: "/Dashboard/EvaluateThesis(PhD)",
       },
     ],
-  },
+  }, */
 
   {
     text: "Notification",
@@ -237,7 +237,7 @@ export const msListitems = [
     icon: <ListIcon />,
     active: false,
     subMenu: [
-      {
+      /* {
         text: "Supervisor's Report",
         icon: <PeopleIcon />,
         path: "/Dashboard/Supervisor'sReport",
@@ -252,15 +252,15 @@ export const msListitems = [
         text: "Thesis-Wise Report",
         icon: <TableChartIcon />,
         path: "/Dashboard/Thesis-WiseReport",
-      },
+      }, */
 
       {
-        text: "Synopsis-Wise Report",
+        text: "Summary Report",
         icon: <PieChartIcon />,
-        path: "/Dashboard/Synopsis-WiseReport",
+        path: "/Dashboard/summary-report",
       },
 
-      {
+      /* {
         text: "Supervisor/Program-Wise Report",
         icon: <FindInPageIcon />,
         path: "/Dashboard/ViewSupervisorProgram-WiseReport",
@@ -270,10 +270,10 @@ export const msListitems = [
         text: "Session-Wise Report",
         icon: <ScreenSearchDesktopIcon />,
         path: "/Dashboard/Session-WiseReport",
-      },
+      }, */
     ],
   },
-  {
+  /* {
     text: "View Notification",
     icon: <ManageAccountsIcon />,
     path: "/Dashboard/ViewNotification",
@@ -282,7 +282,7 @@ export const msListitems = [
     text: "View Announcement",
     icon: <ManageAccountsIcon />,
     path: "/Dashboard/ViewAnnouncement",
-  },
+  }, */
   {
     text: "Change Password",
     icon: <ChangeCircleIcon />,
