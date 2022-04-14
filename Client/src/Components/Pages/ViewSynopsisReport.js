@@ -5,13 +5,6 @@ import synopsisService from "../../API/synopsis";
 import ReportPDF from "./ReportPDF";
 
 const ViewSynopsisReport = () => {
-  useEffect(() => {
-    async function fetchData() {
-      const res = await synopsisService.getSynopsisEvaluations();
-    }
-    fetchData();
-  }, []);
-
   const data = {
     candidateName: "Waqas Zafar",
     registrationNumber: "FA18-BCS-107",
