@@ -97,7 +97,7 @@ export const goListitems = [
       {
         text: "Send Report",
         icon: <PersonAddIcon />,
-        path: "/Dashboard/SendThesisRepor",
+        path: "/Dashboard/SendThesisReport",
       },
     ],
   },

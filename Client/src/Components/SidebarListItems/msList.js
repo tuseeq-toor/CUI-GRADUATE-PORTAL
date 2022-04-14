@@ -131,7 +131,7 @@ export const msListitems = [
       {
         text: "Send Report",
         icon: <PersonAddIcon />,
-        path: "/Dashboard/SendSynopsisRepor",
+        path: "/Dashboard/SendSynopsisReport",
       },
     ],
   },
@@ -176,7 +176,7 @@ export const msListitems = [
       {
         text: "Send Report",
         icon: <PersonAddIcon />,
-        path: "/Dashboard/SendThesisRepor",
+        path: "/Dashboard/SendThesisReport",
       },
     ],
   },

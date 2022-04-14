@@ -188,7 +188,7 @@ export const phdListitems = [
       {
         text: "Send Report",
         icon: <PersonAddIcon />,
-        path: "/Dashboard/SendThesisRepor",
+        path: "/Dashboard/SendThesisReport",
       },
     ],
   },

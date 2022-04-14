@@ -5,35 +5,24 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
 import studentService from "../../API/students";
-import {
-  supervisorWiseData,
-  supervisorWiseHeader,
-} from "../DummyData/DummyData";
-import DataTable from "../UI/TableUI";
+import profile from "../../../src/avatar-1.jpg";
 
 export default function SuperivorReport() {
-  const [stuarray, setstuarray] = useState([]);
+  const [students, setStudents] = useState([]);
   useEffect(() => {
     async function get() {
       var data = await studentService.getStudents();
       console.log("dataaa", data);
-      alert("helo");
+      // alert("helo");
       console.log("data", data[0]._id);
-      setstuarray(data);
+      setStudents(data);
     }
     get();
   }, []);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    alert("Submitted");
-    const data = new FormData(event.currentTarget);
-    const userEmail = data.get("email");
-    const userPassword = data.get("password");
-  };
   return (
     <>
-      <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
+      <Box sx={{ minWidth: 120, mb: 6 }}>
         <FormControl fullWidth color="secondary">
           <InputLabel id="demo-simple-select-label">Supervisor</InputLabel>
           <Select
@@ -89,93 +78,316 @@ export default function SuperivorReport() {
         </FormControl>
       </Box>
 
-      {stuarray.map((e) => {
+      {students.map((student) => {
         return (
-          <table
-            style={{ border: "2px solid black", margin: "20px", width: "80%" }}
-          >
-            <tbody>
-              <tr>
-                <td
+          <div>
+            <Box
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "0 1rem",
+              }}
+            >
+              <div>
+                <img
+                  src={profile || student?.profilePicture}
+                  alt=""
                   style={{
-                    border: "1px solid black",
-                    width: "50%",
-                    padding: "0",
+                    height: "128px",
+                    width: "128px",
+                    borderRadius: "100%",
+                    marginBottom: "1rem",
+                  }}
+                />
+                <div
+                  style={{
+                    margin: "0",
+                    display: "flex",
+                    alignItems: "center",
                   }}
                 >
-                  <h3>
-                    Student Name:{" "}
-                    <span style={{ fontSize: "17", fontWeight: "normal" }}>
-                      {e.username}
-                    </span>
+                  <div
+                    style={{
+                      width: "20rem",
+                      margin: "0",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <h3 style={{ margin: "0 1rem 0 0" }}>Name:</h3>
+                    <p style={{ margin: "0" }}>{student?.username}</p>
+                  </div>
+                  <h3
+                    style={{
+                      marginRight: "1rem",
+                      marginTop: "0",
+                      marginBottom: "0",
+                    }}
+                  >
+                    Registration Number:
                   </h3>
-                </td>
-                <td style={{ border: "1px solid black" }}>
-                  <h3>
-                    Registration #:{" "}
-                    <span style={{ fontSize: "17", fontWeight: "normal" }}>
-                      {e.registrationNo}
-                    </span>
+                  <p style={{ marginTop: "0", marginBottom: "0" }}>
+                    {student?.registrationNo}
+                  </p>
+                </div>
+                <div
+                  style={{
+                    margin: "1rem 0 0 0",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "20rem",
+                      margin: "0",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <h3 style={{ margin: "0 1rem 0 0" }}>Father Name:</h3>
+                    <p style={{ margin: "0" }}>{student?.fatherName}</p>
+                  </div>
+                  <h3
+                    style={{
+                      marginRight: "1rem",
+                      marginTop: "0",
+                      marginBottom: "0",
+                    }}
+                  >
+                    Supervisor:
                   </h3>
-                </td>
-              </tr>
-              <tr>
-                <td style={{ border: "1px solid black" }}>
-                  <h3>
-                    Registeration Date:{" "}
-                    <span style={{ fontSize: "17", fontWeight: "normal" }}>
-                      {e.thesisRegistration}
-                    </span>
-                  </h3>
-                </td>
-                <td style={{ border: "1px solid black" }}>
-                  <h3>
-                    Supervisor:{" "}
-                    <span style={{ fontSize: "17", fontWeight: "normal" }}>
-                      {e["supervisor_id"].fullName}
-                    </span>
-                  </h3>
-                </td>
-              </tr>
-              <tr>
-                <td style={{ border: "1px solid black" }}>
-                  <h3>
-                    Email:{" "}
-                    <span style={{ fontSize: "17", fontWeight: "normal" }}>
-                      {e.email}
-                    </span>
-                  </h3>{" "}
-                </td>
-                <td style={{ border: "1px solid black" }}>
-                  <h3>
-                    Mobile:{" "}
-                    <span style={{ fontSize: "17", fontWeight: "normal" }}>
-                      {e.mobile}
-                    </span>
-                  </h3>{" "}
-                </td>
-              </tr>
-              <tr>
-                <td style={{ border: "1px solid black" }}>
-                  <h3>Track:</h3> {e.track}
-                </td>
-                <td style={{ border: "1px solid black" }}>
-                  <h3>External:</h3>
-                </td>
-              </tr>
-              <tr>
-                <td style={{ border: "1px solid black" }}>
-                  <h3>Thesis Status:</h3>
-                </td>
-                <td style={{ border: "1px solid black" }}>
-                  <h3></h3>
-                </td>
-              </tr>
-              <tr>
-                <h3>Thesis Title:</h3> {e.synopsisTitle}
-              </tr>
-            </tbody>
-          </table>
+                  <p style={{ marginTop: "0", marginBottom: "0" }}>
+                    {student.supervisor_id?.fullName}
+                  </p>
+                </div>
+              </div>
+
+              {/*  <img
+                src={student?.profilePic}
+                alt=""
+                style={{
+                  objectFit: "contain",
+                  height: "6rem",
+                  borderRadius: "50%",
+                }}
+              /> */}
+            </Box>
+            <table
+              cellSpacing={0}
+              cellPadding={4}
+              style={{
+                color: "#333333",
+                borderCollapse: "separate",
+                margin: "1rem",
+              }}
+            >
+              <tbody>
+                <tr
+                  style={{
+                    color: "#333333",
+                  }}
+                >
+                  <td
+                    valign="top"
+                    style={{
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  ></td>
+                </tr>
+
+                {/* <tr
+                  style={{
+                    color: "#333333",
+                    backgroundColor: "#F7F6F3",
+                  }}
+                >
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Registration No
+                  </td>
+                  <td>{student?.registrationNo}</td>
+                </tr>
+                <tr style={{ backgroundColor: "White" }}>
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Name
+                  </td>
+                  <td>{student?.username}</td>
+                </tr> */}
+
+                {/* <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Father's Name
+                  </td>
+                  <td>{student?.fatherName}</td>
+                </tr> */}
+                <tr
+                  style={{
+                    backgroundColor: "white",
+                  }}
+                >
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Email
+                  </td>
+                  <td>{student?.email}</td>
+                </tr>
+                <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Mobile No.
+                  </td>
+                  <td>{student?.mobile}</td>
+                </tr>
+                <tr
+                  style={{
+                    backgroundColor: "white",
+                  }}
+                >
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Track
+                  </td>
+                  <td>{student?.thesisTrack}</td>
+                </tr>
+
+                <tr
+                  style={{
+                    color: "#333333",
+                    backgroundColor: "#F7F6F3",
+                  }}
+                >
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Thesis Title
+                  </td>
+                  <td>{student?.synopsisTitle}</td>
+                </tr>
+                <tr
+                  style={{
+                    backgroundColor: "white",
+                  }}
+                >
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Registration Date
+                  </td>
+                  <td>{student?.thesisRegistration}</td>
+                </tr>
+                <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    External
+                  </td>
+                  <td>{/* {selectedSchedule?.student_id?.synopsisTitle} */}</td>
+                </tr>
+                <tr
+                  style={{
+                    backgroundColor: "white",
+                  }}
+                >
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Thesis Status
+                  </td>
+
+                  <td>{/* {selectedSynopsis?.specializationTrack} */}</td>
+                </tr>
+
+                {/* <tr
+                  style={{
+                    color: "#333333",
+                    backgroundColor: "#F7F6F3",
+                  }}
+                >
+                  <td
+                    valign="top"
+                    style={{
+                      backgroundColor: "#E9ECF1",
+                      fontWeight: "bold",
+                      width: "20%",
+                    }}
+                  >
+                    Supervisor
+                  </td>
+                  <td>{student.supervisor_id?.fullName}</td>
+                </tr> */}
+              </tbody>
+            </table>
+            <div
+              style={{
+                width: "10%",
+                minWidth: "6rem",
+                maxWidth: "10rem",
+                margin: "2rem auto",
+                borderTop: "8px dotted #572E74",
+              }}
+            />
+          </div>
         );
       })}
     </>
