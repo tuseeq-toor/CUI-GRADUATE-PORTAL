@@ -1,5 +1,5 @@
 import React from "react";
-import profile from "../../../src/avatar-1.jpg";
+import profile from "../../avatar-1.jpg";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";

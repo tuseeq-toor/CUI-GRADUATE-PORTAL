@@ -1,21 +1,10 @@
 import { flexbox } from "@mui/system";
 import React, { useEffect } from "react";
 
-import Pdf from "react-to-pdf";
-import comsatsLogo from "../../../src/cui.png";
 import synopsisService from "../../API/synopsis";
 import ReportPDF from "./ReportPDF";
 
-const ref = React.createRef();
-
 const ViewSynopsisReport = () => {
-  useEffect(() => {
-    async function fetchData() {
-      const res = await synopsisService.getSynopsisEvaluations();
-    }
-    fetchData();
-  }, []);
-
   const data = {
     candidateName: "Waqas Zafar",
     registrationNumber: "FA18-BCS-107",

@@ -1,7 +1,8 @@
 import { Button } from "@mui/material";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import comsatsLogo from "../../../src/cui.png";
+import synopsisService from "../../API/synopsis";
 import "../../Components/UI/ActiveTab.css";
 
 const data = {
@@ -30,6 +31,16 @@ const data = {
 };
 
 const ReportPDF = () => {
+  useEffect(() => {
+    async function fetchData() {
+      const res = await synopsisService.getSynopsisEvaluations();
+      console.log(res);
+      console.log("latest");
+    }
+
+    fetchData();
+  }, []);
+
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
