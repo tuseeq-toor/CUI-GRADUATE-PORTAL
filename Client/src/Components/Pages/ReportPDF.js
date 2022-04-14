@@ -35,6 +35,7 @@ const ReportPDF = () => {
     async function fetchData() {
       const res = await synopsisService.getSynopsisEvaluations();
       console.log(res);
+      console.log("latest");
     }
 
     fetchData();
