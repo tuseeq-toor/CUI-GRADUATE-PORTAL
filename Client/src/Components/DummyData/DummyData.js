@@ -1,17 +1,11 @@
+import { Button } from "@mui/material";
+
 export const programHeader = [
-  {
-    field: "id",
-    headerName: "ID",
-    width: 80,
-  },
-  {
-    field: "Program",
-    headerName: "Program",
-    width: 150,
-  },
-  { field: "longName", headerName: "Long name", width: 150 },
-  { field: "minSemester", headerName: "Min Semester", width: 150 },
-  { field: "maxSemester", headerName: "Max Semester", width: 150 },
+  
+  
+  { field: "programShortName", headerName: "Short Name", width: 150 },
+  { field: "programFullName", headerName: "Long Name", width: 150 },
+  { field: "programDescription", headerName: "Descrip", width: 150 },
   {
     field: "duration",
     headerName: "Duration (Years)",
@@ -22,6 +16,48 @@ export const programHeader = [
     headerName: "Credits",
     width: 150,
   },
+  {
+    field: "Action1",
+    headerName: "Edit",
+    width: 150,
+
+    renderCell: (props) => (
+      <>
+        <Button
+          onClick={() => {
+
+console.log(props.row.id)
+
+          }}
+          variant="contained"
+          color="secondary"
+          size="small"
+          style={{ marginLeft: 0 }}
+        >
+          Delete
+        </Button>
+
+        <Button
+          onClick={() => {}}
+          variant="contained"
+          color="secondary"
+          size="small"
+          style={{ marginLeft: 10 }}
+        >
+          Edit
+        </Button>
+      </>
+    ),
+
+
+    // renderCell: (props) => (
+    //   <Button style={{backgroundColor:"green"}}
+    //    >
+    //     Test
+    //   </Button>
+    // ),
+
+  }
 ];
 
 export const programData = [
