@@ -14,8 +14,17 @@ import programsService from "../../API/programs";
 import sessionsService from "../../API/sessions";
 import synopsisService from "../../API/synopsis";
 import { setDate } from "date-fns/esm";
+import { Autocomplete } from "@mui/material";
+import { top100Films } from "../DummyData/DummyData";
 
 export default function EvaluateSynopsisMS() {
+  const defaultProps = {
+    options: top100Films,
+    getOptionLabel: (film) => film.title,
+  };
+
+  const [autocompleteValue, setAutocompleteValueValue] = useState(null);
+
   const [students, setStudents] = useState([]);
   const [schedules, setSchedule] = useState([]);
   const [programs, setPrograms] = useState([]);
@@ -81,78 +90,24 @@ export default function EvaluateSynopsisMS() {
   };
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-      <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
-        <FormControl fullWidth color="secondary">
-          <InputLabel id="demo-simple-select-label">Track</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            //value={Program}
-            label="Track"
-            //onChange={handleChange}
-          >
-            <MenuItem value={12}>Regular</MenuItem>
-            <MenuItem value={14}>By Publication</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-
-      <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
-        <FormControl fullWidth color="secondary">
-          <InputLabel id="demo-simple-select-label">Program</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            // value={programs}
-            label="Program"
-            // onChange={handleChange}
-          >
-            {programs?.map((program) => (
-              <MenuItem selected="selected" value={program._id}>
-                {program?.programShortName}
-              </MenuItem>
-            ))}
-            {/* <MenuItem value={15}>MS (SE)</MenuItem>
-            <MenuItem value={15}>MS (IS)</MenuItem> */}
-          </Select>
-        </FormControl>
-      </Box>
-
-      <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
-        <FormControl fullWidth color="secondary">
-          <InputLabel id="demo-simple-select-label">Session</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            //value={Program}
-            label="Session"
-            //onChange={handleChange}
-          >
-            <MenuItem value={12}>Fall 2021</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-
-      <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
-        <FormControl fullWidth color="secondary">
-          <InputLabel id="demo-simple-select-label">Registration No</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            //value={Program}
-            label="Registration No"
-            onChange={(e) => handleRegistrationNo(e)}
-          >
-            {schedules.map((oneSchedule) => (
-              <MenuItem
-                selected="selected"
-                value={oneSchedule.student_id.registrationNo}
-              >
-                {oneSchedule.student_id.registrationNo}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      <Box sx={{ mb: 4 }}>
+        <Autocomplete
+          {...defaultProps}
+          id="controlled-demo"
+          value={autocompleteValue}
+          onChange={(event, newValue) => {
+            setAutocompleteValueValue(newValue);
+            console.log(autocompleteValue);
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Search"
+              variant="outlined"
+              color="secondary"
+            />
+          )}
+        />
       </Box>
 
       <div className="row">
@@ -417,7 +372,6 @@ export default function EvaluateSynopsisMS() {
       </div>
       <div className="row">
         <div className="col-md-12 p-4">
-          {" "}
           <table style={{ width: "100%" }} className="table table-sm">
             <tbody>
               <tr>
@@ -445,7 +399,7 @@ export default function EvaluateSynopsisMS() {
                     <td>
                       <FormControlLabel
                         value="The candidate is recommended to do minor changings."
-                        control={<Radio />}
+                        control={<Radio color="secondary" />}
                         label=""
                         name="evaluationStatus"
                         onChange={handleChange}
@@ -461,7 +415,7 @@ export default function EvaluateSynopsisMS() {
                     <td>
                       <FormControlLabel
                         value="The candidate is recommended to do major changings."
-                        control={<Radio />}
+                        control={<Radio color="secondary" />}
                         label=""
                         name="evaluationStatus"
                         onChange={handleChange}
@@ -473,8 +427,10 @@ export default function EvaluateSynopsisMS() {
             </tbody>
           </table>
           <TextField
-            id="standard-basic"
-            sx={{ width: "100%", marginBottom: "15px" }}
+            fullWidth
+            sx={{ my: 2 }}
+            multiline
+            rows={6}
             label="GAC Decision and Recommendations"
             color="secondary"
             name="comment"

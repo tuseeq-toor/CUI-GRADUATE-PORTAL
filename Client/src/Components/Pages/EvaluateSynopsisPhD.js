@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -6,122 +6,103 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import { Autocomplete } from "@mui/material";
+import { top100Films } from "../DummyData/DummyData";
+import synopsisService from "../../API/synopsis";
+import programsService from "../../API/programs";
+import sessionsService from "../../API/sessions";
 
 export default function EvaluateSynopsisPhD() {
-  const handleSubmit = (event) => {
+  const defaultProps = {
+    options: top100Films,
+    getOptionLabel: (option) => option.title,
+  };
+
+  const [autocompleteValue, setAutocompleteValueValue] = useState(null);
+
+  const [students, setStudents] = useState([]);
+  const [schedules, setSchedule] = useState([]);
+  const [programs, setPrograms] = useState([]);
+  const [sessions, setSessions] = useState([]);
+  const [synopsis, setSynopsis] = useState([]);
+  const [selectedSynopsis, setSelectedSynopsis] = useState([]);
+  const [selectedStudent, setSelectedStudent] = useState({});
+  const [selectedSchedule, setSelectedSchedule] = useState({});
+  const [decision, setDecision] = useState("");
+  const [data, setData] = useState({});
+
+  useEffect(() => {
+    async function fetchData() {
+      // const stds = await studentService.getStudents();
+      const schd = await synopsisService.getSynopsisSchedules();
+      const prog = await programsService.getPrograms();
+      const ses = await sessionsService.getSessions();
+      const syn = await synopsisService.getSubmittedSynopsis();
+
+      // setStudents(stds);
+      setSchedule(schd);
+      setPrograms(prog);
+      setSessions(ses);
+      setSynopsis(syn);
+    }
+    fetchData();
+  }, []);
+  const handleRegistrationNo = (e) => {
+    schedules.forEach((oneSchedule) => {
+      if (e.target.value === oneSchedule.student_id.registrationNo) {
+        // const updated = oneStudent;
+        // updated["decision"] = decision;
+        var schedule = oneSchedule;
+        setSelectedSchedule(oneSchedule);
+      }
+      synopsis.forEach((synopsis) => {
+        console.log("Selected Schedule", selectedSchedule);
+        console.log("Selected Synopsis", synopsis);
+        if (schedule.student_id._id === synopsis.student_id._id) {
+          console.log(true);
+          setSelectedSynopsis(synopsis);
+          setData({ ...data, schedule_id: schedule._id });
+        }
+      });
+    });
+  };
+
+  const handleChange = (event) => {
+    setData({ ...data, [event.target.name]: event.target.value });
+    console.log(data);
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    alert("Submitted");
-    const data = new FormData(event.currentTarget);
-    const userEmail = data.get("email");
-    const userPassword = data.get("password");
-    /* axios.post("http://localhost:3000/auth/login", {
-        email: userEmail,
-        password: userPassword,
-      })
-      .then((res) => {
-        const data = res.data.user;
-	console.log(data);
-        navigate("/Dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      }); */
+    const res = await synopsisService.addEvaluation(data);
+
+    synopsisService.updateEvaluation({
+      ...data,
+      synopsisEvaluation_id: res.data.synopsisEvaluation._id,
+      evaluationStatus: res.data.evaluationStatus._id,
+    });
+    // alert(JSON.stringify(data));
   };
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-      <Box>
-        <FormControl color="secondary" fullWidth sx={{ marginBottom: "15px" }}>
-          <InputLabel id="demo-simple-select-label">Track</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            //v
-            label="Track"
-            //onChange={handleChange}
-          >
-            <MenuItem value="Regular">Regular</MenuItem>
-            <MenuItem value="By Publication">By Publication</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-
-      <Box>
-        <FormControl color="secondary" fullWidth sx={{ marginBottom: "15px" }}>
-          <InputLabel id="demo-simple-select-label">Program</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            //v
-            label="Program"
-            //onChange={handleChange}
-          >
-            <MenuItem value="14">MS (CS)</MenuItem>
-            <MenuItem value="15">MS (SE)</MenuItem>
-            <MenuItem value="16">MS (IS)</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-
-      <Box>
-        <FormControl color="secondary" fullWidth sx={{ marginBottom: "15px" }}>
-          <InputLabel id="demo-simple-select-label">Session</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Session"
-          >
-            <MenuItem value="1036">FALL 2021</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-
-      <Box>
-        <FormControl color="secondary" fullWidth sx={{ marginBottom: "15px" }}>
-          <InputLabel id="demo-simple-select-label">Registration No</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Registration No"
-          >
-            <MenuItem value="6001">FA19-RCS-008</MenuItem>
-            <MenuItem value="5959">FA19-RCS-017</MenuItem>
-            <MenuItem value="5951">FA19-RCS-021</MenuItem>
-            <MenuItem value="6029">FA19-RCS-023</MenuItem>
-            <MenuItem value="5987">FA19-RCS-024</MenuItem>
-            <MenuItem value="5960">FA19-RCS-026</MenuItem>
-            <MenuItem value="6101">FA19-RCS-030</MenuItem>
-            <MenuItem value="6015">FA19-RCS-033</MenuItem>
-            <MenuItem value="6048">FA19-RCS-046</MenuItem>
-            <MenuItem value="5937">FA19-RCS-050</MenuItem>
-            <MenuItem value="6055">FA19-RCS-058</MenuItem>
-            <MenuItem value="5942">FA19-RCS-066</MenuItem>
-            <MenuItem value="6007">FA19-RCS-075</MenuItem>
-            <MenuItem value="5980">FA19-RCS-089</MenuItem>
-            <MenuItem value="6086">FA20-RCS-015</MenuItem>
-            <MenuItem value="5936">FA20-RCS-020</MenuItem>
-            <MenuItem value="5930">FA20-RCS-021</MenuItem>
-            <MenuItem value="6088">FA20-RCS-034</MenuItem>
-            <MenuItem value="5978">SP18-RCS-013</MenuItem>
-            <MenuItem value="1495">SP18-RCS-034</MenuItem>
-            <MenuItem value="5950">SP19-RCS-009</MenuItem>
-            <MenuItem value="6012">SP19-RCS-014</MenuItem>
-            <MenuItem value="5963">SP19-RCS-018</MenuItem>
-            <MenuItem value="6013">SP19-RCS-021</MenuItem>
-            <MenuItem value="5974">SP19-RCS-032</MenuItem>
-            <MenuItem value="6033">SP19-RCS-045</MenuItem>
-            <MenuItem value="5966">SP19-RCS-048</MenuItem>
-            <MenuItem value="5956">SP19-RCS-051</MenuItem>
-            <MenuItem value="6011">SP19-RCS-059</MenuItem>
-            <MenuItem value="6064">SP20-RCS-005</MenuItem>
-            <MenuItem value="5932">SP20-RCS-013</MenuItem>
-            <MenuItem value="6073">SP20-RCS-016</MenuItem>
-            <MenuItem value="6014">SP20-RCS-054</MenuItem>
-            <MenuItem value="6068">SP20-RCS-065</MenuItem>
-            <MenuItem value="6066">SP20-RCS-069</MenuItem>
-            <MenuItem value="6078">SP20-RCS-070</MenuItem>
-            <MenuItem value="6016">SP20-RCS-072</MenuItem>
-          </Select>
-        </FormControl>
+      <Box sx={{ mb: 4 }}>
+        <Autocomplete
+          {...defaultProps}
+          id="controlled-demo"
+          value={autocompleteValue}
+          onChange={(event, newValue) => {
+            setAutocompleteValueValue(newValue);
+            console.log(autocompleteValue);
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Search"
+              variant="outlined"
+              color="secondary"
+            />
+          )}
+        />
       </Box>
 
       <div className="row">
@@ -389,7 +370,6 @@ export default function EvaluateSynopsisPhD() {
       </div>
       <div className="row">
         <div className="col-md-12 p-4">
-          {" "}
           <table className="border table table-sm">
             <tbody>
               <tr>
@@ -455,13 +435,15 @@ export default function EvaluateSynopsisPhD() {
             </tbody>
           </table>
           <TextField
-            color="secondary"
             fullWidth
-            sx={{ marginTop: "15px", marginBottom: "15px" }}
-            id="outlined-multiline-flexible"
-            label="Comments"
+            sx={{ mt: 4, mb: 2 }}
             multiline
-            maxRows={8}
+            rows={6}
+            label="GAC Decision and Recommendations"
+            color="secondary"
+            name="comment"
+            variant="outlined"
+            /* onChange={handleChange} */
           />
           <Button
             type="submit"
