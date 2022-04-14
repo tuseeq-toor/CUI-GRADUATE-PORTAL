@@ -268,7 +268,7 @@ export const phdListitems = [
     icon: <ListIcon />,
     active: false,
     subMenu: [
-      {
+      /* {
         text: "Supervisor's Report",
         icon: <PeopleIcon />,
         path: "/Dashboard/Supervisor'sReport",
@@ -283,7 +283,7 @@ export const phdListitems = [
         text: "Thesis-Wise Report",
         icon: <TableChartIcon />,
         path: "/Dashboard/Thesis-WiseReport",
-      },
+      }, */
 
       {
         text: "Synopsis-Wise Report",
@@ -291,7 +291,7 @@ export const phdListitems = [
         path: "/Dashboard/Synopsis-WiseReport",
       },
 
-      {
+      /* {
         text: "Supervisor/Program-Wise Report",
         icon: <FindInPageIcon />,
         path: "/Dashboard/ViewSupervisorProgram-WiseReport",
@@ -301,7 +301,7 @@ export const phdListitems = [
         text: "Session-Wise Report",
         icon: <ScreenSearchDesktopIcon />,
         path: "/Dashboard/Session-WiseReport",
-      },
+      }, */
     ],
   },
   {

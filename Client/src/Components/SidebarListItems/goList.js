@@ -257,7 +257,7 @@ export const goListitems = [
     icon: <ListIcon />,
     active: false,
     subMenu: [
-      {
+      /* {
         text: "Supervisor's Report",
         icon: <PeopleIcon />,
         path: "/Dashboard/Supervisor'sReport",
@@ -272,7 +272,7 @@ export const goListitems = [
         text: "Thesis-Wise Report",
         icon: <TableChartIcon />,
         path: "/Dashboard/Thesis-WiseReport",
-      },
+      }, */
 
       {
         text: "Synopsis-Wise Report",
@@ -280,7 +280,7 @@ export const goListitems = [
         path: "/Dashboard/Synopsis-WiseReport",
       },
 
-      {
+      /* {
         text: "Supervisor/Program-Wise Report",
         icon: <FindInPageIcon />,
         path: "/Dashboard/ViewSupervisorProgram-WiseReport",
@@ -290,7 +290,7 @@ export const goListitems = [
         text: "Session-Wise Report",
         icon: <ScreenSearchDesktopIcon />,
         path: "/Dashboard/Session-WiseReport",
-      },
+      }, */
     ],
   },
   {

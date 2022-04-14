@@ -1,34 +1,78 @@
-import React from "react";
+import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
+import { FormLabel, Radio, RadioGroup } from "@mui/material";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 export default function AddStudent() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    alert("Submitted");
-    const data = new FormData(event.currentTarget);
-    const userEmail = data.get("email");
-    const userPassword = data.get("password");
-    /* axios.post("http://localhost:3000/auth/login", {
-        email: userEmail,
-        password: userPassword,
-      })
-      .then((res) => {
-        const data = res.data.user;
-	console.log(data);
-        navigate("/Dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      }); */
-  };
+  const [studentType, setStudentType] = useState("MS");
+
+  const validationSchema = yup.object({
+    email: yup.string("Enter your email"),
+    /* .email("Enter a valid email")
+      .required("Email is required"), */
+    password: yup
+      .string("Enter your password")
+      .min(4, "Password should be of minimum 8 characters length")
+      .required("Password is required"),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      studentType: studentType,
+      email: "",
+      password: "",
+    },
+    enableReinitialize: true,
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      console.log(values);
+
+      /* dispatch()
+        .then((res) => {
+          console.log(res);
+          navigate("/Dashboard");
+        })
+        .catch((err) => {
+          console.log(err);
+        }); */
+    },
+  });
+
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+    <Box
+      component="form"
+      onSubmit={formik.handleSubmit}
+      noValidate
+      sx={{ mt: 1 }}
+    >
+      <FormControl sx={{ mb: 1 }}>
+        <FormLabel color="secondary">Student</FormLabel>
+        <RadioGroup
+          row
+          name="studentType"
+          value={formik.values.studentType}
+          onChange={formik.handleChange}
+        >
+          <FormControlLabel
+            value="MS"
+            control={<Radio color="secondary" />}
+            label="MS"
+          />
+          <FormControlLabel
+            value="PhD"
+            control={<Radio color="secondary" />}
+            label="PhD"
+          />
+        </RadioGroup>
+      </FormControl>
       <TextField
         id="standard-basic"
         sx={{
@@ -251,41 +295,46 @@ export default function AddStudent() {
         color="secondary"
         variant="outlined"
       />
-      <TextField
-        id="standard-basic"
-        sx={{ width: "100%", marginBottom: "15px" }}
-        label="Thesis Track"
-        color="secondary"
-        variant="outlined"
-      />
-      <TextField
-        id="standard-basic"
-        sx={{ width: "100%", marginBottom: "15px" }}
-        label="Area of Specialization"
-        color="secondary"
-        variant="outlined"
-      />
-      <TextField
-        id="standard-basic"
-        sx={{ width: "100%", marginBottom: "15px" }}
-        label="Comprehensive"
-        color="secondary"
-        variant="outlined"
-      />
-      <TextField
-        id="standard-basic"
-        sx={{ width: "100%", marginBottom: "15px" }}
-        label="Foriegn Submission"
-        color="secondary"
-        variant="outlined"
-      />
-      <TextField
-        id="standard-basic"
-        sx={{ width: "100%", marginBottom: "15px" }}
-        label="Other Issue"
-        color="secondary"
-        variant="outlined"
-      />
+      {formik.values.studentType === "PhD" && (
+        <>
+          <TextField
+            id="standard-basic"
+            sx={{ width: "100%", marginBottom: "15px" }}
+            label="Thesis Track"
+            color="secondary"
+            variant="outlined"
+          />
+          <TextField
+            id="standard-basic"
+            sx={{ width: "100%", marginBottom: "15px" }}
+            label="Area of Specialization"
+            color="secondary"
+            variant="outlined"
+          />
+          <TextField
+            id="standard-basic"
+            sx={{ width: "100%", marginBottom: "15px" }}
+            label="Comprehensive"
+            color="secondary"
+            variant="outlined"
+          />
+          <TextField
+            id="standard-basic"
+            sx={{ width: "100%", marginBottom: "15px" }}
+            label="Foriegn Submission"
+            color="secondary"
+            variant="outlined"
+          />
+          <TextField
+            id="standard-basic"
+            sx={{ width: "100%", marginBottom: "15px" }}
+            label="Other Issue"
+            color="secondary"
+            variant="outlined"
+          />
+        </>
+      )}
+
       <TextField
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
