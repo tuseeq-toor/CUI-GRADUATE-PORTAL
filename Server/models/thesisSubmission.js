@@ -8,6 +8,7 @@ const thesisSubmissionSchema = new Schema({
   supervisor_id: { type: mongoose.Types.ObjectId, ref: "Faculty" },
   coSupervisor_id: { type: mongoose.Types.ObjectId, ref: "Faculty" },
   thesisTitle: { type: String },
+  thesisStatus: { type: String },
   synopsisNotification: { type: String /* required: true */ },
   thesisFileName: { type: String /* required: true */ },
   plagiarismReport: { type: String /* required: true */ },

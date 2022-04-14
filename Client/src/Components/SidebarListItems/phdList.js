@@ -124,7 +124,7 @@ export const phdListitems = [
         path: "/Dashboard/CreateSynopsisSchedule",
       },
       {
-        text: " Synopsis PhD",
+        text: "Evaluate Synopsis PhD",
         icon: <MapIcon />,
         path: "/Dashboard/EvaluateSynopsis(PhD)",
       },
@@ -206,7 +206,7 @@ export const phdListitems = [
     ],
   }, */
 
-  {
+  /* {
     text: "Evaluate Thesis",
     icon: <ListIcon />,
     active: false,
@@ -217,7 +217,7 @@ export const phdListitems = [
         path: "/Dashboard/EvaluateThesis(PhD)",
       },
     ],
-  },
+  }, */
 
   {
     text: "Notification",
@@ -286,9 +286,9 @@ export const phdListitems = [
       }, */
 
       {
-        text: "Synopsis-Wise Report",
+        text: "Summary Report",
         icon: <PieChartIcon />,
-        path: "/Dashboard/Synopsis-WiseReport",
+        path: "/Dashboard/summary-report",
       },
 
       /* {
@@ -304,7 +304,7 @@ export const phdListitems = [
       }, */
     ],
   },
-  {
+  /* {
     text: "View Notification",
     icon: <ManageAccountsIcon />,
     path: "/Dashboard/ViewNotification",
@@ -313,7 +313,7 @@ export const phdListitems = [
     text: "View Announcement",
     icon: <ManageAccountsIcon />,
     path: "/Dashboard/ViewAnnouncement",
-  },
+  }, */
   {
     text: "Change Password",
     icon: <ChangeCircleIcon />,

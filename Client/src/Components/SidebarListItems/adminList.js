@@ -247,9 +247,9 @@ export const adminListitems = [
       }, */
 
       {
-        text: "Synopsis-Wise Report",
+        text: "Summary Report",
         icon: <PieChartIcon />,
-        path: "/Dashboard/Synopsis-WiseReport",
+        path: "/Dashboard/summary-report",
       },
 
       /* {

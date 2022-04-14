@@ -20,7 +20,7 @@ import { top100Films } from "../DummyData/DummyData";
 export default function EvaluateSynopsisMS() {
   const defaultProps = {
     options: top100Films,
-    getOptionLabel: (option) => option.title,
+    getOptionLabel: (film) => film.title,
   };
 
   const [autocompleteValue, setAutocompleteValueValue] = useState(null);

@@ -152,7 +152,7 @@ export const msListitems = [
         path: "/Dashboard/create-schedule-ms",
       },
       {
-        text: "Thesis MS",
+        text: "Evaluate Thesis MS",
         icon: <AnalyticsIcon />,
         path: "/Dashboard/EvaluateThesis(MS)",
       },
@@ -181,7 +181,7 @@ export const msListitems = [
     ],
   },
 
-  {
+  /* {
     text: "Evaluate Thesis",
     icon: <ListIcon />,
     active: false,
@@ -192,7 +192,7 @@ export const msListitems = [
         path: "/Dashboard/EvaluateThesis(PhD)",
       },
     ],
-  },
+  }, */
 
   {
     text: "Notification",
@@ -255,9 +255,9 @@ export const msListitems = [
       }, */
 
       {
-        text: "Synopsis-Wise Report",
+        text: "Summary Report",
         icon: <PieChartIcon />,
-        path: "/Dashboard/Synopsis-WiseReport",
+        path: "/Dashboard/summary-report",
       },
 
       /* {
@@ -273,7 +273,7 @@ export const msListitems = [
       }, */
     ],
   },
-  {
+  /* {
     text: "View Notification",
     icon: <ManageAccountsIcon />,
     path: "/Dashboard/ViewNotification",
@@ -282,7 +282,7 @@ export const msListitems = [
     text: "View Announcement",
     icon: <ManageAccountsIcon />,
     path: "/Dashboard/ViewAnnouncement",
-  },
+  }, */
   {
     text: "Change Password",
     icon: <ChangeCircleIcon />,

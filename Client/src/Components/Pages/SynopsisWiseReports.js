@@ -6,16 +6,19 @@ import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
 import studentService from "../../API/students";
 import profile from "../../../src/avatar-1.jpg";
+import synopsisService from "../../API/synopsis";
 
 export default function SuperivorReport() {
   const [students, setStudents] = useState([]);
+
   useEffect(() => {
     async function get() {
-      var data = await studentService.getStudents();
-      console.log("dataaa", data);
+      const data = await studentService.getStudents();
+      const synopsisData = await synopsisService.getSubmittedSynopsis();
+      console.log("dataaa", synopsisData);
       // alert("helo");
       console.log("data", data[0]._id);
-      setStudents(data);
+      setStudents(synopsisData);
     }
     get();
   }, []);
@@ -91,11 +94,11 @@ export default function SuperivorReport() {
             >
               <div>
                 <img
-                  src={profile || student?.profilePicture}
+                  src={profile || student.student_id?.profilePicture}
                   alt=""
                   style={{
-                    height: "128px",
-                    width: "128px",
+                    height: "80px",
+                    width: "80px",
                     borderRadius: "100%",
                     marginBottom: "1rem",
                   }}
@@ -116,7 +119,9 @@ export default function SuperivorReport() {
                     }}
                   >
                     <h3 style={{ margin: "0 1rem 0 0" }}>Name:</h3>
-                    <p style={{ margin: "0" }}>{student?.username}</p>
+                    <p style={{ margin: "0" }}>
+                      {student.student_id?.username}
+                    </p>
                   </div>
                   <h3
                     style={{
@@ -128,7 +133,7 @@ export default function SuperivorReport() {
                     Registration Number:
                   </h3>
                   <p style={{ marginTop: "0", marginBottom: "0" }}>
-                    {student?.registrationNo}
+                    {student.student_id?.registrationNo}
                   </p>
                 </div>
                 <div
@@ -147,7 +152,9 @@ export default function SuperivorReport() {
                     }}
                   >
                     <h3 style={{ margin: "0 1rem 0 0" }}>Father Name:</h3>
-                    <p style={{ margin: "0" }}>{student?.fatherName}</p>
+                    <p style={{ margin: "0" }}>
+                      {student.student_id?.fatherName}
+                    </p>
                   </div>
                   <h3
                     style={{
@@ -165,7 +172,7 @@ export default function SuperivorReport() {
               </div>
 
               {/*  <img
-                src={student?.profilePic}
+                src={student.student_id?.profilePic}
                 alt=""
                 style={{
                   objectFit: "contain",
@@ -214,7 +221,7 @@ export default function SuperivorReport() {
                   >
                     Registration No
                   </td>
-                  <td>{student?.registrationNo}</td>
+                  <td>{student.student_id?.registrationNo}</td>
                 </tr>
                 <tr style={{ backgroundColor: "White" }}>
                   <td
@@ -227,7 +234,7 @@ export default function SuperivorReport() {
                   >
                     Name
                   </td>
-                  <td>{student?.username}</td>
+                  <td>{student.student_id?.username}</td>
                 </tr> */}
 
                 {/* <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
@@ -241,7 +248,7 @@ export default function SuperivorReport() {
                   >
                     Father's Name
                   </td>
-                  <td>{student?.fatherName}</td>
+                  <td>{student.student_id?.fatherName}</td>
                 </tr> */}
                 <tr
                   style={{
@@ -258,7 +265,7 @@ export default function SuperivorReport() {
                   >
                     Email
                   </td>
-                  <td>{student?.email}</td>
+                  <td>{student.student_id?.email}</td>
                 </tr>
                 <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
                   <td
@@ -271,7 +278,7 @@ export default function SuperivorReport() {
                   >
                     Mobile No.
                   </td>
-                  <td>{student?.mobile}</td>
+                  <td>{student.student_id?.mobile}</td>
                 </tr>
                 <tr
                   style={{
@@ -288,7 +295,7 @@ export default function SuperivorReport() {
                   >
                     Track
                   </td>
-                  <td>{student?.thesisTrack}</td>
+                  <td>{student.student_id?.thesisTrack}</td>
                 </tr>
 
                 <tr
@@ -307,7 +314,7 @@ export default function SuperivorReport() {
                   >
                     Thesis Title
                   </td>
-                  <td>{student?.synopsisTitle}</td>
+                  <td>{student.student_id?.synopsisTitle}</td>
                 </tr>
                 <tr
                   style={{
@@ -324,7 +331,7 @@ export default function SuperivorReport() {
                   >
                     Registration Date
                   </td>
-                  <td>{student?.thesisRegistration}</td>
+                  <td>{student.student_id?.thesisRegistration}</td>
                 </tr>
                 <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
                   <td
@@ -355,7 +362,7 @@ export default function SuperivorReport() {
                     Thesis Status
                   </td>
 
-                  <td>{/* {selectedSynopsis?.specializationTrack} */}</td>
+                  <td>{student.thesisStatus}</td>
                 </tr>
 
                 {/* <tr
