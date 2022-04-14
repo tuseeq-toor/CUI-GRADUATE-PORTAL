@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
-import studentService from "../../API/students";
+
 import {
   supervisorWiseData,
   supervisorWiseHeader,
@@ -12,24 +12,24 @@ import {
 import DataTable from "../UI/TableUI";
 
 export default function SuperivorReport() {
-  const [stuarray, setstuarray] = useState([]);
-  useEffect(() => {
-    async function get() {
-      var data = await studentService.getStudents();
-      console.log("dataaa", data);
-      alert("helo");
-      console.log("data", data[0]._id);
-      setstuarray(data);
-    }
-    get();
-  }, []);
-
   const handleSubmit = (event) => {
     event.preventDefault();
     alert("Submitted");
     const data = new FormData(event.currentTarget);
     const userEmail = data.get("email");
     const userPassword = data.get("password");
+    /* axios.post("http://localhost:3000/auth/login", {
+        email: userEmail,
+        password: userPassword,
+      })
+      .then((res) => {
+        const data = res.data.user;
+	console.log(data);
+        navigate("/Dashboard");
+      })
+      .catch((err) => {
+        console.log(err);
+      }); */
   };
   return (
     <>
@@ -89,95 +89,7 @@ export default function SuperivorReport() {
         </FormControl>
       </Box>
 
-      {stuarray.map((e) => {
-        return (
-          <table
-            style={{ border: "2px solid black", margin: "20px", width: "80%" }}
-          >
-            <tbody>
-              <tr>
-                <td
-                  style={{
-                    border: "1px solid black",
-                    width: "50%",
-                    padding: "0",
-                  }}
-                >
-                  <h3>
-                    Student Name:{" "}
-                    <span style={{ fontSize: "17", fontWeight: "normal" }}>
-                      {e.username}
-                    </span>
-                  </h3>
-                </td>
-                <td style={{ border: "1px solid black" }}>
-                  <h3>
-                    Registration #:{" "}
-                    <span style={{ fontSize: "17", fontWeight: "normal" }}>
-                      {e.registrationNo}
-                    </span>
-                  </h3>
-                </td>
-              </tr>
-              <tr>
-                <td style={{ border: "1px solid black" }}>
-                  <h3>
-                    Registeration Date:{" "}
-                    <span style={{ fontSize: "17", fontWeight: "normal" }}>
-                      {e.thesisRegistration}
-                    </span>
-                  </h3>
-                </td>
-                <td style={{ border: "1px solid black" }}>
-                  <h3>
-                    Supervisor:{" "}
-                    <span style={{ fontSize: "17", fontWeight: "normal" }}>
-                      {e["supervisor_id"].fullName}
-                    </span>
-                  </h3>
-                </td>
-              </tr>
-              <tr>
-                <td style={{ border: "1px solid black" }}>
-                  <h3>
-                    Email:{" "}
-                    <span style={{ fontSize: "17", fontWeight: "normal" }}>
-                      {e.email}
-                    </span>
-                  </h3>{" "}
-                </td>
-                <td style={{ border: "1px solid black" }}>
-                  <h3>
-                    Mobile:{" "}
-                    <span style={{ fontSize: "17", fontWeight: "normal" }}>
-                      {e.mobile}
-                    </span>
-                  </h3>{" "}
-                </td>
-              </tr>
-              <tr>
-                <td style={{ border: "1px solid black" }}>
-                  <h3>Track:</h3> {e.track}
-                </td>
-                <td style={{ border: "1px solid black" }}>
-                  <h3>External:</h3>
-                </td>
-              </tr>
-              <tr>
-                <td style={{ border: "1px solid black" }}>
-                  <h3>Thesis Status:</h3>
-                </td>
-                <td style={{ border: "1px solid black" }}>
-                  <h3></h3>
-                </td>
-              </tr>
-              <tr>
-                <h3>Thesis Title:</h3> {e.synopsisTitle}
-              </tr>
-            </tbody>
-          </table>
-        );
-      })}
+      <DataTable header={supervisorWiseHeader} data={supervisorWiseData} />
     </>
   );
 }

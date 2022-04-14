@@ -53,12 +53,6 @@ const Home = () => {
           <p> Your are logged in as PhD</p>
         </>
       )}
-      {userRole === "SUPERVISOR" && (
-        <>
-          <h1>Welcome!</h1>
-          <p> Your are logged in as Supervisor</p>
-        </>
-      )}
       {/* {props.onUser === "GO" && <h1>Welcome! GO</h1>}
       {props.onUser === "MS_COR" && <h1>Welcome! MS Coordinator</h1>}
       {props.onUser === "PHD_COR" && <h1>Welcome! PhD Coordinator</h1>} */}
