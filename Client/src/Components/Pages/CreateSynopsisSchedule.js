@@ -92,7 +92,6 @@ export default function CreateSynopsisSchedule() {
           </Grid>
           <Grid item xs={6} style={{ width: "100%" }}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
-              {" "}
               <DateTimePicker
                 name="defenseDate"
                 label="Defense Date"

@@ -39,7 +39,7 @@ export const goListitems = [
   {
     text: "Home",
     icon: <HomeIcon />,
-    path: "/Dashboard",
+    path: "/Dashboard/HomeGo",
   },
 
   {
@@ -67,7 +67,7 @@ export const goListitems = [
       {
         text: "Send Report",
         icon: <PersonAddIcon />,
-        path: "/Dashboard/SendSynopsisRepor",
+        path: "/Dashboard/SendSynopsisReport",
       },
     ],
   },
@@ -293,7 +293,7 @@ export const goListitems = [
       }, */
     ],
   },
-  {
+  /* {
     text: "View Notification",
     icon: <ManageAccountsIcon />,
     path: "/Dashboard/ViewNotification",
@@ -302,7 +302,7 @@ export const goListitems = [
     text: "View Announcement",
     icon: <ManageAccountsIcon />,
     path: "/Dashboard/ViewAnnouncement",
-  },
+  }, */
   {
     text: "Change Password",
     icon: <ChangeCircleIcon />,

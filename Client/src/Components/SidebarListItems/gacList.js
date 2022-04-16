@@ -19,7 +19,7 @@ export const gacListitems = [
   {
     text: "Home",
     icon: <HomeIcon />,
-    path: "/Dashboard",
+    path: "/Dashboard/HomeGac",
   },
 
   {
