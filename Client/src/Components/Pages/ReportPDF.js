@@ -34,8 +34,12 @@ const ReportPDF = () => {
   useEffect(() => {
     async function fetchData() {
       const res = await synopsisService.getSynopsisEvaluations();
+      const syn= await synopsisService.getSubmittedSynopsis()
       console.log(res);
+      console.log(syn);
       console.log("latest");
+
+
     }
 
     fetchData();

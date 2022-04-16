@@ -55,6 +55,7 @@ router.get("/synopsis-schedule", auth.verifyUser, (req, res) => {
     .populate("student_id")
     .populate("program_id")
     .then((synopsisSchedule) => {
+      console.log(synopsisSchedule);
       res.setHeader("Content-Type", "application/json");
       res.status(200).json(synopsisSchedule);
     })
@@ -87,9 +88,14 @@ router.post(
 
   (req, res) => {
     let body = req.body;
-    EvaluationStatus.create(body)
+
+    EvaluationStatus.create({ evaluationStatus: body.evaluationStatus })
       .then((evaluationStatus) => {
-        SynopsisEvaluation.create(body)
+        SynopsisEvaluation.create({
+          ...body,
+          evaluationStatus: evaluationStatus._id,
+          evaluator_id: req.user._id,
+        })
           .then((synopsisEvaluation) => {
             res.setHeader("Content-Type", "application/json");
             res.status(200).json({ synopsisEvaluation, evaluationStatus });
@@ -105,47 +111,44 @@ router.post(
       });
   }
 );
-router.patch(
-  "/update-evaluation",
-  auth.verifyUser,
+// router.patch(
+//   "/update-evaluation",
+//   auth.verifyUser,
 
-  (req, res) => {
-    let body = req.body;
+//   (req, res) => {
+//     let body = req.body;
 
-    SynopsisEvaluation.findOneAndUpdate(
-      { _id: body.synopsisEvaluation_id },
-      {
-        $push: {
-          recommendations: {
-            comment: body.comment,
-            evaluationStatus: body.evaluationStatus,
-            evaluator_id: req.user._id,
-          },
-        },
-      }
-    )
-      .then((synopsisSchedule) => {
-        res.setHeader("Content-Type", "application/json");
-        res.status(200).json(synopsisSchedule);
-      })
-      .catch((err) => {
-        res.setHeader("Content-Type", "application/json");
-        res.status(500).json({ success: false, message: err.message });
-      });
-  }
-);
+//     SynopsisEvaluation.findOneAndUpdate(
+//       { _id: body.synopsisEvaluation_id },
+//       {
+//         $push: {
+//           recommendations: {
+//             comment: body.comment,
+//             evaluationStatus: body.evaluationStatus,
+//             evaluator_id: req.user._id,
+//           },
+//         },
+//       }
+//     )
+//       .then((synopsisSchedule) => {
+//         res.setHeader("Content-Type", "application/json");
+//         res.status(200).json(synopsisSchedule);
+//       })
+//       .catch((err) => {
+//         res.setHeader("Content-Type", "application/json");
+//         res.status(500).json({ success: false, message: err.message });
+//       });
+//   }
+// );
 
 router.get("/synopsis-evaluation", auth.verifyUser, (req, res) => {
   SynopsisEvaluation.find({})
-    .populate("recommendations.evaluator_id recommendations.evaluationStatus")
+    .populate("evaluator_id evaluationStatus")
     .populate({
       path: "schedule_id",
-      populate: [
-        { path: "student_id", model: "Student" },
-        { path: "program_id", model: "Program" },
-        { path: "scheduledBy", model: "User" },
-      ],
+      populate: [{ path: "student_id", model: "Student" }],
     })
+
     .then((synopsisEvaluation) => {
       res.setHeader("Content-Type", "application/json");
       res.status(200).json(synopsisEvaluation);
@@ -156,12 +159,35 @@ router.get("/synopsis-evaluation", auth.verifyUser, (req, res) => {
     });
 });
 
+// router.get("/synopsis-evaluation", auth.verifyUser, (req, res) => {
+//   SynopsisEvaluation.find({})
+//     .populate("recommendations.evaluator_id recommendations.evaluationStatus")
+//     .populate({
+//       path: "schedule_id",
+//       populate: [
+//         {
+//           path: "student_id",
+//           model: "Student",
+//         },
+//         { path: "program_id", model: "Program" },
+//         { path: "scheduledBy", model: "User" },
+//       ],
+//     })
+//     .then((synopsisEvaluation) => {
+//       res.setHeader("Content-Type", "application/json");
+//       res.status(200).json(synopsisEvaluation);
+//     })
+//     .catch((err) => {
+//       res.setHeader("Content-Type", "application/json");
+//       res.status(500).json({ success: false, message: err.message });
+//     });
+// });
+
 router.post(
   "/submit-synopsis",
   auth.verifyUser,
   auth.checkStudent,
   async (req, res) => {
-    const studentId = req.user._id;
     uploadSynopsis(req, res, async function (err) {
       const { synopsisTitle, supervisor, coSupervisor, synopsisTrack } =
         req.body;
@@ -180,6 +206,10 @@ router.post(
 
         return res.status(500).json({ success: false, message: err });
       } else {
+        let studId = await User.findById(
+          { _id: req.user._id },
+          { student_id: 1 }
+        );
         let s_id = await User.findById({ _id: supervisor }, { faculty_id: 1 });
         let cs_id = await User.findById(
           { _id: coSupervisor },
@@ -187,7 +217,7 @@ router.post(
         );
 
         SynopsisSubmission.create({
-          student_id: studentId,
+          student_id: studId.student_id,
           supervisor_id: s_id.faculty_id,
           coSupervisor_id: cs_id.faculty_id,
           synopsisTitle,
@@ -214,11 +244,9 @@ router.post(
 
 router.get("/submitted-synopsis", auth.verifyUser, (req, res) => {
   SynopsisSubmission.find({})
-    .populate("student_id")
-    .populate("supervisor_id")
-    .populate("coSupervisor_id")
+    .populate("student_id supervisor_id coSupervisor_id")
     .then((synopsisSubmission) => {
-      console.log(synopsisSubmission);
+      console.log("submitted", synopsisSubmission);
       res.setHeader("Content-Type", "application/json");
       res.status(200).json(synopsisSubmission);
     })
@@ -233,7 +261,6 @@ router.post(
   auth.verifyUser,
   auth.checkStudent,
   async (req, res) => {
-    const studentId = req.user._id;
     uploadThesis(req, res, async function (err) {
       const { thesisTitle, supervisor, coSupervisor, thesisTrack } = req.body;
 
@@ -251,6 +278,10 @@ router.post(
 
         return res.status(500).json({ success: false, message: err });
       } else {
+        let studId = await User.findById(
+          { _id: req.user._id },
+          { student_id: 1 }
+        );
         let s_id = await User.findById({ _id: supervisor }, { faculty_id: 1 });
         let cs_id = await User.findById(
           { _id: coSupervisor },
@@ -259,7 +290,7 @@ router.post(
 
         thesisSubmission
           .create({
-            student_id: studentId,
+            student_id: studId.student_id,
             supervisor_id: s_id.faculty_id,
             coSupervisor_id: cs_id.faculty_id,
             thesisTitle,
