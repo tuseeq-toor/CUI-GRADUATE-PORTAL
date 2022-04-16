@@ -24,7 +24,7 @@ const User = require("../models/user");
 exports.studentSignUpNeeds = async (user) => {
   needs = {};
   let session = user.registrationNo.split("-")[0];
-  console.log("session", session);
+
   needs.program = await Program.findOne(
     {
       programShortName: user.program,

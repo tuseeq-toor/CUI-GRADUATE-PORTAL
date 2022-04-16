@@ -12,9 +12,7 @@ router.post("/signup", async (req, res, next) => {
   const user = req.body;
   console.log(user);
   if (user.userRole === "STUDENT") {
-    console.log("student role" + user.userRole);
     let needs = await helpers.studentSignUpNeeds(user);
-    console.log("route needs" + needs);
     let exists = await Student.findOne({ registrationNo: user.registrationNo });
     if (exists) {
       res.statusCode = 409;
@@ -132,6 +130,8 @@ router.post("/login", passport.authenticate("local"), async (req, res) => {
         .exec();
       user_info.student = student;
       user_info.userRole = user.userRole;
+      user_info._id = req.user._id;
+
       res.statusCode = 200;
       res.setHeader("Content-Type", "application/json");
       res.json({
@@ -145,6 +145,7 @@ router.post("/login", passport.authenticate("local"), async (req, res) => {
         let faculty = await Faculty.findOne({ _id: user.faculty_id }, {});
         user_info.faculty = faculty;
         user_info.userRole = user.userRole;
+        user_info._id = req.user._id;
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
         res.json({

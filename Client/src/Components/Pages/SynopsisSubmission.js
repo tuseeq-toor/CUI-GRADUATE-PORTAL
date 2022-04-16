@@ -13,6 +13,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 
 import studentService from "../../API/students";
+import synopsisService from "../../API/synopsis";
 
 export default function SynopsisSubmission() {
   const [supervisors, setSupervisors] = useState([]);
@@ -59,7 +60,7 @@ export default function SynopsisSubmission() {
       formData.append("synopsisDocument", values.synopsisDocument[0]);
       formData.append("synopsisPresentation", values.synopsisPresentation[0]);
       // console.log(values);
-      let res = await studentService.submitSynopsis(formData);
+      let res = await synopsisService.submitSynopsis(formData);
       if (res?.status === 500) {
         setError(res.data.message);
         setIsError(true);

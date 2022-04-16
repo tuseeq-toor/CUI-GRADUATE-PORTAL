@@ -12,6 +12,39 @@ export const API_SYNOPSIS = axios.create({
   baseURL: process.env.REACT_APP_URL,
 });
 
+const submitSynopsis = async (data) => {
+  let token = getToken();
+  try {
+    console.log(data + "apisubmit");
+    const res = await API_SYNOPSIS.post("synopsis/submit-synopsis", data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(res);
+    return res;
+  } catch (error) {
+    console.log(error.response);
+    return error.response;
+  }
+};
+const submitThesis = async (data) => {
+  let token = getToken();
+  try {
+    console.log(data + "thesisApiSubmit");
+    const res = await API_SYNOPSIS.post("synopsis/submit-thesis", data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(res);
+    return res;
+  } catch (error) {
+    console.log(error.response);
+    return error.response;
+  }
+};
+
 const createSchedule = async (data) => {
   let token = getToken();
   try {
@@ -93,6 +126,8 @@ const getSynopsisEvaluations = async () => {
 };
 
 const synopsisService = {
+  submitThesis,
+  submitSynopsis,
   createSchedule,
   getSubmittedSynopsis,
   getSynopsisSchedules,
