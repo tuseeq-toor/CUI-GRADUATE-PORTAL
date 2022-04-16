@@ -38,7 +38,7 @@ export const SupervisorListitems = [
   {
     text: "Home",
     icon: <HomeIcon />,
-    path: "/Dashboard",
+    path: "/Dashboard/HomeSupervisor",
   },
   {
     text: "Pending Thesis",

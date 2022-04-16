@@ -39,7 +39,7 @@ export const adminListitems = [
   {
     text: "Home",
     icon: <HomeIcon />,
-    path: "/Dashboard",
+    path: "/Dashboard/HomeAdmin",
   },
 
   {
@@ -251,7 +251,6 @@ export const adminListitems = [
         icon: <PieChartIcon />,
         path: "/Dashboard/summary-report",
       },
-
       /* {
         text: "Supervisor/Program-Wise Report",
         icon: <FindInPageIcon />,

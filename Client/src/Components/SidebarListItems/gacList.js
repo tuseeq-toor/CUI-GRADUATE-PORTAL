@@ -1,4 +1,5 @@
 import ChangeCircleIcon from "@mui/icons-material/ChangeCircle";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import ScreenSearchDesktopIcon from "@mui/icons-material/ScreenSearchDesktop";
 import FindInPageIcon from "@mui/icons-material/FindInPage";
 import PieChartIcon from "@mui/icons-material/PieChart";
@@ -19,7 +20,7 @@ export const gacListitems = [
   {
     text: "Home",
     icon: <HomeIcon />,
-    path: "/Dashboard",
+    path: "/Dashboard/HomeGac",
   },
 
   {
@@ -50,6 +51,11 @@ export const gacListitems = [
         text: "Pending Thesis",
         icon: <EditNotificationsIcon />,
         path: "/Dashboard/PendingThesis",
+      },
+      {
+        text: "Update Thesis Status",
+        icon: <PersonAddIcon />,
+        path: "/Dashboard/UpdateThesisStatus",
       },
       {
         text: "Thesis MS",

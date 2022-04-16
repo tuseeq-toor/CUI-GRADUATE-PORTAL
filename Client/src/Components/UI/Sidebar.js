@@ -137,30 +137,38 @@ export const Sidebar = () => {
     switch (role) {
       case "ADMIN":
         setList(adminListitems);
+        navigate("/Dashboard/HomeAdmin");
         break;
 
       case "GAC":
         setList(gacListitems);
+        navigate("/Dashboard/HomeGac");
         break;
 
       case "GO":
         setList(goListitems);
+        navigate("/Dashboard/HomeGo");
         break;
 
       case "MS_COR":
         setList(msListitems);
+        navigate("/Dashboard/HomeMsCor");
         break;
       case "PHD_COR":
         setList(phdListitems);
+        navigate("/Dashboard/HomePhDCor");
         break;
       case "SUPERVISOR":
         setList(SupervisorListitems);
+        navigate("/Dashboard/HomeSupervisor");
         break;
       case "STUDENT":
         if (userProgram.toLowerCase().includes("ms")) {
           setList(MsStudentListitems);
+          navigate("/Dashboard/HomeMs");
         } else if (userProgram.toLowerCase().includes("phd")) {
           setList(PhdStudentListitems);
+          navigate("/Dashboard/HomePhd");
         }
         break;
       default:
