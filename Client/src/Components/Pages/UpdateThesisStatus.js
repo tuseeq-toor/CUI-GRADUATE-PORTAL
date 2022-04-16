@@ -60,7 +60,7 @@ export default function UpdateThesisStatus() {
           marginBottom: "2%",
         }}
       >
-        <h1>Search</h1>
+        <h1>Thesis Status</h1>
       </div>
       {/* Form starts here */}
       <Box component="form" noValidate sx={{ flexGrow: 1 }}>
@@ -68,14 +68,14 @@ export default function UpdateThesisStatus() {
           <Grid item xs={6}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">
-                Thesis Status
+                Update Thesis Status
               </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 name="session_id"
                 value={data.session_id}
-                label="Update Submission Status"
+                label="Update Thesis Status"
                 // onChange={handleChange}
               >
                 <MenuItem value={"synopsisEvaluation"}>

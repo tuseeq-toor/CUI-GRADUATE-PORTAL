@@ -95,14 +95,14 @@ export default function ManageMsDeadline() {
                 onChange={formik.handleChange} */
               >
                 <FormControlLabel
-                  value="MS"
+                  value="Synopsis"
                   control={<Radio color="secondary" />}
-                  label="MS"
+                  label="Synopsis"
                 />
                 <FormControlLabel
-                  value="PhD"
+                  value="Thesis"
                   control={<Radio color="secondary" />}
-                  label="PhD"
+                  label="Thesis"
                 />
               </RadioGroup>
             </FormControl>

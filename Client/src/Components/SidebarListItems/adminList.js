@@ -251,7 +251,6 @@ export const adminListitems = [
         icon: <PieChartIcon />,
         path: "/Dashboard/summary-report",
       },
-
       /* {
         text: "Supervisor/Program-Wise Report",
         icon: <FindInPageIcon />,
