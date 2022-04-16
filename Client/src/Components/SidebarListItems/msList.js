@@ -27,7 +27,7 @@ export const msListitems = [
   {
     text: "Home",
     icon: <HomeIcon />,
-    path: "/Dashboard",
+    path: "/Dashboard/HomeMsCor",
   },
 
   {
@@ -161,7 +161,11 @@ export const msListitems = [
         icon: <EditNotificationsIcon />,
         path: "/Dashboard/PendingThesis",
       },
-
+      {
+        text: "Update Thesis Status",
+        icon: <PersonAddIcon />,
+        path: "/Dashboard/UpdateThesisStatus",
+      },
       {
         text: "Generate Report",
         icon: <PersonAddIcon />,
@@ -194,7 +198,7 @@ export const msListitems = [
     ],
   }, */
 
-  {
+  /* {
     text: "Notification",
     icon: <ListIcon />,
     active: false,
@@ -211,7 +215,7 @@ export const msListitems = [
         path: "/Dashboard/SendNotification(MS)",
       },
     ],
-  },
+  }, */
 
   {
     text: "Student Details",

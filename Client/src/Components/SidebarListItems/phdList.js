@@ -39,7 +39,7 @@ export const phdListitems = [
   {
     text: "Home",
     icon: <HomeIcon />,
-    path: "/Dashboard",
+    path: "/Dashboard/HomePhDCor",
   },
 
   {
@@ -105,7 +105,7 @@ export const phdListitems = [
   {
     text: "Manage Submission Deadline",
     icon: <AddModeratorIcon />,
-    path: "/Dashboard/ManageMsDeadline",
+    path: "/Dashboard/ManagePhdDeadline",
   },
 
   {
@@ -173,7 +173,11 @@ export const phdListitems = [
         icon: <EditNotificationsIcon />,
         path: "/Dashboard/PendingThesis",
       },
-
+      {
+        text: "Update Thesis Status",
+        icon: <PersonAddIcon />,
+        path: "/Dashboard/UpdateThesisStatus",
+      },
       {
         text: "Generate Report",
         icon: <PersonAddIcon />,
@@ -219,7 +223,7 @@ export const phdListitems = [
     ],
   }, */
 
-  {
+  /* {
     text: "Notification",
     icon: <ListIcon />,
     active: false,
@@ -236,13 +240,13 @@ export const phdListitems = [
         path: "/Dashboard/SendNotification(PhD)",
       },
 
-      /*   {
-        text: "Send Notification (MS)",
-        icon: <NotificationsActiveIcon />,
-        path: "/Dashboard/SendNotification(MS)",
-      }, */
+      //   {
+      //   text: "Send Notification (MS)",
+      //   icon: <NotificationsActiveIcon />,
+      //   path: "/Dashboard/SendNotification(MS)",
+      // },
     ],
-  },
+  }, */
 
   {
     text: "Student Details",

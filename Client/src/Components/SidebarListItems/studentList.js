@@ -38,7 +38,7 @@ export const MsStudentListitems = [
   {
     text: "Home",
     icon: <HomeIcon />,
-    path: "/Dashboard",
+    path: "/Dashboard/HomeMs",
   },
   {
     text: "Submission",
@@ -75,7 +75,7 @@ export const PhdStudentListitems = [
   {
     text: "Home",
     icon: <HomeIcon />,
-    path: "/Dashboard",
+    path: "/Dashboard/HomePhD",
   },
 
   {

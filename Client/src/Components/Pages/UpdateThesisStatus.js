@@ -15,7 +15,7 @@ import studentService from "../../API/students";
 import synopsisService from "../../API/synopsis";
 import programsService from "../../API/programs";
 
-export default function CreateSynopsisSchedule() {
+export default function UpdateThesisStatus() {
   const [students, setStudents] = useState([]);
   const [programs, setPrograms] = useState([]);
 
@@ -60,55 +60,89 @@ export default function CreateSynopsisSchedule() {
           marginBottom: "2%",
         }}
       >
-        <h1>Synopsis Schedule</h1>
+        <h1>Thesis Status</h1>
       </div>
       {/* Form starts here */}
       <Box component="form" noValidate sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Session</InputLabel>
+              <InputLabel id="demo-simple-select-label">
+                Update Thesis Status
+              </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 name="session_id"
                 value={data.session_id}
-                label="Session"
+                label="Update Thesis Status"
                 // onChange={handleChange}
               >
-                {/* {students.map((oneStudent) => (
-                  <MenuItem
-                    selected="selected"
-                    value={oneStudent.synopsisSession_id._id}
-                  >
-                    {oneStudent.synopsisSession_id.title}
-                  </MenuItem>
-                ))} */}
-                <MenuItem value={10}>SP22</MenuItem>
-                <MenuItem value={20}>FA22</MenuItem>
-                <MenuItem value={30}>FA23</MenuItem>
+                <MenuItem value={"synopsisEvaluation"}>
+                  Synopsis Evaluation
+                </MenuItem>
+                <MenuItem value={"internalEvaluation"}>
+                  Internal Evaluation
+                </MenuItem>
+                <MenuItem value={"externalEvaluation"}>
+                  External Evaluation
+                </MenuItem>
+                <MenuItem value={"passOut"}>Pass Out</MenuItem>
+                <MenuItem value={"dismissed"}>Dismissed</MenuItem>
+                <MenuItem value={"synopsisNotSubmittedForGac"}>
+                  Synopsis Not Submitted for GAC
+                </MenuItem>
+                <MenuItem value={"unscheduled"}>Unscheduled</MenuItem>
+                <MenuItem value={"scheduled"}>Scheduled</MenuItem>
+                <MenuItem value={"conducted"}>Conducted</MenuItem>
+                <MenuItem value={"approvedByGac"}>Approved By GAC</MenuItem>
+                <MenuItem value={"minorChanges"}>Minor Changes</MenuItem>
+                <MenuItem value={"synopsisNotSubmittedForDeanOffice"}>
+                  Synopsis Not Submitted for DEAN office
+                </MenuItem>
+                <MenuItem value={"synopsisSubmittedForDeanOffice"}>
+                  Synopsis Submitted for DEAN office
+                </MenuItem>
+                <MenuItem value={"forwardedToDeanOffice "}>
+                  Forwarded to DEAN Office
+                </MenuItem>
+                <MenuItem value={"changesSuggestedByDeanOffice"}>
+                  Changes suggested by DEAN office
+                </MenuItem>
+                <MenuItem value={"Approved By DEAN"}>Approved By DEAN</MenuItem>
+                <MenuItem value={"thesisNotSubmittedForInternal"}>
+                  Thesis Not Submitted for Internal
+                </MenuItem>
+                <MenuItem value={"thesisSubmittedForInternal"}>
+                  Thesis Submitted for Internal
+                </MenuItem>
+                <MenuItem value={"acceptedByInternal"}>
+                  Accepted by Internal
+                </MenuItem>
+                <MenuItem value={"thesisNotSubmittedForInternal"}>
+                  Thesis not Submitted for Internal
+                </MenuItem>
+                <MenuItem value={"thesisSubmittedfForInternal"}>
+                  Thesis Submitted for Internal
+                </MenuItem>
+                <MenuItem value={"deffered"}>Deffered</MenuItem>
+                <MenuItem value={"accepted"}>Accepted</MenuItem>
+                <MenuItem value={"majorChanges"}>Major Changes</MenuItem>
+                <MenuItem value={"rejected"}>Rejected</MenuItem>
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={6} style={{ width: "100%" }}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DateTimePicker
-                name="defenseDate"
-                label="Defense Date"
-                value={data.defenseDate}
-                onChange={handleChangeDate}
-                renderInput={(params) => <TextField {...params} />}
-              />
-            </LocalizationProvider>
-          </Grid>
+
           <Grid item xs={6}>
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Student</InputLabel>
+              <InputLabel id="demo-simple-select-label">
+                Registration No.
+              </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={data.student_id}
-                label="Student"
+                label="Registration No."
                 name="student_id"
                 onChange={handleChange}
               >
@@ -117,28 +151,6 @@ export default function CreateSynopsisSchedule() {
                     {oneStudent.username}
                   </MenuItem>
                 ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={6}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Program</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                name="program_id"
-                value={data.program_id}
-                label="Program"
-                onChange={handleChange}
-              >
-                {programs.map((program) => (
-                  <MenuItem selected="selected" value={program._id}>
-                    {program.programShortName}
-                  </MenuItem>
-                ))}
-                {/* <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem> */}
               </Select>
             </FormControl>
           </Grid>
