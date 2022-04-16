@@ -63,6 +63,7 @@ import HomeGo from "../../Pages/HomeGo";
 import HomeGac from "../../Pages/HomeGac";
 import HomeSupervisor from "../../Pages/HomeSupervisor";
 import ManagePhdDeadline from "../../Pages/ManagePhdDeadline";
+import UpdateThesisStatus from "../../Pages/UpdateThesisStatus";
 const AdminRoutes = (props) => {
   const { isLoggedIn } = useSelector((state) => state.auth);
   console.log(isLoggedIn);
@@ -71,13 +72,17 @@ const AdminRoutes = (props) => {
       <Route path="/" element={<SignIn />} />
       <Route path="/SignUp" element={<SignUp />} />
       <Route path="/Dashboard" element={<AdminDashboard />}>
-        <Route index element={<Home />} />
+        <Route path="/Dashboard/HomeAdmin" element={<Home />} />
         <Route path="/Dashboard/HomeMsCor" element={<HomeMsCor />} />
         <Route path="/Dashboard/HomePhDCor" element={<HomePhdCor />} />
         <Route path="/Dashboard/HomeMs" element={<HomeStudentMs />} />
         <Route path="/Dashboard/HomePhd" element={<HomeStudentPhd />} />
         <Route path="/Dashboard/HomeGo" element={<HomeGo />} />
         <Route path="/Dashboard/HomeGac" element={<HomeGac />} />
+        <Route
+          path="/Dashboard/UpdateThesisStatus"
+          element={<UpdateThesisStatus />}
+        />
         <Route path="/Dashboard/HomeSupervisor" element={<HomeSupervisor />} />
         <Route path="/Dashboard/ManagePrograms" element={<ManagePrograms />} />
         <Route path="/Dashboard/AddPrograms" element={<AddManageProgram />} />

@@ -173,7 +173,11 @@ export const phdListitems = [
         icon: <EditNotificationsIcon />,
         path: "/Dashboard/PendingThesis",
       },
-
+      {
+        text: "Update Thesis Status",
+        icon: <PersonAddIcon />,
+        path: "/Dashboard/UpdateThesisStatus",
+      },
       {
         text: "Generate Report",
         icon: <PersonAddIcon />,

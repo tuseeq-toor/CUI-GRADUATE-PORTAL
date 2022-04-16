@@ -39,7 +39,7 @@ export const adminListitems = [
   {
     text: "Home",
     icon: <HomeIcon />,
-    path: "/Dashboard",
+    path: "/Dashboard/HomeAdmin",
   },
 
   {
