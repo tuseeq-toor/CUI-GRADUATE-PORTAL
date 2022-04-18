@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 
 import DataTable from "../UI/TableUI";
 import axios from "axios";
@@ -263,7 +269,7 @@ export default function ViewFaculty() {
           <TextField
             label="First Name"
             variant="standard"
-            color="warning"
+            color="secondary"
             focused
             style={{ width: "100%" }}
             placeholder={selectedobj.firstName}
@@ -276,7 +282,7 @@ export default function ViewFaculty() {
           <TextField
             label="Last Name"
             variant="standard"
-            color="warning"
+            color="secondary"
             focused
             sx={{ mt: 1 }}
             style={{ width: "100%" }}
@@ -290,7 +296,7 @@ export default function ViewFaculty() {
           <TextField
             label="Father/Husband"
             variant="standard"
-            color="warning"
+            color="secondary"
             focused
             sx={{ mt: 1 }}
             style={{ width: "100%" }}
@@ -304,7 +310,7 @@ export default function ViewFaculty() {
           <TextField
             label="Nationality"
             variant="standard"
-            color="warning"
+            color="secondary"
             focused
             sx={{ mt: 1 }}
             style={{ width: "100%" }}
@@ -318,7 +324,7 @@ export default function ViewFaculty() {
           <TextField
             label="Country"
             variant="standard"
-            color="warning"
+            color="secondary"
             focused
             sx={{ mt: 1 }}
             style={{ width: "100%" }}
@@ -332,7 +338,7 @@ export default function ViewFaculty() {
           <TextField
             label="City"
             variant="standard"
-            color="warning"
+            color="secondary"
             focused
             sx={{ mt: 1 }}
             style={{ width: "100%" }}
@@ -346,7 +352,7 @@ export default function ViewFaculty() {
           <TextField
             label="Email"
             variant="standard"
-            color="warning"
+            color="secondary"
             focused
             sx={{ mt: 1 }}
             style={{ width: "100%" }}
@@ -360,7 +366,7 @@ export default function ViewFaculty() {
           <TextField
             label="Department"
             variant="standard"
-            color="warning"
+            color="secondary"
             focused
             sx={{ mt: 1 }}
             style={{ width: "100%" }}
@@ -374,7 +380,7 @@ export default function ViewFaculty() {
           <TextField
             label="Campus"
             variant="standard"
-            color="warning"
+            color="secondary"
             focused
             sx={{ mt: 1 }}
             style={{ width: "100%" }}
@@ -388,7 +394,7 @@ export default function ViewFaculty() {
           <TextField
             label="Designation"
             variant="standard"
-            color="warning"
+            color="secondary"
             focused
             sx={{ mt: 1 }}
             style={{ width: "100%" }}
@@ -398,33 +404,50 @@ export default function ViewFaculty() {
               setdesign(event.target.value);
             }}
           />
-          <label htmlFor="cars">Active Faculty?: </label>
-          <select
-            name="cars"
-            id="cars"
-            onChange={(event) => {
-              setactive(event.target.value);
-            }}
-          >
-            <option value="active">active</option>
-            <option value="unactive">unactive</option>
-          </select>
+          <Box>
+            <FormControl variant="standard" sx={{ width: 220, mt: 1.5 }}>
+              <InputLabel color="secondary" id="cars">
+                Enable Program?:
+              </InputLabel>
+              <Select
+                variant="standard"
+                name="cars"
+                labelId="cars"
+                id="cars"
+                color="secondary"
+                /* value={age} */
+                onChange={(event) => {
+                  setactive(event.target.value);
+                }}
+              >
+                <MenuItem value="enable">enable</MenuItem>
+                <MenuItem value="disable">disable</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl variant="standard" sx={{ width: 220, mt: 1.5 }}>
+              <InputLabel color="secondary" id="cars">
+                Enable faculty?:
+              </InputLabel>
+              <Select
+                variant="standard"
+                name="cars"
+                labelId="cars"
+                id="cars"
+                color="secondary"
+                /* value={age} */
+                onChange={(event) => {
+                  setenable(event.target.value);
+                }}
+              >
+                <MenuItem value="enable">enable</MenuItem>
+                <MenuItem value="disable">disable</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
 
-          <label htmlFor="css">Enable faculty?: </label>
-          <select
-            name="css"
-            id="css"
-            onChange={(event) => {
-              setenable(event.target.value);
-            }}
-          >
-            <option value="enable">enable</option>
-            <option value="disable">disable</option>
-          </select>
-
-          <br />
           <Button
             variant="contained"
+            color="secondary"
             sx={{ mt: 1 }}
             onClick={(event) => {
               updateProgram();

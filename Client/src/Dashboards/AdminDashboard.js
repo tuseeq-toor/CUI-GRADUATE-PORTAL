@@ -249,9 +249,8 @@ const DashboardContent = (props) => {
               {/* {activeTab} */}
             </Typography>
             <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <AvatarMenu />
-              </Badge>
+              <AvatarMenu />
+              {/* <Badge badgeContent={4} color="secondary"></Badge> */}
             </IconButton>
           </Toolbar>
         </AppBar>

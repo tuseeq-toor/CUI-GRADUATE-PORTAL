@@ -52,11 +52,7 @@ export const gacListitems = [
         icon: <EditNotificationsIcon />,
         path: "/Dashboard/PendingThesis",
       },
-      {
-        text: "Update Thesis Status",
-        icon: <PersonAddIcon />,
-        path: "/Dashboard/UpdateThesisStatus",
-      },
+
       {
         text: "Thesis MS",
         icon: <AnalyticsIcon />,
@@ -69,6 +65,11 @@ export const gacListitems = [
         path: "/Dashboard/EvaluateThesis(PhD)",
       },
     ],
+  },
+  {
+    text: "Update Thesis Status",
+    icon: <PersonAddIcon />,
+    path: "/Dashboard/UpdateThesisStatus",
   },
 
   {

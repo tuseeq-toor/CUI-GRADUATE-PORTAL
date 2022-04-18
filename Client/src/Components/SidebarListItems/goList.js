@@ -53,11 +53,11 @@ export const goListitems = [
         path: "/Dashboard/ManageSynopsisSchedule",
       },
 
-      {
+      /*  {
         text: "Generate Report",
         icon: <PersonAddIcon />,
         path: "/Dashboard/GenerateSynopsisReport",
-      },
+      }, */
       {
         text: "View Report",
         icon: <LayersIcon />,
@@ -83,11 +83,11 @@ export const goListitems = [
         path: "/Dashboard/ManageThesisSchedule",
       },
 
-      {
+      /* {
         text: "Generate Report",
         icon: <PersonAddIcon />,
         path: "/Dashboard/GenerateThesisReport",
-      },
+      }, */
       {
         text: "View Report",
         icon: <LayersIcon />,

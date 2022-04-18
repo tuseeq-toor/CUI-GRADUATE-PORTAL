@@ -1,8 +1,6 @@
 import { Button } from "@mui/material";
 
 export const programHeader = [
-  
-  
   { field: "programShortName", headerName: "Short Name", width: 150 },
   { field: "programFullName", headerName: "Long Name", width: 150 },
   { field: "programDescription", headerName: "Descrip", width: 150 },
@@ -25,9 +23,7 @@ export const programHeader = [
       <>
         <Button
           onClick={() => {
-
-console.log(props.row.id)
-
+            console.log(props.row.id);
           }}
           variant="contained"
           color="secondary"
@@ -49,15 +45,13 @@ console.log(props.row.id)
       </>
     ),
 
-
     // renderCell: (props) => (
     //   <Button style={{backgroundColor:"green"}}
     //    >
     //     Test
     //   </Button>
     // ),
-
-  }
+  },
 ];
 
 export const programData = [
@@ -474,6 +468,27 @@ export const programWiseHeader = [
   { field: "Description", headerName: "Registration No.", width: 200 },
   { field: "Status", headerName: "Email", width: 350 },
   { field: "Professor", headerName: "Professor", width: 300 },
+  {
+    field: "actions",
+    headerName: "Action",
+    width: 200,
+    renderCell: (props) => (
+      <>
+        <Button
+          /* onClick={() => {
+            setselectedobj(props.row);
+            handleOpen();
+          }} */
+          variant="contained"
+          color="secondary"
+          size="small"
+          style={{ marginLeft: 10 }}
+        >
+          Edit
+        </Button>
+      </>
+    ),
+  },
 ];
 
 export const programWiseData = [
