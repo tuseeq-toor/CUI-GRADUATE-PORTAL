@@ -88,7 +88,6 @@ router.post(
 
   (req, res) => {
     let body = req.body;
-
     EvaluationStatus.create({ evaluationStatus: body.evaluationStatus })
       .then((evaluationStatus) => {
         SynopsisEvaluation.create({

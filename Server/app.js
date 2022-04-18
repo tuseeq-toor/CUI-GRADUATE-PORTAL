@@ -8,6 +8,7 @@ const adminRouter = require("./routes/admin");
 const sessionsRouter = require("./routes/sessions");
 const programsRouter = require("./routes/programs");
 const synopsisRouter = require("./routes/synopsis");
+const pdfReportsRouter = require("./routes/pdfReports");
 
 const authRouter = require("./routes/auth");
 var passport = require("passport");
@@ -64,6 +65,7 @@ app.use("/gac", gacRouter);
 app.use("/sessions", sessionsRouter);
 app.use("/programs", programsRouter);
 app.use("/synopsis", synopsisRouter);
+app.use("/pdfReports", pdfReportsRouter);
 app.get("/", async (req, res, next) => {
   console.log("Hello");
   res.json({ msg: "Hello from Server" });
