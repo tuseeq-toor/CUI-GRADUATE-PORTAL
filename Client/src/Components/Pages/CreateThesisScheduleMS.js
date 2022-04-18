@@ -11,12 +11,11 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { Button } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import studentService from "../../API/students";
 import synopsisService from "../../API/synopsis";
 import programsService from "../../API/programs";
 
 export default function CreateThesisSchedule() {
-  const [students, setStudents] = useState([]);
+  const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
   const [programs, setPrograms] = useState([]);
 
   const [data, setData] = React.useState({
@@ -36,9 +35,10 @@ export default function CreateThesisSchedule() {
   };
   useEffect(() => {
     async function fetchData() {
-      const stds = await studentService.getStudents();
+      const stds = await synopsisService.getSubmittedSynopsis();
+      // const stds = await studentService.getStudents();
       const prog = await programsService.getPrograms();
-      setStudents(stds);
+      setSubmittedSynopsis(stds);
       setPrograms(prog);
     }
 
@@ -64,8 +64,8 @@ export default function CreateThesisSchedule() {
       </div>
       {/* Form starts here */}
       <Box component="form" noValidate sx={{ flexGrow: 1 }}>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
+        <Grid container spacing={6}>
+          {/* <Grid item xs={6}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Session</InputLabel>
               <Select
@@ -76,21 +76,21 @@ export default function CreateThesisSchedule() {
                 label="Session"
                 // onChange={handleChange}
               >
-                {/* {students.map((oneStudent) => (
+                 {submittedSynopsis.map((oneSubmission) => (
                   <MenuItem
                     selected="selected"
-                    value={oneStudent.synopsisSession_id._id}
+                    value={oneSubmission.student_id.synopsisSession_id._id}
                   >
-                    {oneStudent.synopsisSession_id.title}
+                    {oneSubmission.student_id.synopsisSession_id.title}
                   </MenuItem>
-                ))} */}
+                ))} 
                 <MenuItem value={10}>SP22</MenuItem>
                 <MenuItem value={20}>FA22</MenuItem>
                 <MenuItem value={30}>FA23</MenuItem>
               </Select>
             </FormControl>
-          </Grid>
-          <Grid item xs={6} style={{ width: "100%" }}>
+          </Grid> */}
+          <Grid item xs={4}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DateTimePicker
                 fullWidth
@@ -98,11 +98,11 @@ export default function CreateThesisSchedule() {
                 label="Defense Date"
                 value={data.defenseDate}
                 onChange={handleChangeDate}
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={(params) => <TextField fullWidth {...params} />}
               />
             </LocalizationProvider>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Student</InputLabel>
               <Select
@@ -113,15 +113,18 @@ export default function CreateThesisSchedule() {
                 name="student_id"
                 onChange={handleChange}
               >
-                {students.map((oneStudent) => (
-                  <MenuItem selected="selected" value={oneStudent._id}>
-                    {oneStudent.username}
+                {submittedSynopsis.map((oneSubmission) => (
+                  <MenuItem
+                    selected="selected"
+                    value={oneSubmission.student_id._id}
+                  >
+                    {oneSubmission.student_id.registrationNo}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Program</InputLabel>
               <Select

@@ -1,7 +1,8 @@
-import { Button } from "@mui/material";
-import React, { useEffect, useRef } from "react";
+import { Autocomplete, Box, Button, TextField } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import comsatsLogo from "../../../src/cui.png";
+import pdfReportsService from "../../API/pdfReports";
 import synopsisService from "../../API/synopsis";
 import "../../Components/UI/ActiveTab.css";
 
@@ -31,26 +32,91 @@ const data = {
 };
 
 const ReportPDF = () => {
+  const [autocompleteValue, setAutocompleteValue] = useState(null);
+  const [evaluations, setEvaluations] = useState([]);
+  const [evaluationLabels, setEvaluationLabels] = useState([]);
+  const [filteredEvaluations, setFilteredEvaluations] = useState([]);
+  const [filteredSynopsis, setFilteredSynopsis] = useState([]);
+  const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
+  const [synopsisSchedules, setSynopisSchedules] = useState([]);
+
+  const uniqueEvaluatedLabels = async (array) => {
+    const labels = [
+      ...new Set(
+        await array.map((a) => {
+          return a.schedule_id.student_id.registrationNo;
+        })
+      ),
+    ];
+    setEvaluationLabels(labels);
+  };
   useEffect(() => {
     async function fetchData() {
       const res = await synopsisService.getSynopsisEvaluations();
-      const syn= await synopsisService.getSubmittedSynopsis()
-      console.log(res);
-      console.log(syn);
-      console.log("latest");
-
-
+      const syn = await synopsisService.getSubmittedSynopsis();
+      const sch = await synopsisService.getSynopsisSchedules();
+      setEvaluations(res);
+      setSubmittedSynopsis(syn);
+      setSynopisSchedules(sch);
+      uniqueEvaluatedLabels(res);
     }
 
     fetchData();
+    console.log(evaluationLabels);
   }, []);
 
+  const handleRegistrationNo = (reg) => {
+    let evals = evaluations.filter(
+      (evaluation) => evaluation.schedule_id.student_id.registrationNo === reg
+    );
+    let subSyn = submittedSynopsis.filter(
+      (submittedSynopsis) => submittedSynopsis.student_id.registrationNo === reg
+    );
+    setFilteredEvaluations(evals);
+    setFilteredSynopsis(subSyn);
+    console.log(filteredSynopsis);
+    console.log(filteredEvaluations);
+  };
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
+
+  const defaultProps = {
+    options: evaluationLabels,
+    getOptionLabel: (evaluation) => evaluation || "",
+  };
+  const handleSubmit = async () => {
+    const res = await pdfReportsService.generateReport({
+      evaluations: filteredEvaluations,
+      synopsis: filteredSynopsis,
+    });
+    console.log(res);
+  };
+
   return (
     <>
+      <Box sx={{ mb: 4 }}>
+        <Autocomplete
+          {...defaultProps}
+          id="controlled-demo"
+          value={autocompleteValue}
+          onChange={(value, newValue) => {
+            let registrationNo = newValue;
+            setAutocompleteValue(newValue);
+
+            handleRegistrationNo(registrationNo);
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Search"
+              variant="outlined"
+              color="secondary"
+            />
+          )}
+        />
+      </Box>
       <div ref={componentRef} className="pdf">
         <div
           style={{
@@ -101,7 +167,7 @@ const ReportPDF = () => {
               Candidate:{" "}
             </h3>
             <p style={{ marginTop: "0", marginBottom: "0" }}>
-              {data.candidateName}
+              {filteredSynopsis[0]?.student_id?.username}
             </p>
           </div>
           <h3
@@ -114,7 +180,7 @@ const ReportPDF = () => {
             Registration Number:
           </h3>
           <p style={{ marginTop: "0", marginBottom: "0" }}>
-            {data.registrationNumber}
+            {filteredSynopsis[0]?.student_id?.registrationNo}
           </p>
         </div>
         {/* Second Row */}
@@ -146,7 +212,7 @@ const ReportPDF = () => {
               Supervisor:{" "}
             </h3>
             <p style={{ marginTop: "0", marginBottom: "0" }}>
-              {data.supervisor}
+              {filteredSynopsis[0]?.supervisor_id?.fullName}
             </p>
           </div>
           <h3
@@ -180,7 +246,7 @@ const ReportPDF = () => {
             Synopsis Title:
           </h3>
           <p style={{ marginTop: "0", marginBottom: "0" }}>
-            {data.synopsisTitle}
+            {filteredSynopsis[0]?.student_id?.synopsisTitle}
           </p>
         </div>
         {/* 4th Row */}
@@ -205,7 +271,7 @@ const ReportPDF = () => {
           </h3>
         </div>
         {/* 5th Row */}
-        {data.recommendations.map((item) => (
+        {filteredEvaluations.map((item) => (
           <div>
             <div
               style={{
@@ -232,7 +298,7 @@ const ReportPDF = () => {
                     fontWeight: "bold",
                   }}
                 >
-                  {item.evaluatorName}
+                  {item?.evaluator_id?.username}
                 </p>
               </div>
               <div
@@ -260,7 +326,7 @@ const ReportPDF = () => {
                     marginBottom: "0",
                   }}
                 >
-                  {item.evaluationStatus}
+                  {item?.evaluationStatus?.evaluationStatus}
                 </p>
               </div>
               <div
@@ -287,7 +353,7 @@ const ReportPDF = () => {
                     fontWeight: "bold",
                   }}
                 >
-                  {item.isRequiredAgain}
+                  {"Yes"}
                 </p>
               </div>
             </div>
@@ -311,20 +377,29 @@ const ReportPDF = () => {
                 textAlign: "justify",
               }}
             >
-              {item.comment}
+              {item?.comments}
             </div>
           </div>
         ))}
       </div>
       <div style={{ display: "grid", placeContent: "center" }}>
         <Button
-          type="submit"
+          type="button"
           variant="contained"
           color="secondary"
           sx={{ mb: 2 }}
           onClick={handlePrint}
         >
-          Print/Download PDF
+          Print PDF
+        </Button>
+        <Button
+          type="button"
+          variant="contained"
+          color="secondary"
+          sx={{ mb: 2 }}
+          onClick={handleSubmit}
+        >
+          Download PDF
         </Button>
       </div>
     </>

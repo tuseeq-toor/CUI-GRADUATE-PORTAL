@@ -2,15 +2,12 @@ import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 
 import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import studentService from "../../API/students";
-import programsService from "../../API/programs";
-import sessionsService from "../../API/sessions";
+
 import synopsisService from "../../API/synopsis";
 import { Autocomplete } from "@mui/material";
 import { Link } from "react-router-dom";
@@ -47,6 +44,8 @@ export default function EvaluateSynopsisMS() {
   }, []);
 
   const handleRegistrationNo = (reg) => {
+    setHasEvaluatedSynopsis(false);
+
     schedules.forEach((oneSchedule) => {
       if (reg === oneSchedule?.student_id?.registrationNo) {
         evaluations.forEach((evaluatedSynopsis) => {
@@ -54,14 +53,9 @@ export default function EvaluateSynopsisMS() {
             if (evaluatedSynopsis.schedule_id._id === oneSchedule._id) {
               if (evaluatedSynopsis.evaluator_id._id === user.user._id) {
                 console.log(true);
-                // setHasEvaluatedSynopsis(true);
-              } else {
-                console.log(false);
-                // setHasEvaluatedSynopsis(false);
+                setHasEvaluatedSynopsis(true);
               }
             }
-          } else {
-            // setHasEvaluatedSynopsis(false);
           }
         });
 
@@ -286,7 +280,6 @@ export default function EvaluateSynopsisMS() {
                         >
                           Area of Specialization
                         </td>
-                        {console.log("selectedSynopsis", selectedSynopsis)}
                         <td>{selectedSynopsis?.specializationTrack}</td>
                       </tr>
                       <tr style={{ backgroundColor: "White" }}>
@@ -425,7 +418,7 @@ export default function EvaluateSynopsisMS() {
                           </td>
                           <td>
                             <FormControlLabel
-                              value="The candidate is recommended to do minor changings."
+                              value="Minor Changings."
                               control={<Radio color="secondary" />}
                               label=""
                               name="evaluationStatus"
@@ -442,7 +435,7 @@ export default function EvaluateSynopsisMS() {
                           <td>Candidate has to re-appear in next semester. </td>
                           <td>
                             <FormControlLabel
-                              value="The candidate is recommended to do major changings."
+                              value="Major Changings."
                               control={<Radio color="secondary" />}
                               label=""
                               name="evaluationStatus"
@@ -461,7 +454,7 @@ export default function EvaluateSynopsisMS() {
                   rows={6}
                   label="GAC Decision and Recommendations"
                   color="secondary"
-                  name="comment"
+                  name="comments"
                   variant="outlined"
                   onChange={handleChange}
                 />
