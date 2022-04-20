@@ -8,6 +8,7 @@ import Box from "@mui/material/Box";
 import { Autocomplete, Paper, TextField } from "@mui/material";
 import synopsisService from "../../API/synopsis";
 import { useSelector } from "react-redux";
+import studentService from "../../API/students";
 
 const data = {
   candidateName: "Waqas Zafar",
@@ -48,66 +49,30 @@ export default function ViewMSStudent() {
   const [loading, setLoading] = useState(false);
 
   const [autocompleteValue, setAutocompleteValue] = useState(null);
-  const [schedules, setSchedules] = useState([]);
 
-  const [hasEvaluatedSynopsis, setHasEvaluatedSynopsis] = useState(null);
-  const [evaluations, setEvaluations] = useState([]);
-  const [selectedSynopsis, setSelectedSynopsis] = useState([]);
-  const [selectedSchedule, setSelectedSchedule] = useState({});
-  const [submittedSynopsis, setSubmittedSynopsis] = useState({});
+  const [students, setStudents] = useState([]);
+  const [selectedStudent, setSelectedStudent] = useState([]);
   const [data, setData] = useState({});
 
   useEffect(() => {
     async function fetchData() {
-      const schd = await synopsisService.getSynopsisSchedules();
-      const alreadyevaluatedSynopsis =
-        await synopsisService.getSynopsisEvaluations();
-      const alreadysubmittedSynopsis =
-        await synopsisService.getSubmittedSynopsis();
-
-      console.log(schd);
-      setEvaluations(alreadyevaluatedSynopsis);
-      setSchedules(schd);
-      setSubmittedSynopsis(alreadysubmittedSynopsis);
-
+      const studs = await studentService.getStudents();
+      setStudents(studs);
       setLoading(true);
     }
     fetchData();
   }, []);
 
   const handleRegistrationNo = (reg) => {
-    setHasEvaluatedSynopsis(false);
-
-    schedules.forEach((oneSchedule) => {
+    students.forEach((oneStudent) => {
       if (
-        reg === oneSchedule?.student_id?.registrationNo &&
-        oneSchedule?.program_id?.programShortName === "MS(CS)"
+        reg === oneStudent.registrationNo &&
+        oneStudent?.program_id?.programShortName.toLowerCase().includes("ms")
       ) {
-        evaluations.forEach((evaluatedSynopsis) => {
-          if (evaluatedSynopsis.schedule_id) {
-            if (evaluatedSynopsis.schedule_id._id === oneSchedule._id) {
-              if (evaluatedSynopsis.evaluator_id._id === user.user._id) {
-                console.log(true);
-                setHasEvaluatedSynopsis(true);
-              }
-            }
-          }
-        });
+        setSelectedStudent(oneStudent);
 
-        setSelectedSchedule(oneSchedule);
-
-        console.log("Selected Schedule", selectedSchedule);
-        setData({ ...data, schedule_id: oneSchedule._id });
-
-        submittedSynopsis.forEach((oneSynopsis) => {
-          if (
-            selectedSchedule.student_id?._id ===
-            submittedSynopsis.student_id?._id
-          ) {
-            console.log("Selected Synopsis", oneSynopsis);
-            setSelectedSynopsis(oneSynopsis);
-          }
-        });
+        console.log("Selected Schedule", selectedStudent);
+        setData({ ...data, student_id: oneStudent._id });
       }
     });
   };
@@ -120,18 +85,11 @@ export default function ViewMSStudent() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const res = await synopsisService.addEvaluation(data);
-
-    // synopsisService.updateEvaluation({
-    //   ...data,
-    //   synopsisEvaluation_id: res.data.synopsisEvaluation._id,
-    //   evaluationStatus: res.data.evaluationStatus._id,
-    // });
-    // alert(JSON.stringify(data));
   };
 
   const defaultProps = {
-    options: schedules,
-    getOptionLabel: (schedule) => schedule?.student_id?.registrationNo || "",
+    options: students,
+    getOptionLabel: (student) => student.registrationNo || "",
   };
 
   return (
@@ -143,8 +101,7 @@ export default function ViewMSStudent() {
             id="controlled-demo"
             value={autocompleteValue}
             onChange={(value, newValue) => {
-              let registrationNo = newValue?.student_id?.registrationNo;
-              let programShortName = newValue?.program_id?.programShortName;
+              let registrationNo = newValue?.registrationNo;
 
               setAutocompleteValue(newValue);
 
@@ -186,9 +143,7 @@ export default function ViewMSStudent() {
               }}
             >
               <h3 style={{ margin: "0 1rem 0 0" }}>Candidate:</h3>
-              <p style={{ margin: "0" }}>
-                {selectedSchedule?.student_id?.username}
-              </p>
+              <p style={{ margin: "0" }}>{selectedStudent?.username}</p>
             </div>
             <h3
               style={{
@@ -200,7 +155,7 @@ export default function ViewMSStudent() {
               Registration Number:
             </h3>
             <p style={{ marginTop: "0", marginBottom: "0" }}>
-              {selectedSchedule?.student_id?.registrationNo}
+              {selectedStudent?.registrationNo}
             </p>
           </div>
           <div
@@ -231,7 +186,7 @@ export default function ViewMSStudent() {
               Supervisor:
             </h3>
             <p style={{ marginTop: "0", marginBottom: "0" }}>
-              {selectedSynopsis?.supervisor_id?.fullName}
+              {selectedStudent?.supervisor_id?.fullName}
             </p>
           </div>
           <div
@@ -250,9 +205,7 @@ export default function ViewMSStudent() {
               }}
             >
               <h3 style={{ margin: "0 1rem 0 0" }}>Email:</h3>
-              <p style={{ margin: "0" }}>
-                {selectedSchedule?.student_id?.email}
-              </p>
+              <p style={{ margin: "0" }}>{selectedStudent?.email}</p>
             </div>
             <h3
               style={{
@@ -264,7 +217,7 @@ export default function ViewMSStudent() {
               Mobile Number:
             </h3>
             <p style={{ marginTop: "0", marginBottom: "0" }}>
-              {selectedSchedule?.student_id?.mobile}
+              {selectedStudent?.mobile}
             </p>
           </div>
         </div>
@@ -283,7 +236,7 @@ export default function ViewMSStudent() {
           A
         </div>*/}
         <img
-          src={data.profilePic}
+          src={process.env.REACT_APP_URL + "/" + selectedStudent.profilePic}
           alt=""
           style={{ objectFit: "contain", height: "6rem", borderRadius: "50%" }}
         />
@@ -332,7 +285,7 @@ export default function ViewMSStudent() {
               textAlign: "justify",
             }}
           >
-            {selectedSynopsis?.supervisor_id?.fullName}
+            {selectedStudent?.supervisor_id?.fullName}
           </div>
         </div>
       </Box>

@@ -312,4 +312,19 @@ router.post(
   }
 );
 
+router.put("/update-synopsis-status", (req, res) => {
+  SynopsisSubmission.findOneAndUpdate(
+    { student_id: req.body.student_id },
+    { thesisStatus: req.body.thesisStatus }
+  )
+    .then(() => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json({ success: true, message: "Status Updated" });
+    })
+    .catch((err) => {
+      console.log(err.message);
+      res.setHeader("Content-Type", "application/json");
+      res.status(500).json({ success: false, message: err.message });
+    });
+});
 module.exports = router;

@@ -35,7 +35,7 @@ export default function SendSynopsisReport() {
             size="small"
             style={{ marginLeft: 10 }}
           >
-            Edit
+            Send Report
           </Button>
         </>
       ),

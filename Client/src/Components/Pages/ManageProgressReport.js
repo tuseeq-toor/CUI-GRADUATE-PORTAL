@@ -2,126 +2,50 @@ import React, { useEffect, useState } from "react";
 import { progressData, studentData } from "../DummyData/DummyData";
 import DataTable from "../UI/TableUI";
 import axios from "axios";
-import { DataGrid } from "@mui/x-data-grid";
-import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+
 import {
   Button,
   FormControl,
-  FormControlLabel,
-  FormLabel,
   InputLabel,
   MenuItem,
-  Radio,
-  RadioGroup,
   Select,
 } from "@mui/material";
 import Modal from "@mui/material/Modal";
 
 import Box from "@mui/material/Box";
-import { Typography } from "@mui/material";
 import { TextField } from "@mui/material";
-
-const style = {
-  position: "absolute",
-  display: "flex",
-  flexDirection: "column",
-  /* gap: ".5rem", */
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 600,
-  bgcolor: "background.paper",
-
-  /* border: "2px solid #000", */
-  boxShadow: 24,
-  p: 4,
-};
+import progressReportService from "../../API/progressReports";
 
 export default function ManageProgressReport() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [reports, setReports] = useState([]);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  const [getprograms, setPrograms] = useState([]);
-  const [gettoken, settoken] = useState("");
-  const [student, setStudent] = useState("");
-  const [session, setSession] = useState("");
-  const [comment, setComment] = useState("");
-  const [status, setStatus] = useState("");
-
-  const [selectedobj, setselectedobj] = useState({});
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    var { token } = user;
-    console.log(token);
-    settoken(token);
-
-    axios
-      .get("http://localhost:3000/programs/getprogram", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        console.log("testing new get data");
-        console.log(response.data.programlist);
-        var newarr = response.data.programlist.map((obj) => ({
-          ...obj,
-          id: obj._id,
-        }));
-        console.log(newarr);
-        setPrograms(newarr);
-      })
-      .catch((err) => console.log(err));
+    async function fetchData() {
+      const res = await progressReportService.getReports();
+      const data = res.map((res) => ({
+        Student: res.student_id.username,
+        Session: res.session_id.title,
+        Status: res.status,
+        Comment: res.comment,
+        id: res._id,
+      }));
+      setReports(data);
+      console.log("Progress Report data", data);
+    }
+    fetchData();
   }, []);
 
-  function getData() {
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    var { token } = user;
-    console.log(token);
-    settoken(token);
-
-    axios
-      .get("http://localhost:3000/programs/getprogram", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        console.log("testing another get data");
-        console.log(response.data.programlist);
-        var newarr = response.data.programlist.map((obj) => ({
-          ...obj,
-          id: obj._id,
-        }));
-        console.log(newarr);
-        setPrograms(newarr);
-      })
-      .catch((err) => console.log(err));
-  }
   const progressHeader = [
     {
-      field: "id",
-      headerName: "ID",
-      width: 80,
-    },
-    {
-      field: "Session",
+      field: "Student",
       headerName: "Student",
       width: 200,
     },
-    { field: "Description", headerName: "Session", width: 200 },
+    { field: "Session", headerName: "Session", width: 200 },
     { field: "Status", headerName: "Status", width: 200 },
-    { field: "Comments", headerName: "Comments", width: 400 },
+    { field: "Comment", headerName: "Comment", width: 400 },
     {
       field: "Action",
       headerName: "Action",
@@ -129,25 +53,7 @@ export default function ManageProgressReport() {
       renderCell: (props) => (
         <>
           <Button
-            onClick={() => {
-              axios
-                .delete(
-                  "http://localhost:3000/programs/deleteprogram/" +
-                    props.row.id,
-                  {
-                    headers: {
-                      Authorization: `Bearer ${gettoken}`,
-                    },
-                  }
-                )
-                .then((response) => {
-                  console.log(response.data.msg);
-
-                  getData();
-                  alert("Program deleted");
-                })
-                .catch((err) => console.log(err));
-            }}
+            onClick={() => {}}
             variant="contained"
             color="secondary"
             size="small"
@@ -157,8 +63,7 @@ export default function ManageProgressReport() {
           </Button>
 
           <Button
-            onClick={() => {
-              setselectedobj(props.row);
+            onClick={(p) => {
               handleOpen();
             }}
             variant="contained"
@@ -173,49 +78,22 @@ export default function ManageProgressReport() {
     },
   ];
 
-  const updateProgram = () => {
-    var s = "";
-    if (s == "") {
-      console.log("checked");
-    }
-    var obj = {};
-    if (student !== "") {
-      obj.programShortName = student;
-      setStudent("");
-    }
-    if (session != "") {
-      obj.programLongName = session;
-      setSession("");
-    }
-    if (comment != "") {
-      obj.description = comment;
-      setComment("");
-    }
-    if (status != "") {
-      obj.minSemesters = status;
-      setStatus("");
-    }
+  const updateProgram = () => {};
+  const style = {
+    position: "absolute",
+    display: "flex",
+    flexDirection: "column",
 
-    console.log(obj);
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 600,
+    bgcolor: "background.paper",
 
-    axios
-      .patch(
-        "http://localhost:3000/programs/updateprogram/" + selectedobj._id,
-        obj,
-        {
-          headers: {
-            Authorization: `Bearer ${gettoken}`,
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response.data.msg);
-
-        getData();
-        alert("Program Updated");
-      })
-      .catch((err) => console.log(err));
+    boxShadow: 24,
+    p: 4,
   };
+
   return (
     <>
       <Modal
@@ -290,7 +168,7 @@ export default function ManageProgressReport() {
         </Box>
       </Modal>
       <div style={{ height: 400, width: "100%", backgroundColor: "white" }}>
-        <DataTable header={progressHeader} data={progressData} />
+        <DataTable header={progressHeader} data={reports} />
       </div>
     </>
   );

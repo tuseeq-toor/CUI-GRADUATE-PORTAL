@@ -41,7 +41,7 @@ var uploadProfile = multer({
   limits: { fileSize: 10000000 },
   fileFilter: (req, file, cb) => {
     // Allowed ext
-    const filetypes = /jpeg|png|jgp/;
+    const filetypes = /jpeg|png|jpg/;
     // Check ext
     const extname = filetypes.test(
       path.extname(file.originalname).toLowerCase()
