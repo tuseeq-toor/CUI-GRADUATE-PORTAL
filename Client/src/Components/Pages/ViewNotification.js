@@ -25,7 +25,7 @@ export default function ViewNotification() {
         <Button
           /* onClick={() => {
             axios
-              .delete("http://localhost:3000/admin/faculty/" + props.row.id, {
+              .delete(`${process.env.REACT_APP_URL}/admin/faculty/` + props.row.id, {
                 headers: {
                   Authorization: `Bearer ${gettoken}`,
                 },

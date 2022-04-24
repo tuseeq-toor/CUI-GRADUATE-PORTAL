@@ -20,40 +20,10 @@ export const Login = createAsyncThunk(
 
 export const Signup = createAsyncThunk(
   "auth/Signup",
-  async (
-    {
-      registrationNo,
-      username,
-      fatherName,
-      mobile,
-      email,
-      program,
-      userRole,
-      password,
-    },
-    thunkAPI
-  ) => {
-    console.log(
-      registrationNo,
-      username,
-      fatherName,
-      mobile,
-      email,
-      userRole,
-      program,
-      password
-    );
+  async (data, thunkAPI) => {
+    console.log(data);
     try {
-      var res = await authService.signup(
-        registrationNo,
-        username,
-        fatherName,
-        mobile,
-        email,
-        program,
-        userRole,
-        password
-      );
+      var res = await authService.signup(data);
       console.log("thunk" + res);
       return res;
     } catch (error) {

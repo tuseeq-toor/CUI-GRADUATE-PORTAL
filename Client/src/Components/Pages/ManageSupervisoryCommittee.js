@@ -68,7 +68,7 @@ export default function ManageSupervisoryCommittee() {
     settoken(token);
 
     axios
-      .get("http://localhost:3000/programs/getprogram", {
+      .get(`${process.env.REACT_APP_URL}/programs/getprogram`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -94,7 +94,7 @@ export default function ManageSupervisoryCommittee() {
     settoken(token);
 
     axios
-      .get("http://localhost:3000/programs/getprogram", {
+      .get(`${process.env.REACT_APP_URL}/programs/getprogram`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -131,7 +131,7 @@ export default function ManageSupervisoryCommittee() {
             onClick={() => {
               axios
                 .delete(
-                  "http://localhost:3000/programs/deleteprogram/" +
+                  `${process.env.REACT_APP_URL}/programs/deleteprogram/` +
                     props.row.id,
                   {
                     headers: {
@@ -221,7 +221,8 @@ export default function ManageSupervisoryCommittee() {
 
     axios
       .patch(
-        "http://localhost:3000/programs/updateprogram/" + selectedobj._id,
+        `${process.env.REACT_APP_URL}/programs/updateprogram/` +
+          selectedobj._id,
         obj,
         {
           headers: {

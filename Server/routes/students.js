@@ -114,7 +114,7 @@ router.get("/", auth.verifyUser, (req, res) => {
     });
 });
 
-router.get("/supervisors", auth.verifyUser, auth.checkStudent, (req, res) => {
+router.get("/supervisors", auth.verifyUser, (req, res) => {
   console.log("supervisors");
   User.find(
     { "userRole.role": "SUPERVISOR", "userRole.enable": true },

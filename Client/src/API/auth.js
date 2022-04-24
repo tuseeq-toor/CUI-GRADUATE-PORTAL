@@ -21,40 +21,11 @@ const login = async (userEmail, userPassword) => {
   }
 };
 
-const signup = async (
-  registrationNo,
-  username,
-  fatherName,
-  mobile,
-  email,
-  program,
-  userRole,
-  password
-) => {
-  console.log(
-    "api" + registrationNo,
-    username,
-    fatherName,
-    mobile,
-    email,
-    password,
-    userRole,
-    program
-  );
+const signup = async (data) => {
   try {
-    const res = await API.post("auth/signup", {
-      registrationNo,
-      username,
-      fatherName,
-      mobile,
-      email,
-      program,
-      userRole,
-      password,
-    });
+    const res = await API.post("auth/signup", data);
     if (res) {
       console.log("Api " + res);
-      localStorage.setItem("user", JSON.stringify(res.data));
       return res.data;
     }
   } catch (error) {

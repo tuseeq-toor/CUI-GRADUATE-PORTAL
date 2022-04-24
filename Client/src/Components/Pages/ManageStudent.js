@@ -78,7 +78,7 @@ export default function ManageStudent() {
     settoken(token);
 
     axios
-      .get("http://localhost:3000/programs/getprogram", {
+      .get(`${process.env.REACT_APP_URL}/programs/getprogram`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -104,7 +104,7 @@ export default function ManageStudent() {
     settoken(token);
 
     axios
-      .get("http://localhost:3000/programs/getprogram", {
+      .get(`${process.env.REACT_APP_URL}/programs/getprogram`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -145,7 +145,7 @@ export default function ManageStudent() {
             onClick={() => {
               axios
                 .delete(
-                  "http://localhost:3000/programs/deleteprogram/" +
+                  `${process.env.REACT_APP_URL}/programs/deleteprogram/` +
                     props.row.id,
                   {
                     headers: {
@@ -259,7 +259,8 @@ export default function ManageStudent() {
 
     axios
       .patch(
-        "http://localhost:3000/programs/updateprogram/" + selectedobj._id,
+        `${process.env.REACT_APP_URL}/programs/updateprogram/` +
+          selectedobj._id,
         obj,
         {
           headers: {

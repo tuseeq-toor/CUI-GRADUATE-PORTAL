@@ -58,7 +58,7 @@ export default function ViewFaculty() {
     settoken(token);
 
     axios
-      .get("http://localhost:3000/admin/faculty", {
+      .get(`${process.env.REACT_APP_URL}/admin/faculty`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -84,7 +84,7 @@ export default function ViewFaculty() {
     settoken(token);
 
     axios
-      .get("http://localhost:3000/admin/faculty", {
+      .get(`${process.env.REACT_APP_URL}/admin/faculty`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -188,11 +188,15 @@ export default function ViewFaculty() {
     console.log(obj);
 
     axios
-      .patch("http://localhost:3000/admin/faculty/" + selectedobj._id, obj, {
-        headers: {
-          Authorization: `Bearer ${gettoken}`,
-        },
-      })
+      .patch(
+        `${process.env.REACT_APP_URL}/admin/faculty/` + selectedobj._id,
+        obj,
+        {
+          headers: {
+            Authorization: `Bearer ${gettoken}`,
+          },
+        }
+      )
       .then((response) => {
         console.log(response.data.msg);
 
@@ -220,11 +224,14 @@ export default function ViewFaculty() {
           <Button
             onClick={() => {
               axios
-                .delete("http://localhost:3000/admin/faculty/" + props.row.id, {
-                  headers: {
-                    Authorization: `Bearer ${gettoken}`,
-                  },
-                })
+                .delete(
+                  `${process.env.REACT_APP_URL}/admin/faculty/` + props.row.id,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${gettoken}`,
+                    },
+                  }
+                )
                 .then((response) => {
                   console.log(response.data.msg);
 

@@ -56,7 +56,7 @@ export default function ManageSession() {
     settoken(token);
 
     axios
-      .get("http://localhost:3000/sessions", {
+      .get(`${process.env.REACT_APP_URL}/sessions`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -101,7 +101,7 @@ export default function ManageSession() {
 
     axios
       .patch(
-        "http://localhost:3000/sessions/updatesession/" + selectedobj._id,
+        `${process.env.REACT_APP_URL}sessions/updatesession/` + selectedobj._id,
         obj,
         {
           headers: {
@@ -126,7 +126,7 @@ export default function ManageSession() {
     settoken(token);
 
     axios
-      .get("http://localhost:3000/sessions", {
+      .get(`${process.env.REACT_APP_URL}/sessions`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -163,7 +163,7 @@ export default function ManageSession() {
             onClick={() => {
               axios
                 .delete(
-                  "http://localhost:3000/sessions/deletesession/" +
+                  `${process.env.REACT_APP_URL}/sessions/deletesession/` +
                     props.row.id,
                   {
                     headers: {
@@ -217,7 +217,7 @@ export default function ManageSession() {
     const data = new FormData(event.currentTarget);
     const userEmail = data.get("email");
     const userPassword = data.get("password");
-    axios.post("http://localhost:3000/auth/login", {
+    axios.post("${process.env.REACT_APP_URL}auth/login", {
         email: userEmail,
         password: userPassword,
       })
