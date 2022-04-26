@@ -48,7 +48,6 @@ import SignUp from "../../UI/SignUp";
 import SignIn from "../SignIn";
 import EvaluateThesisMS from "../../Pages/EvaluateThesisMS";
 import EvaluateThesisPhD from "../../Pages/EvaluateThesisPhD";
-
 import AddFaculty from "../../Pages/AddFaculty";
 import { useSelector } from "react-redux";
 import ManageMsDeadline from "../../Pages/ManageMsDeadline";
@@ -64,6 +63,7 @@ import HomeGac from "../../Pages/HomeGac";
 import HomeSupervisor from "../../Pages/HomeSupervisor";
 import ManagePhdDeadline from "../../Pages/ManagePhdDeadline";
 import UpdateThesisStatus from "../../Pages/UpdateThesisStatus";
+import StatusCodes from "../StatusCodes";
 const AdminRoutes = (props) => {
   const { isLoggedIn } = useSelector((state) => state.auth);
   console.log(isLoggedIn);
@@ -71,183 +71,221 @@ const AdminRoutes = (props) => {
     <Routes>
       <Route path="/" element={<SignIn />} />
       <Route path="/SignUp" element={<SignUp />} />
-      <Route path="/Dashboard" element={<AdminDashboard />}>
-        <Route path="/Dashboard/HomeAdmin" element={<Home />} />
-        <Route path="/Dashboard/HomeMsCor" element={<HomeMsCor />} />
-        <Route path="/Dashboard/HomePhDCor" element={<HomePhdCor />} />
-        <Route path="/Dashboard/HomeMs" element={<HomeStudentMs />} />
-        <Route path="/Dashboard/HomePhd" element={<HomeStudentPhd />} />
-        <Route path="/Dashboard/HomeGo" element={<HomeGo />} />
-        <Route path="/Dashboard/HomeGac" element={<HomeGac />} />
-        <Route
-          path="/Dashboard/UpdateThesisStatus"
-          element={<UpdateThesisStatus />}
-        />
-        <Route path="/Dashboard/HomeSupervisor" element={<HomeSupervisor />} />
-        <Route path="/Dashboard/ManagePrograms" element={<ManagePrograms />} />
-        <Route path="/Dashboard/AddPrograms" element={<AddManageProgram />} />
-        <Route path="/Dashboard/ManageSessions" element={<ManageSession />} />
-        <Route path="/Dashboard/AddSessions" element={<AddSession />} />
-        <Route path="/Dashboard/ViewFaculty" element={<ViewFaculty />} />
-        <Route path="/Dashboard/AddFaculty" element={<AddFaculty />} />
-        <Route path="/Dashboard/ManageStudents" element={<ManageStudent />} />
-        <Route path="/Dashboard/AddStudent" element={<AddStudent />} />
-        <Route
-          path="/Dashboard/ManageMsDeadline"
-          element={<ManageMsDeadline />}
-        />
-        <Route
-          path="/Dashboard/ManagePhdDeadline"
-          element={<ManagePhdDeadline />}
-        />
-        <Route
-          path="/Dashboard/ManageSynopsisSchedule"
-          element={<ManageSynopsisSchedule />}
-        />
-        <Route
-          path="/Dashboard/CreateSynopsisSchedule"
-          element={<CreateSynopsisSchedule />}
-        />
-        <Route
-          path="/Dashboard/GenerateSynopsisReport"
-          element={<GenerateSynopsisReport />}
-        />
-        <Route
-          path="/Dashboard/ViewSynopsisReport"
-          element={<ViewSynopsisReport />}
-        />
-        <Route
-          path="/Dashboard/SendSynopsisReport"
-          element={<SendSynopsisReport />}
-        />
+      {isLoggedIn ? (
+        <>
+          <Route path="/Dashboard" element={<AdminDashboard />}>
+            <Route path="/Dashboard/HomeAdmin" element={<Home />} />
+            <Route path="/Dashboard/HomeMsCor" element={<HomeMsCor />} />
+            <Route path="/Dashboard/HomePhDCor" element={<HomePhdCor />} />
+            <Route path="/Dashboard/HomeMs" element={<HomeStudentMs />} />
+            <Route path="/Dashboard/HomePhd" element={<HomeStudentPhd />} />
+            <Route path="/Dashboard/HomeGo" element={<HomeGo />} />
+            <Route path="/Dashboard/HomeGac" element={<HomeGac />} />
+            <Route
+              path="/Dashboard/UpdateThesisStatus"
+              element={<UpdateThesisStatus />}
+            />
+            <Route
+              path="/Dashboard/HomeSupervisor"
+              element={<HomeSupervisor />}
+            />
+            <Route
+              path="/Dashboard/ManagePrograms"
+              element={<ManagePrograms />}
+            />
+            <Route
+              path="/Dashboard/AddPrograms"
+              element={<AddManageProgram />}
+            />
+            <Route
+              path="/Dashboard/ManageSessions"
+              element={<ManageSession />}
+            />
+            <Route path="/Dashboard/AddSessions" element={<AddSession />} />
+            <Route path="/Dashboard/ViewFaculty" element={<ViewFaculty />} />
+            <Route path="/Dashboard/AddFaculty" element={<AddFaculty />} />
+            <Route
+              path="/Dashboard/ManageStudents"
+              element={<ManageStudent />}
+            />
+            <Route path="/Dashboard/AddStudent" element={<AddStudent />} />
+            <Route
+              path="/Dashboard/ManageMsDeadline"
+              element={<ManageMsDeadline />}
+            />
+            <Route
+              path="/Dashboard/ManagePhdDeadline"
+              element={<ManagePhdDeadline />}
+            />
+            <Route
+              path="/Dashboard/ManageSynopsisSchedule"
+              element={<ManageSynopsisSchedule />}
+            />
+            <Route
+              path="/Dashboard/CreateSynopsisSchedule"
+              element={<CreateSynopsisSchedule />}
+            />
+            <Route
+              path="/Dashboard/GenerateSynopsisReport"
+              element={<GenerateSynopsisReport />}
+            />
+            <Route
+              path="/Dashboard/ViewSynopsisReport"
+              element={<ViewSynopsisReport />}
+            />
+            <Route
+              path="/Dashboard/SendSynopsisReport"
+              element={<SendSynopsisReport />}
+            />
 
-        <Route
-          path="/Dashboard/ManageThesisSchedule"
-          element={<ManageThesisSchedule />}
-        />
-        <Route
-          path="/Dashboard/create-schedule-ms"
-          element={<CreateSchedule />}
-        />
-        <Route
-          path="/Dashboard/GenerateThesisReport"
-          element={<GenerateThesisReport />}
-        />
-        <Route
-          path="/Dashboard/ViewThesisReport"
-          element={<ViewThesisReport />}
-        />
-        <Route
-          path="/Dashboard/SendThesisReport"
-          element={<SendThesisReport />}
-        />
+            <Route
+              path="/Dashboard/ManageThesisSchedule"
+              element={<ManageThesisSchedule />}
+            />
+            <Route
+              path="/Dashboard/create-schedule-ms"
+              element={<CreateSchedule />}
+            />
+            <Route
+              path="/Dashboard/GenerateThesisReport"
+              element={<GenerateThesisReport />}
+            />
+            <Route
+              path="/Dashboard/ViewThesisReport"
+              element={<ViewThesisReport />}
+            />
+            <Route
+              path="/Dashboard/SendThesisReport"
+              element={<SendThesisReport />}
+            />
 
-        <Route
-          path="/Dashboard/ManageProgressReport"
-          element={<ManageProgressReport />}
-        />
+            <Route
+              path="/Dashboard/ManageProgressReport"
+              element={<ManageProgressReport />}
+            />
 
-        <Route
-          path="/Dashboard/AddProgressReport"
-          element={<AddProgressReport />}
-        />
-        <Route
-          path="/Dashboard/ManageCommittee"
-          element={<ManageSupervisoryCommitteeStudent />}
-        />
-        <Route
-          path="/Dashboard/ManageSupervisoryCommittee"
-          element={<ManageSupervisoryCommittee />}
-        />
-        <Route
-          path="/Dashboard/AddSupervisoryCommittee"
-          element={<AddManageSupervisoryCommittee />}
-        />
-        <Route
-          path="/Dashboard/EvaluateSynopsis(MS)"
-          element={<EvaluateSynopsisMS />}
-        />
-        <Route
-          path="/Dashboard/EvaluateSynopsis(PhD)"
-          element={<EvaluateSynopsisPhD />}
-        />
-        <Route path="/Dashboard/PendingThesis" element={<PendingThesis />} />
-        <Route
-          path="/Dashboard/EvaluateThesis(MS)"
-          element={<EvaluateThesisMS />}
-        />
-        <Route
-          path="/Dashboard/EvaluateThesis(PhD)"
-          element={<EvaluateThesisPhD />}
-        />
-        <Route
-          path="/Dashboard/ManageNotification"
-          element={<ManageNotification />}
-        />
-        <Route
-          path="/Dashboard/SendNotification(PhD)"
-          element={<SendNotification />}
-        />
-        <Route
-          path="/Dashboard/SendNotification(MS)"
-          element={<SendNotificationMS />}
-        />
-        <Route
-          path="/Dashboard/SendNotificationtoAll"
-          element={<SendNotificationAll />}
-        />
-        <Route
-          path="/Dashboard/ViewMSStudentDetails"
-          element={<ViewMSStudentDetail />}
-        />
-        <Route
-          path="/Dashboard/ViewPhDStudentDetails"
-          element={<ViewPhDStudentDetail />}
-        />
-        <Route
-          path="/Dashboard/Supervisor'sReport"
-          element={<SupervisorReports />}
-        />
-        <Route
-          path="/Dashboard/Program-WiseReport"
-          element={<ProgramWiseReports />}
-        />
-        <Route
-          path="/Dashboard/summary-report"
-          element={<SynopsisWiseReports />}
-        />
-        <Route
-          path="/Dashboard/Session-WiseReport"
-          element={<SessionWiseReports />}
-        />
-        <Route
-          path="/Dashboard/Thesis-WiseReport"
-          element={<ThesisWiseReports />}
-        />
-        <Route path="/Dashboard/ChangePassword" element={<ChangePassword />} />
-        <Route
-          path="/Dashboard/ViewSupervisorProgram-WiseReport"
-          element={<SupervisorWiseReports />}
-        />
+            <Route
+              path="/Dashboard/AddProgressReport"
+              element={<AddProgressReport />}
+            />
+            <Route
+              path="/Dashboard/ManageCommittee"
+              element={<ManageSupervisoryCommitteeStudent />}
+            />
+            <Route
+              path="/Dashboard/ManageSupervisoryCommittee"
+              element={<ManageSupervisoryCommittee />}
+            />
+            <Route
+              path="/Dashboard/AddSupervisoryCommittee"
+              element={<AddManageSupervisoryCommittee />}
+            />
+            <Route
+              path="/Dashboard/EvaluateSynopsis(MS)"
+              element={<EvaluateSynopsisMS />}
+            />
+            <Route
+              path="/Dashboard/EvaluateSynopsis(PhD)"
+              element={<EvaluateSynopsisPhD />}
+            />
+            <Route
+              path="/Dashboard/PendingThesis"
+              element={<PendingThesis />}
+            />
+            <Route
+              path="/Dashboard/EvaluateThesis(MS)"
+              element={<EvaluateThesisMS />}
+            />
+            <Route
+              path="/Dashboard/EvaluateThesis(PhD)"
+              element={<EvaluateThesisPhD />}
+            />
+            <Route
+              path="/Dashboard/ManageNotification"
+              element={<ManageNotification />}
+            />
+            <Route
+              path="/Dashboard/SendNotification(PhD)"
+              element={<SendNotification />}
+            />
+            <Route
+              path="/Dashboard/SendNotification(MS)"
+              element={<SendNotificationMS />}
+            />
+            <Route
+              path="/Dashboard/SendNotificationtoAll"
+              element={<SendNotificationAll />}
+            />
+            <Route
+              path="/Dashboard/ViewMSStudentDetails"
+              element={<ViewMSStudentDetail />}
+            />
+            <Route
+              path="/Dashboard/ViewPhDStudentDetails"
+              element={<ViewPhDStudentDetail />}
+            />
+            <Route
+              path="/Dashboard/Supervisor'sReport"
+              element={<SupervisorReports />}
+            />
+            <Route
+              path="/Dashboard/Program-WiseReport"
+              element={<ProgramWiseReports />}
+            />
+            <Route
+              path="/Dashboard/summary-report"
+              element={<SynopsisWiseReports />}
+            />
+            <Route
+              path="/Dashboard/Session-WiseReport"
+              element={<SessionWiseReports />}
+            />
+            <Route
+              path="/Dashboard/Thesis-WiseReport"
+              element={<ThesisWiseReports />}
+            />
+            <Route
+              path="/Dashboard/ChangePassword"
+              element={<ChangePassword />}
+            />
+            <Route
+              path="/Dashboard/ViewSupervisorProgram-WiseReport"
+              element={<SupervisorWiseReports />}
+            />
 
+            <Route
+              path="/Dashboard/SynopsisSubmission"
+              element={<SynopsisSubmission />}
+            />
+            <Route
+              path="/Dashboard/ThesisSubmission"
+              element={<ThesisSubmission />}
+            />
+            <Route
+              path="/Dashboard/ViewAnnouncement"
+              element={<ViewAnnouncement />}
+            />
+            <Route
+              path="/Dashboard/ViewNotification"
+              element={<ViewNotification />}
+            />
+            <Route path="/Dashboard/EditProfile" element={<EditProfile />} />
+          </Route>
+        </>
+      ) : (
         <Route
-          path="/Dashboard/SynopsisSubmission"
-          element={<SynopsisSubmission />}
+          path="/*"
+          element={
+            <StatusCodes errorCode={"401"} message={"Unauthorized Access"} />
+          }
         />
-        <Route
-          path="/Dashboard/ThesisSubmission"
-          element={<ThesisSubmission />}
-        />
-        <Route
-          path="/Dashboard/ViewAnnouncement"
-          element={<ViewAnnouncement />}
-        />
-        <Route
-          path="/Dashboard/ViewNotification"
-          element={<ViewNotification />}
-        />
-        <Route path="/Dashboard/EditProfile" element={<EditProfile />} />
-      </Route>
+      )}
+      <Route
+        path="/*"
+        element={
+          <StatusCodes errorCode={"404"} message={"Page doesnot exist"} />
+        }
+      />
     </Routes>
   );
 };

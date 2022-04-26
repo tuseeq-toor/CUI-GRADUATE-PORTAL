@@ -18,6 +18,8 @@ export const Login = createAsyncThunk(
   }
 );
 
+// export const Logout = createAsyncThunk("auth/Logout");
+
 export const Signup = createAsyncThunk(
   "auth/Signup",
   async (data, thunkAPI) => {

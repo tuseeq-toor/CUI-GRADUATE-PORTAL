@@ -13,9 +13,11 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { useSelector, useDispatch } from "react-redux";
 import { USERROLES } from "../../Store/roles";
+import { useNavigate } from "react-router-dom";
 import { Divider } from "@mui/material";
 
 const AvatarMenu = () => {
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const { currentRole } = useSelector((state) => state.userRoles);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -36,6 +38,8 @@ const AvatarMenu = () => {
   };
 
   const handleCloseUserMenu = () => {
+    localStorage.removeItem("user");
+    navigate("/");
     setAnchorElUser(null);
   };
   return (
