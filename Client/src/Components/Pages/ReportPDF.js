@@ -38,7 +38,6 @@ const ReportPDF = () => {
   const [filteredEvaluations, setFilteredEvaluations] = useState([]);
   const [filteredSynopsis, setFilteredSynopsis] = useState([]);
   const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
-  const [synopsisSchedules, setSynopisSchedules] = useState([]);
 
   const uniqueEvaluatedLabels = async (array) => {
     const labels = [
@@ -54,15 +53,13 @@ const ReportPDF = () => {
     async function fetchData() {
       const res = await synopsisService.getSynopsisEvaluations();
       const syn = await synopsisService.getSubmittedSynopsis();
-      const sch = await synopsisService.getSynopsisSchedules();
       setEvaluations(res);
       setSubmittedSynopsis(syn);
-      setSynopisSchedules(sch);
       uniqueEvaluatedLabels(res);
     }
 
     fetchData();
-    console.log(evaluationLabels);
+    console.log("Labels", evaluationLabels);
   }, []);
 
   const handleRegistrationNo = (reg) => {
@@ -91,7 +88,9 @@ const ReportPDF = () => {
       evaluations: filteredEvaluations,
       synopsis: filteredSynopsis,
     });
-    console.log(res);
+    await pdfReportsService.downlaodReport(
+      filteredSynopsis[0].student_id.registrationNo
+    );
   };
 
   return (
@@ -393,7 +392,7 @@ const ReportPDF = () => {
           Print PDF
         </Button>
         <Button
-          type="button"
+          type="downlaod"
           variant="contained"
           color="secondary"
           sx={{ mb: 2 }}

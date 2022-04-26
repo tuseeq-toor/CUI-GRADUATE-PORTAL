@@ -1,11 +1,13 @@
-import React from "react";
-import profile from "../../avatar-1.jpg";
+import React, { useEffect, useState } from "react";
+import profile from "../../../src/avatar-1.jpg";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
-import { Paper } from "@mui/material";
+import { Autocomplete, Paper, TextField } from "@mui/material";
+import synopsisService from "../../API/synopsis";
+import { useSelector } from "react-redux";
 
 const data = {
   candidateName: "Waqas Zafar",
@@ -42,55 +44,122 @@ const data = {
 };
 
 export default function ViewPhDStudent() {
-  const handleSubmit = (event) => {
+  const { isLoggedIn, user } = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(false);
+
+  const [autocompleteValue, setAutocompleteValue] = useState(null);
+  const [schedules, setSchedules] = useState([]);
+
+  const [hasEvaluatedSynopsis, setHasEvaluatedSynopsis] = useState(null);
+  const [evaluations, setEvaluations] = useState([]);
+  const [selectedSynopsis, setSelectedSynopsis] = useState([]);
+  const [selectedSchedule, setSelectedSchedule] = useState({});
+  const [submittedSynopsis, setSubmittedSynopsis] = useState({});
+  const [data, setData] = useState({});
+
+  useEffect(() => {
+    async function fetchData() {
+      const schd = await synopsisService.getSynopsisSchedules();
+      const alreadyevaluatedSynopsis =
+        await synopsisService.getSynopsisEvaluations();
+      const alreadysubmittedSynopsis =
+        await synopsisService.getSubmittedSynopsis();
+
+      console.log(schd);
+      setEvaluations(alreadyevaluatedSynopsis);
+      setSchedules(schd);
+      setSubmittedSynopsis(alreadysubmittedSynopsis);
+
+      setLoading(true);
+    }
+    fetchData();
+  }, []);
+
+  const handleRegistrationNo = (reg) => {
+    setHasEvaluatedSynopsis(false);
+
+    schedules.forEach((oneSchedule) => {
+      if (
+        reg === oneSchedule?.student_id?.registrationNo &&
+        oneSchedule?.program_id?.programShortName === "PHD(CS)"
+      ) {
+        evaluations.forEach((evaluatedSynopsis) => {
+          if (evaluatedSynopsis.schedule_id) {
+            if (evaluatedSynopsis.schedule_id._id === oneSchedule._id) {
+              if (evaluatedSynopsis.evaluator_id._id === user.user._id) {
+                console.log(true);
+                setHasEvaluatedSynopsis(true);
+              }
+            }
+          }
+        });
+
+        setSelectedSchedule(oneSchedule);
+
+        console.log("Selected Schedule", selectedSchedule);
+        setData({ ...data, schedule_id: oneSchedule._id });
+
+        submittedSynopsis.forEach((oneSynopsis) => {
+          if (
+            selectedSchedule.student_id?._id ===
+            submittedSynopsis.student_id?._id
+          ) {
+            console.log("Selected Synopsis", oneSynopsis);
+            setSelectedSynopsis(oneSynopsis);
+          }
+        });
+      }
+    });
+  };
+
+  const handleChange = (event) => {
+    setData({ ...data, [event.target.name]: event.target.value });
+    console.log(data);
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    alert("Submitted");
-    const data = new FormData(event.currentTarget);
-    const userEmail = data.get("email");
-    const userPassword = data.get("password");
-    /* axios.post("http://localhost:3000/auth/login", {
-        email: userEmail,
-        password: userPassword,
-      })
-      .then((res) => {
-        const data = res.data.user;
-	console.log(data);
-        navigate("/Dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      }); */
+    const res = await synopsisService.addEvaluation(data);
+
+    // synopsisService.updateEvaluation({
+    //   ...data,
+    //   synopsisEvaluation_id: res.data.synopsisEvaluation._id,
+    //   evaluationStatus: res.data.evaluationStatus._id,
+    // });
+    // alert(JSON.stringify(data));
+  };
+
+  const defaultProps = {
+    options: schedules,
+    getOptionLabel: (schedule) => schedule?.student_id?.registrationNo || "",
   };
 
   return (
     <>
       <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
-        <FormControl fullWidth>
-          <InputLabel color="secondary" id="demo-simple-select-label">
-            Registration
-          </InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            //value={Registration}
-            label="Registration"
-            color="secondary"
-            //onChange={handleChange}
-          >
-            <MenuItem selected="selected" value="2501">
-              FA15-RCS-023
-            </MenuItem>
-            <MenuItem value="1476">FA15-RCS-029</MenuItem>
-            <MenuItem value="1364">FA15-RIS-002</MenuItem>
-            <MenuItem value="243">FA15-RIS-012</MenuItem>
-            <MenuItem value="1384">FA16-RCS-002</MenuItem>
-            <MenuItem value="1471">FA16-RCS-003</MenuItem>
-            <MenuItem value="1418">FA16-RCS-006</MenuItem>
-            <MenuItem value="3627">FA16-RCS-010</MenuItem>
-            <MenuItem value="1419">FA16-RCS-011</MenuItem>
-            <MenuItem value="1416">FA16-RCS-013</MenuItem>
-          </Select>
-        </FormControl>
+        <Box sx={{ mb: 4 }}>
+          <Autocomplete
+            {...defaultProps}
+            id="controlled-demo"
+            value={autocompleteValue}
+            onChange={(value, newValue) => {
+              let registrationNo = newValue?.student_id?.registrationNo;
+              let programShortName = newValue?.program_id?.programShortName;
+
+              setAutocompleteValue(newValue);
+
+              handleRegistrationNo(registrationNo);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Search"
+                variant="outlined"
+                color="secondary"
+              />
+            )}
+          />
+        </Box>
       </Box>
       <Box
         style={{
@@ -117,7 +186,9 @@ export default function ViewPhDStudent() {
               }}
             >
               <h3 style={{ margin: "0 1rem 0 0" }}>Candidate:</h3>
-              <p style={{ margin: "0" }}>{data.candidateName}</p>
+              <p style={{ margin: "0" }}>
+                {selectedSchedule?.student_id?.username}
+              </p>
             </div>
             <h3
               style={{
@@ -129,7 +200,7 @@ export default function ViewPhDStudent() {
               Registration Number:
             </h3>
             <p style={{ marginTop: "0", marginBottom: "0" }}>
-              {data.registrationNumber}
+              {selectedSchedule?.student_id?.registrationNo}
             </p>
           </div>
           <div
@@ -148,7 +219,7 @@ export default function ViewPhDStudent() {
               }}
             >
               <h3 style={{ margin: "0 1rem 0 0" }}>Dated:</h3>
-              <p style={{ margin: "0" }}>{data.dated}</p>
+              <p style={{ margin: "0" }}>{"date"}</p>
             </div>
             <h3
               style={{
@@ -160,7 +231,7 @@ export default function ViewPhDStudent() {
               Supervisor:
             </h3>
             <p style={{ marginTop: "0", marginBottom: "0" }}>
-              {data.supervisor}
+              {selectedSynopsis?.supervisor_id?.fullName}
             </p>
           </div>
           <div
@@ -179,7 +250,9 @@ export default function ViewPhDStudent() {
               }}
             >
               <h3 style={{ margin: "0 1rem 0 0" }}>Email:</h3>
-              <p style={{ margin: "0" }}>{data.email}</p>
+              <p style={{ margin: "0" }}>
+                {selectedSchedule?.student_id?.email}
+              </p>
             </div>
             <h3
               style={{
@@ -190,7 +263,9 @@ export default function ViewPhDStudent() {
             >
               Mobile Number:
             </h3>
-            <p style={{ marginTop: "0", marginBottom: "0" }}>{data.mobile}</p>
+            <p style={{ marginTop: "0", marginBottom: "0" }}>
+              {selectedSchedule?.student_id?.mobile}
+            </p>
           </div>
         </div>
         {/* <div
@@ -257,7 +332,7 @@ export default function ViewPhDStudent() {
               textAlign: "justify",
             }}
           >
-            {data.supervisoryCommittee}
+            {selectedSynopsis?.supervisor_id?.fullName}
           </div>
         </div>
       </Box>

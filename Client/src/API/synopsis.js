@@ -84,6 +84,23 @@ const updateEvaluation = async (data) => {
     return error.response;
   }
 };
+const updateSynopsisStatus = async (data) => {
+  let token = getToken();
+  try {
+    const res = await API_SYNOPSIS.put(
+      "synopsis/update-synopsis-status",
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
 
 const getSubmittedSynopsis = async () => {
   let token = getToken();
@@ -134,6 +151,7 @@ const synopsisService = {
   addEvaluation,
   updateEvaluation,
   getSynopsisEvaluations,
+  updateSynopsisStatus,
 };
 
 export default synopsisService;

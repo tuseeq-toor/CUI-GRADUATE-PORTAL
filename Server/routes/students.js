@@ -41,7 +41,7 @@ var uploadProfile = multer({
   limits: { fileSize: 10000000 },
   fileFilter: (req, file, cb) => {
     // Allowed ext
-    const filetypes = /jpeg|png|jgp/;
+    const filetypes = /jpeg|png|jpg/;
     // Check ext
     const extname = filetypes.test(
       path.extname(file.originalname).toLowerCase()
@@ -114,7 +114,7 @@ router.get("/", auth.verifyUser, (req, res) => {
     });
 });
 
-router.get("/supervisors", auth.verifyUser, auth.checkStudent, (req, res) => {
+router.get("/supervisors", auth.verifyUser, (req, res) => {
   console.log("supervisors");
   User.find(
     { "userRole.role": "SUPERVISOR", "userRole.enable": true },

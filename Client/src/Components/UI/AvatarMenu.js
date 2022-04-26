@@ -62,12 +62,12 @@ const AvatarMenu = () => {
           open={Boolean(anchorElUser)}
           onClose={handleCloseUserMenu}
         >
-          <MenuItem key="profile" onClick={handleCloseUserMenu}>
+          {/* <MenuItem key="profile" onClick={handleCloseUserMenu}>
             <Typography textAlign="center">Profile</Typography>
           </MenuItem>
           <MenuItem key="settings" onClick={handleCloseUserMenu}>
             <Typography textAlign="center">Settings</Typography>
-          </MenuItem>
+          </MenuItem> */}
           {roles.length >= 1 && (
             <>
               <MenuItem key="dashboards" disabled sx={{ color: "inherit" }}>

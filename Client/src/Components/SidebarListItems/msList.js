@@ -46,11 +46,11 @@ export const msListitems = [
         icon: <PersonAddIcon />,
         path: "/Dashboard/AddStudent",
       },
-      {
+      /*{
         text: "View Detail",
         icon: <PageviewIcon />,
         path: "/Dashboard/ViewMSStudentDetails",
-      },
+      },*/
     ],
   },
   {
@@ -112,16 +112,15 @@ export const msListitems = [
         path: "/Dashboard/CreateSynopsisSchedule",
       },
       {
-        text: "Synopsis MS",
+        text: "Evaluate Synopsis MS",
         icon: <AnalyticsIcon />,
         path: "/Dashboard/EvaluateSynopsis(MS)",
       },
-
-      {
+      /* {
         text: "Generate Report",
         icon: <PersonAddIcon />,
         path: "/Dashboard/GenerateSynopsisReport",
-      },
+      }, */
       {
         text: "View Report",
         icon: <LayersIcon />,
@@ -161,16 +160,11 @@ export const msListitems = [
         icon: <EditNotificationsIcon />,
         path: "/Dashboard/PendingThesis",
       },
-      {
-        text: "Update Thesis Status",
-        icon: <PersonAddIcon />,
-        path: "/Dashboard/UpdateThesisStatus",
-      },
-      {
+      /* {
         text: "Generate Report",
         icon: <PersonAddIcon />,
         path: "/Dashboard/GenerateThesisReport",
-      },
+      }, */
       {
         text: "View Report",
         icon: <LayersIcon />,
@@ -183,6 +177,11 @@ export const msListitems = [
         path: "/Dashboard/SendThesisReport",
       },
     ],
+  },
+  {
+    text: "Update Thesis Status",
+    icon: <PersonAddIcon />,
+    path: "/Dashboard/UpdateThesisStatus",
   },
 
   /* {

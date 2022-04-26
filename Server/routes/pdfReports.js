@@ -32,19 +32,28 @@ router.post("/generate-report", (req, res, next) => {
       evaluations: req.body.evaluations,
       synopsis: req.body.synopsis,
     },
-    path: "../Server/public/pdfReports/output.pdf",
+    path: `../Server/public/pdfReports/${req.body.synopsis[0].student_id.registrationNo}.pdf`,
   };
 
   pdf
     .create(document, options)
-    .then((res) => {
-      console.log(res);
+    .then((response) => {
+      console.log(response);
+      res.status(200).json({ message: "Generated" });
     })
     .catch((error) => {
       console.error(error);
     });
+});
 
-  res.status(200).json({ message: "abc" });
+router.get("/generate-report/:registrationNo", (req, res) => {
+  console.log("registraitionNO", req.params.registrationNo);
+
+  const file = path.join(
+    __dirname,
+    `../public/pdfReports/${req.params.registrationNo}.pdf`
+  );
+  res.download(file);
 });
 
 module.exports = router;

@@ -376,7 +376,7 @@ export default function EvaluateSynopsisMS() {
                         <td>
                           <a
                             target="_blank"
-                            href={`http://localhost:3000/${selectedSynopsis?.synopsisFileName}`}
+                            href={`${process.env.REACT_APP_URL}/${selectedSynopsis?.synopsisFileName}`}
                             rel="noopener noreferrer"
                           >
                             {selectedSynopsis?.synopsisFileName}

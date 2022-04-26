@@ -3,16 +3,14 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>Hello world!</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-            integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <title>PDF Report</title>
 
     </head>
 
 
     <body>
 
-        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <table style="background-color:#572e74" width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
                 <td>
                     <img class="rounded" src="data:image/png;base64,{{logo}}" alt="Logo" />
@@ -20,7 +18,7 @@
                 </td>
                 <td>
 
-                    <h2 class="text-center mt-5" style="color: #6B57A2">
+                    <h2 class="text-center mt-5" style="color: #f0f0f0">
                         Synopsis Evaluation
                     </h2>
                 </td>
@@ -30,65 +28,61 @@
 
 
         {{#each synopsis}}
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:50px">
 
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:50px">
             <tr>
-                <td>
+                <td width="5%">
                     <h3>
                         Candidate:
                     </h3>
                 </td>
-                <td>
+                <td width="15%">
                     <p>
                         {{this.student_id.username}}
                     </p>
                 </td>
-                <td>
+                <td width="10%">
                     <h3>
                         Registration No:
                     </h3>
                 </td>
-                <td>
+                <td width="25%">
                     <p>
                         {{this.student_id.registrationNo}}
                     </p>
                 </td>
-
-
             </tr>
         </table>
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
-
             <tr>
-                <td>
-                    <h3 style="margin: 0;padding:0">
+                <td width="5%">
+                    <h3>
                         Supervisor:
                     </h3>
                 </td>
-                <td>
+                <td width="15%">
                     <p>
-                        {{this.student_id.supervisor_id.username}}
+                        {{this.supervisor_id.fullName}}
                     </p>
                 </td>
-                <td>
+                <td width="10%">
                     <h3>
                         Dated:
                     </h3>
                 </td>
-                <td>
+                <td width="25%">
                     <p>
-                        {{Date}}
+                        March 13, 2022
                     </p>
                 </td>
-
-
             </tr>
         </table>
+
         <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
             <tr>
                 <td width="15%">
-                    <h3 style="margin: 0;padding:0">
+                    <h3>
                         Synopsis Title:
                     </h3>
                 </td>
@@ -109,42 +103,53 @@
 
         </h3>
         {{#each evaluations}}
-        <table>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
             <tr>
-                <td>
+                <td width="12%">
                     <h3>
                         Evaluator:
 
                     </h3>
                 </td>
-                <td>
+                <td width="18%">
                     <p> {{this.evaluator_id.username}}</p>
                 </td>
-                <td>
+                <td width="20%">
                     <h3>
                         Recommendation:
 
                     </h3>
                 </td>
-                <td>
+                <td width="20%">
                     <p> {{this.evaluationStatus.evaluationStatus}}</p>
                 </td>
-                <td>
+                <td width="20%">
                     <h3>
                         Is Required Again:
 
                     </h3>
                 </td>
-                <td>
+                <td width="15%">
                     <p>Yes</p>
                 </td>
             </tr>
-            <tr>
-                <h3>Comment:</h3>
-            </tr>
-            <tr>{{this.comments}}</tr>
+
         </table>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:50px; margin-top:-25px;">
+            <tr>
+                <td>
+                    <h3>Comment:</h3>
+                </td>
+
+            </tr>
+
+            <tr>
+                <td>{{this.comments}}</td>
+            </tr>
+        </table>
+
+
         {{/each}}
 
 

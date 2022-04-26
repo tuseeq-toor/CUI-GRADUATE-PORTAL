@@ -12,7 +12,7 @@ router.post("/signup", async (req, res, next) => {
   const user = req.body;
   console.log(user);
   if (user.userRole === "STUDENT") {
-    let needs = await helpers.studentSignUpNeeds(user);
+    // let needs = await helpers.studentSignUpNeeds(user);
     let exists = await Student.findOne({ registrationNo: user.registrationNo });
     if (exists) {
       res.statusCode = 409;
@@ -25,8 +25,6 @@ router.post("/signup", async (req, res, next) => {
     } else {
       Student.create({
         ...user,
-
-        program_id: needs.program,
 
         // synopsisSession_id: needs.session._id,
       })

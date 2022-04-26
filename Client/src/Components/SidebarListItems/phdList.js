@@ -58,11 +58,11 @@ export const phdListitems = [
         icon: <PersonAddIcon />,
         path: "/Dashboard/AddStudent",
       },
-      {
+      /* {
         text: "View Detail",
         icon: <PageviewIcon />,
         path: "/Dashboard/ViewPhDStudentDetails",
-      },
+      }, */
     ],
   },
   {
@@ -128,12 +128,11 @@ export const phdListitems = [
         icon: <MapIcon />,
         path: "/Dashboard/EvaluateSynopsis(PhD)",
       },
-
-      {
+      /* {
         text: "Generate Report",
         icon: <PersonAddIcon />,
         path: "/Dashboard/GenerateSynopsisReport",
-      },
+      }, */
       {
         text: "View Report",
         icon: <LayersIcon />,
@@ -164,25 +163,20 @@ export const phdListitems = [
         path: "/Dashboard/create-schedule-ms",
       },
       {
-        text: "Thesis MS",
-        icon: <AnalyticsIcon />,
-        path: "/Dashboard/EvaluateThesis(MS)",
+        text: "Evaluate Thesis PhD",
+        icon: <MapIcon />,
+        path: "/Dashboard/EvaluateThesis(PhD)",
       },
       {
         text: "Pending Thesis",
         icon: <EditNotificationsIcon />,
         path: "/Dashboard/PendingThesis",
       },
-      {
-        text: "Update Thesis Status",
-        icon: <PersonAddIcon />,
-        path: "/Dashboard/UpdateThesisStatus",
-      },
-      {
+      /* {
         text: "Generate Report",
         icon: <PersonAddIcon />,
         path: "/Dashboard/GenerateThesisReport",
-      },
+      }, */
       {
         text: "View Report",
         icon: <LayersIcon />,
@@ -195,6 +189,11 @@ export const phdListitems = [
         path: "/Dashboard/SendThesisReport",
       },
     ],
+  },
+  {
+    text: "Update Thesis Status",
+    icon: <PersonAddIcon />,
+    path: "/Dashboard/UpdateThesisStatus",
   },
 
   /* {

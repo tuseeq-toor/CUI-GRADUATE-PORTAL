@@ -5,10 +5,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import TextField from "@mui/material/TextField";
-import DateTimePicker from "@mui/lab/DateTimePicker";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
+
 import { Button } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import studentService from "../../API/students";
@@ -16,14 +13,12 @@ import synopsisService from "../../API/synopsis";
 import programsService from "../../API/programs";
 
 export default function UpdateThesisStatus() {
-  const [students, setStudents] = useState([]);
+  const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
   const [programs, setPrograms] = useState([]);
 
   const [data, setData] = React.useState({
+    thesisStatus: "",
     student_id: "",
-    // session_id: "",
-    program_id: "",
-    defenseDate: new Date(),
   });
 
   const handleChange = (event) => {
@@ -31,15 +26,11 @@ export default function UpdateThesisStatus() {
     setData({ ...data, [event.target.name]: event.target.value });
   };
 
-  const handleChangeDate = (newValue) => {
-    setData({ ...data, date: newValue });
-  };
   useEffect(() => {
     async function fetchData() {
-      const stds = await studentService.getStudents();
-      const prog = await programsService.getPrograms();
-      setStudents(stds);
-      setPrograms(prog);
+      const submittedSynopsis = await synopsisService.getSubmittedSynopsis();
+
+      setSubmittedSynopsis(submittedSynopsis);
     }
 
     fetchData();
@@ -48,7 +39,7 @@ export default function UpdateThesisStatus() {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(data);
-    synopsisService.createSchedule(data);
+    synopsisService.updateSynopsisStatus(data);
   };
 
   return (
@@ -73,10 +64,10 @@ export default function UpdateThesisStatus() {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                name="session_id"
+                name="thesisStatus"
                 value={data.session_id}
                 label="Update Thesis Status"
-                // onChange={handleChange}
+                onChange={handleChange}
               >
                 <MenuItem value={"synopsisEvaluation"}>
                   Synopsis Evaluation
@@ -146,9 +137,12 @@ export default function UpdateThesisStatus() {
                 name="student_id"
                 onChange={handleChange}
               >
-                {students.map((oneStudent) => (
-                  <MenuItem selected="selected" value={oneStudent._id}>
-                    {oneStudent.username}
+                {submittedSynopsis.map((oneSynopsis) => (
+                  <MenuItem
+                    selected="selected"
+                    value={oneSynopsis.student_id._id}
+                  >
+                    {oneSynopsis.student_id.registrationNo}
                   </MenuItem>
                 ))}
               </Select>

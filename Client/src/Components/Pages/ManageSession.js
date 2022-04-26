@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 import Modal from "@mui/material/Modal";
 
 import Box from "@mui/material/Box";
-import { Typography } from "@mui/material";
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 import { TextField } from "@mui/material";
 
 import DataTable from "../UI/TableUI";
@@ -31,6 +37,17 @@ export default function ManageSession() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const [getprograms, setPrograms] = useState([]);
+
+  const [psname, setpsname] = useState("");
+  const [plname, setplname] = useState("");
+  const [pdesc, setpdesc] = useState("");
+  const [pminsem, setpminsem] = useState("");
+  const [pmaxsem, setpmaxsem] = useState("");
+  const [pdurat, setpdurat] = useState("");
+  const [pcredit, setpcredit] = useState("");
+  const [penable, setpenable] = useState("");
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
 
@@ -39,7 +56,7 @@ export default function ManageSession() {
     settoken(token);
 
     axios
-      .get("http://localhost:3000/sessions", {
+      .get(`${process.env.REACT_APP_URL}/sessions`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -84,7 +101,7 @@ export default function ManageSession() {
 
     axios
       .patch(
-        "http://localhost:3000/sessions/updatesession/" + selectedobj._id,
+        `${process.env.REACT_APP_URL}sessions/updatesession/` + selectedobj._id,
         obj,
         {
           headers: {
@@ -109,7 +126,7 @@ export default function ManageSession() {
     settoken(token);
 
     axios
-      .get("http://localhost:3000/sessions", {
+      .get(`${process.env.REACT_APP_URL}/sessions`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -146,7 +163,7 @@ export default function ManageSession() {
             onClick={() => {
               axios
                 .delete(
-                  "http://localhost:3000/sessions/deletesession/" +
+                  `${process.env.REACT_APP_URL}/sessions/deletesession/` +
                     props.row.id,
                   {
                     headers: {
@@ -200,7 +217,7 @@ export default function ManageSession() {
     const data = new FormData(event.currentTarget);
     const userEmail = data.get("email");
     const userPassword = data.get("password");
-    axios.post("http://localhost:3000/auth/login", {
+    axios.post("${process.env.REACT_APP_URL}auth/login", {
         email: userEmail,
         password: userPassword,
       })
@@ -224,7 +241,7 @@ export default function ManageSession() {
           <TextField
             label="Title"
             variant="standard"
-            color="warning"
+            color="secondary"
             focused
             sx={{ mt: 1 }}
             style={{ width: "100%" }}
@@ -237,7 +254,7 @@ export default function ManageSession() {
           <TextField
             label="Description"
             variant="standard"
-            color="warning"
+            color="secondary"
             focused
             sx={{ mt: 1, mb: 1 }}
             style={{ width: "100%" }}
@@ -248,20 +265,29 @@ export default function ManageSession() {
             }}
           />
 
-          <label htmlFor="cars">Enable Session?: </label>
-
-          <select
-            name="cars"
-            id="cars"
-            onChange={(event) => {
-              setstatus(event.target.value);
-            }}
-          >
-            <option value="enable">enable</option>
-            <option value="disable">disable</option>
-          </select>
+          <FormControl variant="standard" sx={{ width: 220, mt: 1.5 }}>
+            <InputLabel color="secondary" id="cars">
+              Enable Program?:
+            </InputLabel>
+            <Select
+              variant="standard"
+              name="cars"
+              labelId="cars"
+              id="cars"
+              color="secondary"
+              /* value={age} */
+              onChange={(event) => {
+                setpenable(event.target.value);
+              }}
+              label="Enable Program?:"
+            >
+              <MenuItem value="enable">enable</MenuItem>
+              <MenuItem value="disable">disable</MenuItem>
+            </Select>
+          </FormControl>
           <br />
           <Button
+            color="secondary"
             variant="contained"
             sx={{ mt: 1 }}
             onClick={(event) => {

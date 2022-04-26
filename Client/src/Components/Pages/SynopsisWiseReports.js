@@ -7,83 +7,113 @@ import Box from "@mui/material/Box";
 import studentService from "../../API/students";
 import profile from "../../../src/avatar-1.jpg";
 import synopsisService from "../../API/synopsis";
+import { Autocomplete, TextField } from "@mui/material";
+import { useSelector } from "react-redux";
 
 export default function SuperivorReport() {
-  const [students, setStudents] = useState([]);
+  const { isLoggedIn, user } = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
+
+  const [selectedSynopsis, setSelectedSynopsis] = useState([]);
+  const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
 
   useEffect(() => {
-    async function get() {
-      const data = await studentService.getStudents();
-      const synopsisData = await synopsisService.getSubmittedSynopsis();
-      console.log("dataaa", synopsisData);
-      // alert("helo");
-      console.log("data", data[0]._id);
-      setStudents(synopsisData);
+    async function fetchData() {
+      const alreadysubmittedSynopsis =
+        await synopsisService.getSubmittedSynopsis();
+
+      setSubmittedSynopsis(alreadysubmittedSynopsis);
+
+      setLoading(true);
     }
-    get();
+    fetchData();
   }, []);
+
+  const handleRegistrationNo = (e) => {
+    setSelectedSynopsis([]);
+    let array = submittedSynopsis.filter(
+      (oneSynopsis) => e.target.value === oneSynopsis.thesisStatus
+    );
+    setSelectedSynopsis(array);
+    if (array.length !== 0) {
+      setIsSelected(true);
+    }
+  };
 
   return (
     <>
       <Box sx={{ minWidth: 120, mb: 6 }}>
-        <FormControl fullWidth color="secondary">
-          <InputLabel id="demo-simple-select-label">Supervisor</InputLabel>
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">
+            Update Thesis Status
+          </InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            //value={age}
-            label="Supervisor"
-            //onChange={handleChange}
+            value={selectedSynopsis.thesisStatus || ""}
+            name="thesisStatus"
+            label="Select Status"
+            onChange={handleRegistrationNo}
           >
-            <MenuItem selected="selected" value="237">
-              -
+            <MenuItem value={"synopsisEvaluation"}>
+              Synopsis Evaluation
             </MenuItem>
-            <MenuItem value="239">Dr. Abid Khan</MenuItem>
-            <MenuItem value="4209">Dr. Adeel Anjum</MenuItem>
-            <MenuItem value="25565">Dr. Adnan Akhunzada</MenuItem>
-            <MenuItem value="2281">Dr. Ahmad R. Shahid</MenuItem>
-            <MenuItem value="4208">Dr. Aimal Tariq Rextin</MenuItem>
-            <MenuItem value="6925">Dr. Amir Hanif Dar</MenuItem>
-            <MenuItem value="3014">Dr. Ashfaq Hussain Farooqi</MenuItem>
-            <MenuItem value="663">Dr. Assad Abbas</MenuItem>
-            <MenuItem value="3012">Dr. Basit Raza</MenuItem>
-            <MenuItem value="2089">Dr. Farhana Jabeen</MenuItem>
-            <MenuItem value="3343">Dr. Ghufran Ahmed</MenuItem>
-            <MenuItem value="252">Dr. Hasan Ali Khattak</MenuItem>
-            <MenuItem value="2187">Dr. Iftikhar Azim Niaz</MenuItem>
-            <MenuItem value="253">Dr. Inayat-ur-Rehman</MenuItem>
-            <MenuItem value="284">Dr. Javed Iqbal</MenuItem>
-            <MenuItem value="654">Dr. Majid Iqbal Khan</MenuItem>
-            <MenuItem value="3344">Dr. Malik Ahmad Kamran</MenuItem>
-            <MenuItem value="633">Dr. Mansoor Ahmed</MenuItem>
-            <MenuItem value="264">Dr. Mariam Akbar</MenuItem>
-            <MenuItem value="4243">Dr. Masoom Alam</MenuItem>
-            <MenuItem value="2678">Dr. Mubeen Ghafoor</MenuItem>
-            <MenuItem value="282">Dr. Muhammad Asim Noor</MenuItem>
-            <MenuItem value="263">Dr. Muhammad Imran</MenuItem>
-            <MenuItem value="281">Dr. Muhammad Manzoor ilahi Tamimy</MenuItem>
-            <MenuItem value="19074">Dr. Muhammad Waqar</MenuItem>
-            <MenuItem value="3356">Dr. Munam Ali Shah</MenuItem>
-            <MenuItem value="1211">Dr. Nadeem Javaid</MenuItem>
-            <MenuItem value="659">Dr. Saif ur Rehman Khan</MenuItem>
-            <MenuItem value="280">Dr. Saif Ur Rehman Malik</MenuItem>
-            <MenuItem value="10430">Dr. Sajjad A. Madani</MenuItem>
-            <MenuItem value="272">Dr. Shahid Hussain</MenuItem>
-            <MenuItem value="19178">Dr. Sheneela Naz</MenuItem>
-            <MenuItem value="240">Dr. Syed Sohaib Ali</MenuItem>
-            <MenuItem value="245">Dr. Tahir Mustafa Madni</MenuItem>
-            <MenuItem value="784">Dr. Tehseen Zia</MenuItem>
-            <MenuItem value="19205">Dr. Usman Yaseen</MenuItem>
-            <MenuItem value="273">Dr. Uzair Iqbal</MenuItem>
-            <MenuItem value="3656">Dr. Zobia Rehman</MenuItem>
-            <MenuItem value="4564">Prof. Dr. Sohail Asghar</MenuItem>
+            <MenuItem value={"internalEvaluation"}>
+              Internal Evaluation
+            </MenuItem>
+            <MenuItem value={"externalEvaluation"}>
+              External Evaluation
+            </MenuItem>
+            <MenuItem value={"passOut"}>Pass Out</MenuItem>
+            <MenuItem value={"dismissed"}>Dismissed</MenuItem>
+            <MenuItem value={"synopsisNotSubmittedForGac"}>
+              Synopsis Not Submitted for GAC
+            </MenuItem>
+            <MenuItem value={"unscheduled"}>Unscheduled</MenuItem>
+            <MenuItem value={"scheduled"}>Scheduled</MenuItem>
+            <MenuItem value={"conducted"}>Conducted</MenuItem>
+            <MenuItem value={"approvedByGac"}>Approved By GAC</MenuItem>
+            <MenuItem value={"minorChanges"}>Minor Changes</MenuItem>
+            <MenuItem value={"synopsisNotSubmittedForDeanOffice"}>
+              Synopsis Not Submitted for DEAN office
+            </MenuItem>
+            <MenuItem value={"synopsisSubmittedForDeanOffice"}>
+              Synopsis Submitted for DEAN office
+            </MenuItem>
+            <MenuItem value={"forwardedToDeanOffice "}>
+              Forwarded to DEAN Office
+            </MenuItem>
+            <MenuItem value={"changesSuggestedByDeanOffice"}>
+              Changes suggested by DEAN office
+            </MenuItem>
+            <MenuItem value={"Approved By DEAN"}>Approved By DEAN</MenuItem>
+            <MenuItem value={"thesisNotSubmittedForInternal"}>
+              Thesis Not Submitted for Internal
+            </MenuItem>
+            <MenuItem value={"thesisSubmittedForInternal"}>
+              Thesis Submitted for Internal
+            </MenuItem>
+            <MenuItem value={"acceptedByInternal"}>
+              Accepted by Internal
+            </MenuItem>
+            <MenuItem value={"thesisNotSubmittedForInternal"}>
+              Thesis not Submitted for Internal
+            </MenuItem>
+            <MenuItem value={"thesisSubmittedfForInternal"}>
+              Thesis Submitted for Internal
+            </MenuItem>
+            <MenuItem value={"deffered"}>Deffered</MenuItem>
+            <MenuItem value={"accepted"}>Accepted</MenuItem>
+            <MenuItem value={"majorChanges"}>Major Changes</MenuItem>
+            <MenuItem value={"rejected"}>Rejected</MenuItem>
           </Select>
         </FormControl>
       </Box>
 
-      {students.map((student) => {
+      {selectedSynopsis.map((synopsis) => {
         return (
-          <div>
+          <>
             <Box
               style={{
                 display: "flex",
@@ -94,8 +124,12 @@ export default function SuperivorReport() {
             >
               <div>
                 <img
-                  src={profile || student.student_id?.profilePicture}
-                  alt=""
+                  src={
+                    process.env.REACT_APP_URL +
+                      "/" +
+                      synopsis?.student_id?.profilePicture || profile
+                  }
+                  alt="Student Profile"
                   style={{
                     height: "80px",
                     width: "80px",
@@ -103,6 +137,11 @@ export default function SuperivorReport() {
                     marginBottom: "1rem",
                   }}
                 />
+                {console.log(
+                  process.env.REACT_APP_URL +
+                    "/" +
+                    synopsis?.student_id?.profilePicture
+                )}
                 <div
                   style={{
                     margin: "0",
@@ -120,7 +159,7 @@ export default function SuperivorReport() {
                   >
                     <h3 style={{ margin: "0 1rem 0 0" }}>Name:</h3>
                     <p style={{ margin: "0" }}>
-                      {student.student_id?.username}
+                      {synopsis?.student_id?.username}
                     </p>
                   </div>
                   <h3
@@ -133,7 +172,7 @@ export default function SuperivorReport() {
                     Registration Number:
                   </h3>
                   <p style={{ marginTop: "0", marginBottom: "0" }}>
-                    {student.student_id?.registrationNo}
+                    {synopsis?.student_id?.registrationNo}
                   </p>
                 </div>
                 <div
@@ -153,7 +192,7 @@ export default function SuperivorReport() {
                   >
                     <h3 style={{ margin: "0 1rem 0 0" }}>Father Name:</h3>
                     <p style={{ margin: "0" }}>
-                      {student.student_id?.fatherName}
+                      {synopsis?.student_id?.fatherName}
                     </p>
                   </div>
                   <h3
@@ -166,20 +205,10 @@ export default function SuperivorReport() {
                     Supervisor:
                   </h3>
                   <p style={{ marginTop: "0", marginBottom: "0" }}>
-                    {student.supervisor_id?.fullName}
+                    {synopsis?.supervisor_id?.fullName}
                   </p>
                 </div>
               </div>
-
-              {/*  <img
-                src={student.student_id?.profilePic}
-                alt=""
-                style={{
-                  objectFit: "contain",
-                  height: "6rem",
-                  borderRadius: "50%",
-                }}
-              /> */}
             </Box>
             <table
               cellSpacing={0}
@@ -205,51 +234,6 @@ export default function SuperivorReport() {
                   ></td>
                 </tr>
 
-                {/* <tr
-                  style={{
-                    color: "#333333",
-                    backgroundColor: "#F7F6F3",
-                  }}
-                >
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Registration No
-                  </td>
-                  <td>{student.student_id?.registrationNo}</td>
-                </tr>
-                <tr style={{ backgroundColor: "White" }}>
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Name
-                  </td>
-                  <td>{student.student_id?.username}</td>
-                </tr> */}
-
-                {/* <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Father's Name
-                  </td>
-                  <td>{student.student_id?.fatherName}</td>
-                </tr> */}
                 <tr
                   style={{
                     backgroundColor: "white",
@@ -265,7 +249,7 @@ export default function SuperivorReport() {
                   >
                     Email
                   </td>
-                  <td>{student.student_id?.email}</td>
+                  <td>{synopsis?.student_id?.email}</td>
                 </tr>
                 <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
                   <td
@@ -278,7 +262,7 @@ export default function SuperivorReport() {
                   >
                     Mobile No.
                   </td>
-                  <td>{student.student_id?.mobile}</td>
+                  <td>{synopsis?.student_id?.mobile}</td>
                 </tr>
                 <tr
                   style={{
@@ -295,7 +279,7 @@ export default function SuperivorReport() {
                   >
                     Track
                   </td>
-                  <td>{student.student_id?.thesisTrack}</td>
+                  <td>{synopsis?.student_id?.thesisTrack}</td>
                 </tr>
 
                 <tr
@@ -314,7 +298,7 @@ export default function SuperivorReport() {
                   >
                     Thesis Title
                   </td>
-                  <td>{student.student_id?.synopsisTitle}</td>
+                  <td>{synopsis?.synopsisTitle}</td>
                 </tr>
                 <tr
                   style={{
@@ -331,21 +315,21 @@ export default function SuperivorReport() {
                   >
                     Registration Date
                   </td>
-                  <td>{student.student_id?.thesisRegistration}</td>
+                  <td>{synopsis?.student_id?.thesisRegistration}</td>
                 </tr>
-                <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    External
-                  </td>
-                  <td>{/* {selectedSchedule?.student_id?.synopsisTitle} */}</td>
-                </tr>
+                {/* <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
+              <td
+                valign="top"
+                style={{
+                  backgroundColor: "#E9ECF1",
+                  fontWeight: "bold",
+                  width: "20%",
+                }}
+              >
+                External
+              </td>
+              <td> {selectedSchedule?.student_id?.synopsisTitle} </td>
+            </tr> */}
                 <tr
                   style={{
                     backgroundColor: "white",
@@ -362,27 +346,8 @@ export default function SuperivorReport() {
                     Thesis Status
                   </td>
 
-                  <td>{student.thesisStatus}</td>
+                  <td>{synopsis?.thesisStatus}</td>
                 </tr>
-
-                {/* <tr
-                  style={{
-                    color: "#333333",
-                    backgroundColor: "#F7F6F3",
-                  }}
-                >
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Supervisor
-                  </td>
-                  <td>{student.supervisor_id?.fullName}</td>
-                </tr> */}
               </tbody>
             </table>
             <div
@@ -394,7 +359,7 @@ export default function SuperivorReport() {
                 borderTop: "8px dotted #572E74",
               }}
             />
-          </div>
+          </>
         );
       })}
     </>

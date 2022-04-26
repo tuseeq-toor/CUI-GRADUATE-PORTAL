@@ -24,7 +24,14 @@ const generateReport = async (data) => {
     return error.response;
   }
 };
+const downlaodReport = async (registrationNo) => {
+  console.log("registraitionNO", registrationNo);
+  window.open(
+    `${process.env.REACT_APP_URL}/pdfReports/generate-report/${registrationNo}`
+  );
+};
 const pdfReportsService = {
   generateReport,
+  downlaodReport,
 };
 export default pdfReportsService;

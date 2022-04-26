@@ -54,7 +54,7 @@ export default function SignUp() {
         fatherName: data.get("Father'sName"),
         mobile: data.get("Mobile"),
         email: email,
-        program: data.get("Program"),
+        program_id: data.get("Program"),
         userRole: "STUDENT",
         password: "dummy",
       })
@@ -128,8 +128,8 @@ export default function SignUp() {
                     name="Program"
                     label="Program"
                   >
-                    {programs.map((program) => (
-                      <MenuItem value={program.programShortName}>
+                    {programs?.map((program) => (
+                      <MenuItem value={program._id}>
                         {program.programShortName}
                       </MenuItem>
                     ))}
