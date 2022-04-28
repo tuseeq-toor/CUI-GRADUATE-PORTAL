@@ -5,7 +5,10 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { Button, Box } from "@mui/material";
 import sessionsService from "../../API/sessions";
+import BackdropModal from "../UI/BackdropModal";
 export default function AddSession() {
+  const [showAddModal, setShowAddModal] = useState(false);
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState(false);
@@ -68,6 +71,13 @@ export default function AddSession() {
       <Button type="submit" variant="contained" size="large" color="secondary">
         Add Session
       </Button>
+      <BackdropModal
+        showModal={showAddModal}
+        setShowModal={setShowAddModal}
+        title={"Add!"}
+      >
+        The Program has been Added.
+      </BackdropModal>
     </Box>
   );
 }

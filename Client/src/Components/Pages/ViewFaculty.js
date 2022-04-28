@@ -15,6 +15,7 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import { TextField } from "@mui/material";
+import BackdropModal from "../UI/BackdropModal";
 const style = {
   position: "absolute",
   top: "50%",
@@ -29,9 +30,11 @@ const style = {
 };
 
 export default function ViewFaculty() {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [gettoken, settoken] = useState("");
   const [facultylist, setfacultylist] = useState([]);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const [firstName, setfirstName] = useState("");
   const [lastName, setlastName] = useState("");
   const [father_HusbandName, setfatherhusband] = useState("");
@@ -201,7 +204,10 @@ export default function ViewFaculty() {
         console.log(response.data.msg);
 
         getData();
-        alert("Faculty Updated");
+        if (response.status === 200) {
+          setShowUpdateModal(true);
+        }
+        // alert("Faculty Updated");
       })
       .catch((err) => console.log(err));
   };
@@ -236,7 +242,10 @@ export default function ViewFaculty() {
                   console.log(response.data.msg);
 
                   getData();
-                  alert("Faculty deleted");
+                  if (response.status === 200) {
+                    setShowDeleteModal(true);
+                  }
+                  // alert("Faculty deleted");
                 })
                 .catch((err) => console.log(err));
             }}
@@ -468,6 +477,20 @@ export default function ViewFaculty() {
       <div style={{ height: 400, width: "100%", backgroundColor: "white" }}>
         <DataTable header={facultyHeader} data={facultylist} />
       </div>
+      <BackdropModal
+        showModal={showDeleteModal}
+        setShowModal={setShowDeleteModal}
+        title={"Delete!"}
+      >
+        Faculty has been Deleted.
+      </BackdropModal>
+      <BackdropModal
+        showModal={showUpdateModal}
+        setShowModal={setShowUpdateModal}
+        title={"Update!"}
+      >
+        Faculty has been Updated.
+      </BackdropModal>
     </div>
   );
 }

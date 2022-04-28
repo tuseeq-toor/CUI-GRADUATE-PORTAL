@@ -9,8 +9,10 @@ import Button from "@mui/material/Button";
 import studentService from "../../API/students";
 import sessionsService from "../../API/sessions";
 import progressReportService from "../../API/progressReports";
+import BackdropModal from "../UI/BackdropModal";
 
 export default function AddProgressReport() {
+  const [showAddModal, setShowAddModal] = useState(false);
   const [students, setStudents] = useState([]);
   const [sessions, setSessions] = useState([]);
   const [data, setData] = useState({});
@@ -28,7 +30,11 @@ export default function AddProgressReport() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const res = await progressReportService.addProgressReport(data);
+
     console.log(res);
+    if (res.status === 200) {
+      setShowAddModal(true);
+    }
   };
 
   const handleChange = (event) => {
@@ -109,6 +115,13 @@ export default function AddProgressReport() {
       <Button type="submit" variant="contained" color="secondary" size="large">
         Add Progress Report
       </Button>
+      <BackdropModal
+        showModal={showAddModal}
+        setShowModal={setShowAddModal}
+        title={"Add!"}
+      >
+        Progress report has been Added.
+      </BackdropModal>
     </Box>
   );
 }

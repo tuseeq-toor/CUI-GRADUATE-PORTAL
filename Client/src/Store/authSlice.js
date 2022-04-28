@@ -26,7 +26,7 @@ export const Signup = createAsyncThunk(
     console.log(data);
     try {
       var res = await authService.signup(data);
-      console.log("thunk" + res);
+      console.log("thunk/signup" + res);
       return res;
     } catch (error) {
       console.log(error);
@@ -51,8 +51,8 @@ export const addFaculty = createAsyncThunk(
 );
 
 const initialState = user
-  ? { isLoggedIn: true, user, status: "" }
-  : { isLoggedIn: false, user: null, status: "" };
+  ? { isLoggedIn: true, user, status: "", success: true }
+  : { isLoggedIn: false, user: null, status: "", success: false };
 
 const authSlice = createSlice({
   name: "auth",
@@ -70,6 +70,7 @@ const authSlice = createSlice({
     },
     [Signup.fulfilled]: (state, action) => {
       state.status = action.payload.status;
+      state.success = action.payload.success;
     },
     [Signup.rejected]: (state) => {},
     [addFaculty.fulfilled]: (state, action) => {},

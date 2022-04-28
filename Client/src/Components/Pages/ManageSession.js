@@ -14,6 +14,7 @@ import { TextField } from "@mui/material";
 import DataTable from "../UI/TableUI";
 import axios from "axios";
 import { Button } from "@mui/material";
+import BackdropModal from "../UI/BackdropModal";
 const style = {
   position: "absolute",
   top: "40%",
@@ -27,6 +28,8 @@ const style = {
 };
 
 export default function ManageSession() {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [sessionlist, setsessionlist] = useState([]);
   const [gettoken, settoken] = useState("");
   const [selectedobj, setselectedobj] = useState({});
@@ -113,7 +116,10 @@ export default function ManageSession() {
         console.log(response.data.msg);
 
         getData();
-        alert("Session Updated");
+        if (response.status === 200) {
+          setShowUpdateModal(true);
+        }
+        // alert("Session Updated");
       })
       .catch((err) => console.log(err));
   };
@@ -175,7 +181,10 @@ export default function ManageSession() {
                   console.log(response.data.msg);
 
                   getData();
-                  alert("session deleted");
+                  if (response.status === 200) {
+                    setShowDeleteModal(true);
+                  }
+                  // alert("session deleted");
                 })
                 .catch((err) => console.log(err));
             }}
@@ -301,6 +310,20 @@ export default function ManageSession() {
       <div style={{ height: 400, width: "100%", backgroundColor: "white" }}>
         <DataTable header={sessionHeader} data={sessionlist} />
       </div>
+      <BackdropModal
+        showModal={showDeleteModal}
+        setShowModal={setShowDeleteModal}
+        title={"Delete!"}
+      >
+        The Session has been Deleted.
+      </BackdropModal>
+      <BackdropModal
+        showModal={showUpdateModal}
+        setShowModal={setShowUpdateModal}
+        title={"Update!"}
+      >
+        The Session has been Updated.
+      </BackdropModal>
     </div>
   );
 }

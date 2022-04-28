@@ -9,16 +9,19 @@ import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
 import { FormLabel, Radio, RadioGroup } from "@mui/material";
 import { useFormik } from "formik";
-import { Signup } from "../../Store/authSlice";
+import authSlice, { Signup } from "../../Store/authSlice";
 
 import * as yup from "yup";
 import programsService from "../../API/programs";
 import sessionsService from "../../API/sessions";
 import studentService from "../../API/students";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import BackdropModal from "../UI/BackdropModal";
 
 export default function AddStudent() {
+  const { success } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const [studentType, setStudentType] = useState("MS");
   const [sessions, setSessions] = useState([]);
@@ -54,6 +57,7 @@ export default function AddStudent() {
     // validationSchema: validationSchema,
     onSubmit: (values) => {
       dispatch(Signup(values));
+      setShowAddModal(true);
     },
   });
 
@@ -308,6 +312,13 @@ export default function AddStudent() {
       <Button type="submit" variant="contained" size="large" color="secondary">
         Add Student
       </Button>
+      <BackdropModal
+        showModal={showAddModal}
+        setShowModal={setShowAddModal}
+        title={"Add!"}
+      >
+        Student has been Added.
+      </BackdropModal>
     </Box>
   );
 }

@@ -11,8 +11,10 @@ import {
   Select,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
+import BackdropModal from "../UI/BackdropModal";
 
 export default function AddManageSupervisoryCommittee() {
+  const [showAddModal, setShowAddModal] = useState(false);
   const [supervisorsList, setSupervisorsList] = useState([]);
   const [selectedSupervisor, setSelectedSupervisor] = useState({});
   const [supervisors, setSupervisors] = useState([]);
@@ -69,6 +71,10 @@ export default function AddManageSupervisoryCommittee() {
 
   const submitHandler = () => {
     alert("Selected Supervisors" + supervisorsList);
+    // if (res.status === 200) {
+    //   setShowAddModal(true);
+    // }
+    setShowAddModal(true);
   };
 
   const updateList = () => {
@@ -147,6 +153,13 @@ export default function AddManageSupervisoryCommittee() {
           Submit Supervisory Committee
         </Button>
       </Box>
+      <BackdropModal
+        showModal={showAddModal}
+        setShowModal={setShowAddModal}
+        title={"Add!"}
+      >
+        Supervisory Committee has been Added.
+      </BackdropModal>
     </>
   );
 }

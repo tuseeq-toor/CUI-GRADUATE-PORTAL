@@ -23,6 +23,7 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import { TextField } from "@mui/material";
+import BackdropModal from "../UI/BackdropModal";
 
 const style = {
   position: "absolute",
@@ -41,6 +42,9 @@ const style = {
 };
 
 export default function ManagePrograms() {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
 
@@ -143,11 +147,14 @@ export default function ManagePrograms() {
                     },
                   }
                 )
-                .then((response) => {
-                  console.log(response.data.msg);
+                .then((res) => {
+                  console.log(res.data.msg);
 
                   getData();
-                  alert("Program deleted");
+                  if (res.status === 200) {
+                    setShowDeleteModal(true);
+                  }
+                  // alert("Program deleted");
                 })
                 .catch((err) => console.log(err));
             }}
@@ -243,9 +250,11 @@ export default function ManagePrograms() {
       )
       .then((response) => {
         console.log(response.data.msg);
-
         getData();
-        alert("Program Updated");
+        if (response.status === 200) {
+          setShowUpdateModal(true);
+        }
+        // alert("Program Updated");
       })
       .catch((err) => console.log(err));
   };
@@ -391,6 +400,20 @@ export default function ManagePrograms() {
       <div style={{ height: 400, width: "100%", backgroundColor: "white" }}>
         <DataTable header={programHeader} data={getprograms} />
       </div>
+      <BackdropModal
+        showModal={showDeleteModal}
+        setShowModal={setShowDeleteModal}
+        title={"Delete!"}
+      >
+        The Program has been Deleted.
+      </BackdropModal>
+      <BackdropModal
+        showModal={showUpdateModal}
+        setShowModal={setShowUpdateModal}
+        title={"Update!"}
+      >
+        The Program has been Updated.
+      </BackdropModal>
     </div>
   );
 }

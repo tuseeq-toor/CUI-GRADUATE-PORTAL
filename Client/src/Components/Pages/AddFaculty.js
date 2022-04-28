@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -7,17 +7,19 @@ import { Field, useFormik } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { addFaculty } from "../../Store/authSlice";
+import BackdropModal from "../UI/BackdropModal";
 
 export default function AddStudent() {
   const dispatch = useDispatch();
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
-  const [admin, setAdmin] = React.useState(false);
-  const [gac, setGac] = React.useState(false);
-  const [go, setGo] = React.useState(false);
-  const [ms, setMs] = React.useState(false);
-  const [phd, setPhd] = React.useState(false);
-  const [supervisor, setSupervisor] = React.useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [admin, setAdmin] = useState(false);
+  const [gac, setGac] = useState(false);
+  const [go, setGo] = useState(false);
+  const [ms, setMs] = useState(false);
+  const [phd, setPhd] = useState(false);
+  const [supervisor, setSupervisor] = useState(false);
   const validationSchema = yup.object({
     firstName: yup.string(),
     lastName: yup.string(),
@@ -80,7 +82,9 @@ export default function AddStudent() {
         // .unwrap()
         .then((res) => {
           console.log(res);
-
+          if (res.status === 200) {
+            setShowAddModal(true);
+          }
           /* navigate("/"); */
         })
         .catch((err) => {
@@ -288,6 +292,13 @@ export default function AddStudent() {
           Add Faculty
         </Button>
       </Box>
+      <BackdropModal
+        showModal={showAddModal}
+        setShowModal={setShowAddModal}
+        title={"Add!"}
+      >
+        Faculty has been Added.
+      </BackdropModal>
     </>
   );
 }

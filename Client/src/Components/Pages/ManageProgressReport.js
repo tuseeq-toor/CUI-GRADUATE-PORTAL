@@ -15,8 +15,11 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { TextField } from "@mui/material";
 import progressReportService from "../../API/progressReports";
+import BackdropModal from "../UI/BackdropModal";
 
 export default function ManageProgressReport() {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [open, setOpen] = useState(false);
   const [reports, setReports] = useState([]);
   const handleOpen = () => setOpen(true);
@@ -53,7 +56,12 @@ export default function ManageProgressReport() {
       renderCell: (props) => (
         <>
           <Button
-            onClick={() => {}}
+            onClick={() => {
+              // if (response.status === 200) {
+              //   setShowDeleteModal(true);
+              // }
+              setShowDeleteModal(true);
+            }}
             variant="contained"
             color="secondary"
             size="small"
@@ -160,6 +168,10 @@ export default function ManageProgressReport() {
               size="large"
               onClick={(event) => {
                 updateProgram();
+                // if (response.status === 200) {
+                //   setShowDeleteModal(true);
+                // }
+                setShowUpdateModal(true);
               }}
             >
               Update Progress Report
@@ -170,6 +182,20 @@ export default function ManageProgressReport() {
       <div style={{ height: 400, width: "100%", backgroundColor: "white" }}>
         <DataTable header={progressHeader} data={reports} />
       </div>
+      <BackdropModal
+        showModal={showDeleteModal}
+        setShowModal={setShowDeleteModal}
+        title={"Delete!"}
+      >
+        The Report has been Deleted.
+      </BackdropModal>
+      <BackdropModal
+        showModal={showUpdateModal}
+        setShowModal={setShowUpdateModal}
+        title={"Update!"}
+      >
+        The Report has been Updated.
+      </BackdropModal>
     </>
   );
 }

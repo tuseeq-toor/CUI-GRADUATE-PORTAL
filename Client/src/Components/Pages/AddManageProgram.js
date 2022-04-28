@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { Box } from "@mui/system";
@@ -7,7 +7,11 @@ import { Field, useFormik } from "formik";
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import programsService from "../../API/programs";
 
+import BackdropModal from "../UI/BackdropModal";
+
 export default function AddManageProgram() {
+  const [showAddModal, setShowAddModal] = useState(false);
+
   const validationSchema = yup.object({
     programShortName: yup.string(),
     programLongName: yup.string(),
@@ -34,7 +38,11 @@ export default function AddManageProgram() {
     // validationSchema: validationSchema,
     onSubmit: async (values) => {
       const res = await programsService.addPrograms(values);
-      alert("Added");
+      // console.log(res.status);
+      if (res.status === 200) {
+        setShowAddModal(true);
+      }
+      // alert("Added");
     },
   });
 
@@ -133,6 +141,13 @@ export default function AddManageProgram() {
           Add Program
         </Button>
       </Box>
+      <BackdropModal
+        showModal={showAddModal}
+        setShowModal={setShowAddModal}
+        title={"Add!"}
+      >
+        The Program has been Added.
+      </BackdropModal>
     </>
   );
 }
