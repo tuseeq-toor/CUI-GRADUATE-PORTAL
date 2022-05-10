@@ -24,19 +24,20 @@ export default function ManageProgressReport() {
   const [reports, setReports] = useState([]);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  async function fetchData() {
+    const res = await progressReportService.getReports();
+    const data = res.map((res) => ({
+      Student: res.student_id?.username,
+      Session: res.session_id?.title,
+      Status: res?.status,
+      Comment: res?.comment,
+      id: res?._id,
+    }));
+    setReports(data);
+    console.log("Progress Report data", data);
+  }
   useEffect(() => {
-    async function fetchData() {
-      const res = await progressReportService.getReports();
-      const data = res.map((res) => ({
-        Student: res.student_id.username,
-        Session: res.session_id.title,
-        Status: res.status,
-        Comment: res.comment,
-        id: res._id,
-      }));
-      setReports(data);
-      console.log("Progress Report data", data);
-    }
     fetchData();
   }, []);
 
@@ -57,10 +58,27 @@ export default function ManageProgressReport() {
         <>
           <Button
             onClick={() => {
-              // if (response.status === 200) {
-              //   setShowDeleteModal(true);
-              // }
-              setShowDeleteModal(true);
+              axios
+                .delete(
+                  `${process.env.REACT_APP_URL}/programs/deleteprogram/` +
+                    props.row.id,
+                  {
+                    headers: {
+                      // Authorization: `Bearer ${getToken}`,
+                    },
+                  }
+                )
+                .then((res) => {
+                  console.log(res.data.msg);
+
+                  fetchData();
+
+                  if (res.status === 200) {
+                    setShowDeleteModal(true);
+                  }
+                  // alert("Program deleted");
+                })
+                .catch((err) => console.log(err));
             }}
             variant="contained"
             color="secondary"

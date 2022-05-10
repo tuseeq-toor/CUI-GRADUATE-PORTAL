@@ -21,16 +21,17 @@ export default function AddStudent() {
   const [phd, setPhd] = useState(false);
   const [supervisor, setSupervisor] = useState(false);
   const validationSchema = yup.object({
-    firstName: yup.string(),
-    lastName: yup.string(),
-    fullName: yup.string(),
-    fatherName: yup.string(),
-    nationality: yup.string(),
-    city: yup.string(),
-    email: yup.string(),
-    designation: yup.string(),
-    department: yup.string(),
-    campus: yup.string(),
+    firstName: yup.string().required(),
+    lastName: yup.string().required(),
+    fullName: yup.string().required(),
+    fatherName: yup.string().required(),
+    nationality: yup.string().required(),
+    city: yup.string().required(),
+    email: yup.string().required(),
+    designation: yup.string().required(),
+    department: yup.string().required(),
+    campus: yup.string().required(),
+    userRole: yup.array().required(),
   });
   const userRole = [
     {
@@ -78,18 +79,19 @@ export default function AddStudent() {
       values.fullName = `${values.firstName} ${values.lastName}`;
       values.userRole = userRole;
       console.log(values);
-      dispatch(addFaculty(values))
-        // .unwrap()
-        .then((res) => {
+      dispatch(addFaculty(values));
+      setShowAddModal(true);
+      // .unwrap()
+      /* .then((res) => {
           console.log(res);
           if (res.status === 200) {
             setShowAddModal(true);
           }
-          /* navigate("/"); */
+          // navigate("/");
         })
         .catch((err) => {
           console.log(err);
-        });
+        }); */
     },
   });
 

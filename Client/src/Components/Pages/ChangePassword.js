@@ -28,6 +28,7 @@ export default function ChangePassword() {
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
         label="Old Password"
+        name="oldPassword"
         color="secondary"
         variant="outlined"
       />
@@ -36,6 +37,7 @@ export default function ChangePassword() {
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
         label="New Password"
+        name="newPassword"
         color="secondary"
         variant="outlined"
       />
@@ -46,8 +48,8 @@ export default function ChangePassword() {
         label="Confirm Password"
         color="secondary"
         variant="outlined"
+        name="confirmPassword"
       />
-
       <Button type="submit" variant="contained" size="large" color="secondary">
         Update Password
       </Button>

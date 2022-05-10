@@ -6,30 +6,43 @@ import Checkbox from "@mui/material/Checkbox";
 import { Button, Box } from "@mui/material";
 import sessionsService from "../../API/sessions";
 import BackdropModal from "../UI/BackdropModal";
+import * as yup from "yup";
+import { useFormik } from "formik";
 export default function AddSession() {
   const [showAddModal, setShowAddModal] = useState(false);
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [status, setStatus] = useState(false);
+  const validationSchema = yup.object({
+    title: yup.string().required(),
+    description: yup.string().required(),
+    status: yup.boolean().required(),
+  });
 
-  const handleStatus = (event) => {
-    setStatus(event.target.checked);
-  };
+  const formik = useFormik({
+    initialValues: {
+      title: "",
+      description: "",
+      status: false,
+    },
+    enableReinitialize: true,
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      const res = await sessionsService.addSession(values);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+      if (res.status === 200) {
+        setShowAddModal(true);
+      }
 
-    const res = await sessionsService.addSession({
-      title,
-      description,
-      status,
-    });
-    console.log("response", res);
-  };
+      console.log("response", res);
+    },
+  });
 
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+    <Box
+      component="form"
+      onSubmit={formik.handleSubmit}
+      noValidate
+      sx={{ mt: 1 }}
+    >
       <TextField
         id="title"
         sx={{ width: "100%", marginBottom: "15px" }}
@@ -37,11 +50,9 @@ export default function AddSession() {
         name="title"
         color="secondary"
         variant="outlined"
-        value={title}
-        onChange={(e) => {
-          setTitle(e.target.value);
-          console.log(title);
-        }}
+        onChange={formik.handleChange}
+        error={formik.touched.title && Boolean(formik.errors.title)}
+        helperText={formik.touched.title && formik.errors.title}
       />
 
       <TextField
@@ -51,20 +62,18 @@ export default function AddSession() {
         name="description"
         color="secondary"
         variant="outlined"
-        value={description}
-        onChange={(e) => {
-          setDescription(e.target.value);
-          console.log(description);
-        }}
+        onChange={formik.handleChange}
+        error={formik.touched.description && Boolean(formik.errors.description)}
+        helperText={formik.touched.description && formik.errors.description}
       />
 
       <FormGroup sx={{ marginBottom: "15px" }}>
         <FormControlLabel
           name="status"
-          checked={status}
+          checked={formik.values.status}
           control={<Checkbox color="secondary" />}
           label="Status"
-          onChange={handleStatus}
+          onChange={formik.handleChange}
         />
       </FormGroup>
 
@@ -76,7 +85,7 @@ export default function AddSession() {
         setShowModal={setShowAddModal}
         title={"Add!"}
       >
-        The Program has been Added.
+        The Session has been Added.
       </BackdropModal>
     </Box>
   );

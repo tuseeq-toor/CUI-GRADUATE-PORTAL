@@ -281,25 +281,4 @@ router.get("/session/:stud_id", (req, res) => {
     });
 });
 
-//change password
-router.post("/change-password", auth.checkStudent, (req, res) => {
-  req.user
-    .changePassword(req.body.oldPassword, req.body.newPassword)
-    .then((user) => {
-      Student.findOne({ _id: user.student_id })
-        .then((student) => {
-          res.setHeader("Content-Type", "application/json");
-          res.status(200).json({ success: true, message: "Password Updated" });
-        })
-        .catch((err) => {
-          res.setHeader("Content-Type", "application/json");
-          res.status(500).json({ success: false, message: err.message });
-        });
-    })
-    .catch((err) => {
-      res.setHeader("Content-Type", "application/json");
-      res.status(500).json({ success: false, message: err.message });
-    });
-});
-
 module.exports = router;

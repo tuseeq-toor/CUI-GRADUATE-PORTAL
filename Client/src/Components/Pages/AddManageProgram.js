@@ -3,7 +3,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { Box } from "@mui/system";
 import * as yup from "yup";
-import { Field, useFormik } from "formik";
+import { useFormik } from "formik";
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import programsService from "../../API/programs";
 
@@ -13,14 +13,14 @@ export default function AddManageProgram() {
   const [showAddModal, setShowAddModal] = useState(false);
 
   const validationSchema = yup.object({
-    programShortName: yup.string(),
-    programLongName: yup.string(),
-    description: yup.string(),
-    minSemesters: yup.number(),
-    maxSemesters: yup.number(),
-    credits: yup.number(),
-    duration: yup.string(),
-    enable: yup.boolean(),
+    programShortName: yup.string().required(),
+    programLongName: yup.string().required(),
+    description: yup.string().required(),
+    minSemesters: yup.number().required(),
+    maxSemesters: yup.number().required(),
+    credits: yup.number().required(),
+    duration: yup.string().required(),
+    enable: yup.boolean().required(),
   });
 
   const formik = useFormik({
@@ -35,7 +35,7 @@ export default function AddManageProgram() {
       enable: false,
     },
     enableReinitialize: true,
-    // validationSchema: validationSchema,
+    validationSchema: validationSchema,
     onSubmit: async (values) => {
       const res = await programsService.addPrograms(values);
       // console.log(res.status);
@@ -62,6 +62,13 @@ export default function AddManageProgram() {
           name="programShortName"
           variant="outlined"
           onChange={formik.handleChange}
+          error={
+            formik.touched.programShortName &&
+            Boolean(formik.errors.programShortName)
+          }
+          helperText={
+            formik.touched.programShortName && formik.errors.programShortName
+          }
         />
 
         <TextField
@@ -72,6 +79,13 @@ export default function AddManageProgram() {
           variant="outlined"
           name="programLongName"
           onChange={formik.handleChange}
+          error={
+            formik.touched.programLongName &&
+            Boolean(formik.errors.programLongName)
+          }
+          helperText={
+            formik.touched.programLongName && formik.errors.programLongName
+          }
         />
         <TextField
           id="standard-basic"
@@ -81,6 +95,10 @@ export default function AddManageProgram() {
           variant="outlined"
           name="description"
           onChange={formik.handleChange}
+          error={
+            formik.touched.description && Boolean(formik.errors.description)
+          }
+          helperText={formik.touched.description && formik.errors.description}
         />
 
         <TextField
@@ -91,6 +109,10 @@ export default function AddManageProgram() {
           variant="outlined"
           name="minSemesters"
           onChange={formik.handleChange}
+          error={
+            formik.touched.minSemesters && Boolean(formik.errors.minSemesters)
+          }
+          helperText={formik.touched.minSemesters && formik.errors.minSemesters}
         />
 
         <TextField
@@ -101,6 +123,10 @@ export default function AddManageProgram() {
           variant="outlined"
           name="maxSemesters"
           onChange={formik.handleChange}
+          error={
+            formik.touched.maxSemesters && Boolean(formik.errors.maxSemesters)
+          }
+          helperText={formik.touched.maxSemesters && formik.errors.maxSemesters}
         />
 
         <TextField
@@ -111,6 +137,8 @@ export default function AddManageProgram() {
           variant="outlined"
           name="duration"
           onChange={formik.handleChange}
+          error={formik.touched.duration && Boolean(formik.errors.duration)}
+          helperText={formik.touched.duration && formik.errors.duration}
         />
 
         <TextField
@@ -121,6 +149,8 @@ export default function AddManageProgram() {
           variant="outlined"
           name="credits"
           onChange={formik.handleChange}
+          error={formik.touched.credits && Boolean(formik.errors.credits)}
+          helperText={formik.touched.credits && formik.errors.credits}
         />
 
         <FormGroup sx={{ marginBottom: "15px" }}>

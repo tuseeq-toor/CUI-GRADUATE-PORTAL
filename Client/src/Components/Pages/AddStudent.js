@@ -29,33 +29,41 @@ export default function AddStudent() {
   const [supervisors, setSupervisors] = useState([]);
 
   const validationSchema = yup.object({
-    email: yup.string("Enter your email"),
-    /* .email("Enter a valid email")
-      .required("Email is required"), */
-    password: yup
-      .string("Enter your password")
-      .min(4, "Password should be of minimum 8 characters length")
-      .required("Password is required"),
+    registrationNo: yup.string().required(),
+    username: yup.string().required(),
+    fatherName: yup.string().required(),
+    email: yup.string().required(),
+    mobile: yup.number().required(),
+    supervisor_id: yup.string().required(),
+    coSupervisor_id: yup.string().required(),
+    program_id: yup.string().required(),
+    thesisRegistration: yup.string().required(),
+    totalPublications: yup.number().required(),
+    impactFactorPublications: yup.number().required(),
+    thesisTrack: yup.string().required(),
   });
 
   const formik = useFormik({
     initialValues: {
+      registrationNo: "",
       username: "",
       fatherName: "",
       password: "dummy",
+      email: "",
       mobile: "",
       supervisor_id: "",
       coSupervisor_id: "",
       userRole: "STUDENT",
       program_id: "",
       thesisRegistration: "",
+      thesisTrack: "",
       totalPublications: "",
       impactFactorPublications: "",
-      thesisTrack: "",
     },
     enableReinitialize: true,
-    // validationSchema: validationSchema,
+    validationSchema: validationSchema,
     onSubmit: (values) => {
+      console.log(values);
       dispatch(Signup(values));
       setShowAddModal(true);
     },
@@ -75,12 +83,7 @@ export default function AddStudent() {
   }, []);
 
   return (
-    <Box
-      component="form"
-      onSubmit={formik.handleSubmit}
-      noValidate
-      sx={{ mt: 1 }}
-    >
+    <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 1 }}>
       <FormControl sx={{ mb: 1 }}>
         <FormLabel color="secondary">Student</FormLabel>
         <RadioGroup
@@ -113,6 +116,12 @@ export default function AddStudent() {
         name="registrationNo"
         value={formik.values.registrationNo}
         onChange={formik.handleChange}
+        error={
+          formik.touched.registrationNo && Boolean(formik.errors.registrationNo)
+        }
+        helperText={
+          formik.touched.registrationNo && formik.errors.registrationNo
+        }
       />
       <TextField
         id="standard-basic"
@@ -123,6 +132,8 @@ export default function AddStudent() {
         name="username"
         value={formik.values.username}
         onChange={formik.handleChange}
+        error={formik.touched.username && Boolean(formik.errors.username)}
+        helperText={formik.touched.username && formik.errors.username}
       />
       <TextField
         id="standard-basic"
@@ -133,6 +144,8 @@ export default function AddStudent() {
         name="fatherName"
         value={formik.values.fatherName}
         onChange={formik.handleChange}
+        error={formik.touched.fatherName && Boolean(formik.errors.fatherName)}
+        helperText={formik.touched.fatherName && formik.errors.fatherName}
       />
       <TextField
         id="standard-basic"
@@ -143,6 +156,8 @@ export default function AddStudent() {
         name="email"
         value={formik.values.email}
         onChange={formik.handleChange}
+        error={formik.touched.email && Boolean(formik.errors.email)}
+        helperText={formik.touched.email && formik.errors.email}
       />
       <TextField
         id="standard-basic"
@@ -153,6 +168,8 @@ export default function AddStudent() {
         name="mobile"
         value={formik.values.mobile}
         onChange={formik.handleChange}
+        error={formik.touched.mobile && Boolean(formik.errors.mobile)}
+        helperText={formik.touched.mobile && formik.errors.mobile}
       />
       <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
         <FormControl fullWidth color="secondary">
@@ -164,6 +181,10 @@ export default function AddStudent() {
             name="program_id"
             value={formik.values.program_id}
             onChange={formik.handleChange}
+            error={
+              formik.touched.program_id && Boolean(formik.errors.program_id)
+            }
+            helperText={formik.touched.program_id && formik.errors.program_id}
           >
             {programs?.map((program) => (
               <MenuItem value={program._id}>
@@ -173,24 +194,7 @@ export default function AddStudent() {
           </Select>
         </FormControl>
       </Box>
-      {/* <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
-        <FormControl fullWidth color="secondary">
-          <InputLabel id="demo-simple-select-label">
-            Course Work Completion
-          </InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Course Work Completion"
-            value={formik.values.courseWorkCompletion}
-            onChange={formik.handleChange}
-          >
-            <MenuItem value="1">N/A</MenuItem>
-            <MenuItem value="15">SP11</MenuItem>
-            <MenuItem value="16">FA11</MenuItem>
-          </Select>
-        </FormControl>
-      </Box> */}
+
       <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
         <FormControl fullWidth color="secondary">
           <InputLabel id="demo-simple-select-label">Supervisor</InputLabel>
@@ -201,6 +205,13 @@ export default function AddStudent() {
             name="supervisor_id"
             value={formik.values.supervisor_id}
             onChange={formik.handleChange}
+            error={
+              formik.touched.supervisor_id &&
+              Boolean(formik.errors.supervisor_id)
+            }
+            helperText={
+              formik.touched.supervisor_id && formik.errors.supervisor_id
+            }
           >
             {supervisors?.map((supervisor) => (
               <MenuItem value={supervisor._id}>{supervisor.username}</MenuItem>
@@ -218,6 +229,13 @@ export default function AddStudent() {
             name="coSupervisor_id"
             value={formik.values.coSupervisor_id}
             onChange={formik.handleChange}
+            error={
+              formik.touched.coSupervisor_id &&
+              Boolean(formik.errors.coSupervisor_id)
+            }
+            helperText={
+              formik.touched.coSupervisor_id && formik.errors.coSupervisor_id
+            }
           >
             {supervisors?.map((supervisor) => (
               <MenuItem value={supervisor._id}>{supervisor.username}</MenuItem>
@@ -225,15 +243,6 @@ export default function AddStudent() {
           </Select>
         </FormControl>
       </Box>
-      {/*   <TextField
-        id="standard-basic"
-        sx={{ width: "100%", marginBottom: "15px" }}
-        label="Thesis Title"
-        color="secondary"
-        variant="outlined"
-        value={formik.values.supervisor_id}
-        onChange={formik.handleChange}
-      /> */}
       <TextField
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
@@ -243,7 +252,14 @@ export default function AddStudent() {
         name="thesisRegistration"
         value={formik.values.thesisRegistration}
         onChange={formik.handleChange}
-      />{" "}
+        error={
+          formik.touched.thesisRegistration &&
+          Boolean(formik.errors.thesisRegistration)
+        }
+        helperText={
+          formik.touched.thesisRegistration && formik.errors.thesisRegistration
+        }
+      />
       <TextField
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
@@ -253,6 +269,8 @@ export default function AddStudent() {
         name="thesisTrack"
         value={formik.values.thesisTrack}
         onChange={formik.handleChange}
+        error={formik.touched.thesisTrack && Boolean(formik.errors.thesisTrack)}
+        helperText={formik.touched.thesisTrack && formik.errors.thesisTrack}
       />
       {studentType === "PhD" && (
         <>
@@ -265,6 +283,14 @@ export default function AddStudent() {
             variant="outlined"
             value={formik.values.totalPublications}
             onChange={formik.handleChange}
+            error={
+              formik.touched.totalPublications &&
+              Boolean(formik.errors.totalPublications)
+            }
+            helperText={
+              formik.touched.totalPublications &&
+              formik.errors.totalPublications
+            }
           />
           <TextField
             id="standard-basic"
@@ -275,38 +301,15 @@ export default function AddStudent() {
             variant="outlined"
             value={formik.values.impactFactorPublications}
             onChange={formik.handleChange}
+            error={
+              formik.touched.impactFactorPublications &&
+              Boolean(formik.errors.impactFactorPublications)
+            }
+            helperText={
+              formik.touched.impactFactorPublications &&
+              formik.errors.impactFactorPublications
+            }
           />
-
-          {/*   <TextField
-            id="standard-basic"
-            sx={{ width: "100%", marginBottom: "15px" }}
-            label="Area of Specialization"
-            color="secondary"
-            variant="outlined"
-            value={formik.values.supervisor_id}
-            onChange={formik.handleChange}
-          /> */}
-          {/*   <TextField
-            id="standard-basic"
-            sx={{ width: "100%", marginBottom: "15px" }}
-            label="Comprehensive"
-            color="secondary"
-            variant="outlined"
-          /> */}
-          {/*    <TextField
-            id="standard-basic"
-            sx={{ width: "100%", marginBottom: "15px" }}
-            label="Foriegn Submission"
-            color="secondary"
-            variant="outlined"
-          /> */}
-          {/*    <TextField
-            id="standard-basic"
-            sx={{ width: "100%", marginBottom: "15px" }}
-            label="Other Issue"
-            color="secondary"
-            variant="outlined"
-          /> */}
         </>
       )}
       <Button type="submit" variant="contained" size="large" color="secondary">

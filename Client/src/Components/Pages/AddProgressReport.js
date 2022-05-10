@@ -10,12 +10,13 @@ import studentService from "../../API/students";
 import sessionsService from "../../API/sessions";
 import progressReportService from "../../API/progressReports";
 import BackdropModal from "../UI/BackdropModal";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 export default function AddProgressReport() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [students, setStudents] = useState([]);
   const [sessions, setSessions] = useState([]);
-  const [data, setData] = useState({});
 
   useEffect(() => {
     async function fetchData() {
@@ -27,50 +28,65 @@ export default function AddProgressReport() {
     }
     fetchData();
   }, []);
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const res = await progressReportService.addProgressReport(data);
 
-    console.log(res);
-    if (res.status === 200) {
+  const validationSchema = yup.object({
+    student_id: yup.string().required(),
+    session_id: yup.string().required(),
+    status: yup.string().required(),
+    comment: yup.string().required(),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      student_id: "",
+      session_id: "",
+      status: "",
+      comment: "",
+    },
+    enableReinitialize: true,
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      const res = await progressReportService.addProgressReport(values);
+
+      console.log(res);
+      if (res.status === 200) {
+        setShowAddModal(true);
+      }
+
       setShowAddModal(true);
-    }
-  };
+    },
+  });
 
-  const handleChange = (event) => {
-    setData({ ...data, [event.target.name]: event.target.value });
-    console.log("Data Progress Report", data);
-  };
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate>
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Student</InputLabel>
+    <Box component="form" onSubmit={formik.handleSubmit}>
+      <FormControl color="secondary" fullWidth>
+        <InputLabel>Student</InputLabel>
         <Select
           sx={{ marginBottom: "15px" }}
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={students.registrationNo}
           label="Student"
           name="student_id"
-          onChange={handleChange}
+          value={formik.values.student_id}
+          onChange={formik.handleChange}
+          error={formik.touched.student_id && Boolean(formik.errors.student_id)}
+          helperText={formik.touched.student_id && formik.errors.student_id}
         >
           {students.map((oneStudent) => (
-            <MenuItem selected="selected" value={oneStudent._id}>
+            <MenuItem value={oneStudent._id}>
               {oneStudent.registrationNo}
             </MenuItem>
           ))}
         </Select>
       </FormControl>
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Session</InputLabel>
+      <FormControl color="secondary" fullWidth>
+        <InputLabel>Session</InputLabel>
         <Select
           sx={{ marginBottom: "15px" }}
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={students.registrationNo}
           label="Session"
           name="session_id"
-          onChange={handleChange}
+          value={formik.values.session_id}
+          onChange={formik.handleChange}
+          error={formik.touched.session_id && Boolean(formik.errors.session_id)}
+          helperText={formik.touched.session_id && formik.errors.session_id}
         >
           {sessions.map((oneSession) => (
             <MenuItem selected="selected" value={oneSession._id}>
@@ -82,13 +98,14 @@ export default function AddProgressReport() {
 
       <Box>
         <FormControl color="secondary" fullWidth sx={{ marginBottom: "15px" }}>
-          <InputLabel id="demo-simple-select-label">Status</InputLabel>
+          <InputLabel>Status</InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
             label="Status"
             name="status"
-            onChange={handleChange}
+            value={formik.values.status}
+            onChange={formik.handleChange}
+            error={formik.touched.status && Boolean(formik.errors.status)}
+            helperText={formik.touched.status && formik.errors.status}
           >
             <MenuItem value="Satisfactory">Satisfactory</MenuItem>
             <MenuItem value="Unsatisfactory">Unsatisfactory</MenuItem>
@@ -104,12 +121,13 @@ export default function AddProgressReport() {
         color="secondary"
         fullWidth
         sx={{ marginBottom: "15px" }}
-        id="outlined-multiline-flexible"
         label="Comment"
         name="comment"
         rows={6}
-        maxRows={8}
-        onChange={handleChange}
+        value={formik.values.comment}
+        onChange={formik.handleChange}
+        error={formik.touched.comment && Boolean(formik.errors.comment)}
+        helperText={formik.touched.comment && formik.errors.comment}
       />
 
       <Button type="submit" variant="contained" color="secondary" size="large">

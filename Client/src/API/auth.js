@@ -44,10 +44,23 @@ const addFaculty = async (faculty) => {
     console.log(error);
   }
 };
+const changePassword = async (password) => {
+  console.log("api" + password);
+  try {
+    const res = await API.post("auth/change-password", password);
+    if (res) {
+      console.log("Api " + res);
+      return res.data;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const authService = {
   login,
   signup,
   addFaculty,
+  changePassword,
 };
 export default authService;
