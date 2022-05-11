@@ -509,46 +509,6 @@ export default function ManageStudent() {
                 />
               </Box>
             </Box>
-
-            {/* {formik.values.studentType === "PhD" && (
-              <>
-              <TextField
-                id="standard-basic"
-                sx={{ width: "100%", marginBottom: "5px" }}
-                label="Thesis Track"
-                color="secondary"
-                variant="standard"
-              />
-              <TextField
-                id="standard-basic"
-                sx={{ width: "100%", marginBottom: "5px" }}
-                label="Area of Specialization"
-                color="secondary"
-                variant="standard"
-              />
-              <TextField
-                id="standard-basic"
-                sx={{ width: "100%", marginBottom: "5px" }}
-                label="Comprehensive"
-                color="secondary"
-                variant="standard"
-              />
-              <TextField
-                id="standard-basic"
-                sx={{ width: "100%", marginBottom: "5px" }}
-                label="Foriegn Submission"
-                color="secondary"
-                variant="standard"
-              />
-              <TextField
-                id="standard-basic"
-                sx={{ width: "100%", marginBottom: "5px" }}
-                label="Other Issue"
-                color="secondary"
-                variant="standard"
-              />
-            </>
-            )} */}
           </Box>
           <Box>
             <Button

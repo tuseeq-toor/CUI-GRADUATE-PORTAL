@@ -52,8 +52,6 @@ export default function AddProgressReport() {
       if (res.status === 200) {
         setShowAddModal(true);
       }
-
-      setShowAddModal(true);
     },
   });
 

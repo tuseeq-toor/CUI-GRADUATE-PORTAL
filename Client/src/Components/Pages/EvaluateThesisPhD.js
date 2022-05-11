@@ -9,11 +9,18 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
 import synopsisService from "../../API/synopsis";
-import { Autocomplete } from "@mui/material";
+import {
+  Autocomplete,
+  FormLabel,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export default function EvaluateThesisPhD() {
+  const { currentRole } = useSelector((state) => state.userRoles);
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
 
@@ -391,68 +398,123 @@ export default function EvaluateThesisPhD() {
             <div className="row">
               <div className="col-md-12 p-4">
                 <table style={{ width: "100%" }} className="table table-sm">
-                  <tbody>
-                    <tr>
-                      <th colSpan={4}>
-                        <b>
-                          After in depth examination of the manuscript following
-                          are the recommendations of GAC member
-                        </b>
-                      </th>
-                    </tr>
-                    <FormControl>
-                      <RadioGroup
-                        aria-labelledby="demo-radio-buttons-group-label"
-                        defaultValue="female"
-                        name="radio-buttons-group"
+                  {currentRole === "GO" ? (
+                    <>
+                      <Box
+                        sx={{
+                          minWidth: 120,
+                          marginTop: "1rem",
+                        }}
                       >
-                        <tr>
-                          <td>1</td>
-                          <td>
-                            The candidate is recommended to do <b>minor</b>{" "}
-                            changings.
-                          </td>
-                          <td>
-                            A Candidate has to submit a manuscript within 1
-                            week.
-                          </td>
-                          <td>
-                            <FormControlLabel
-                              value="Minor Changings."
-                              control={<Radio color="secondary" />}
-                              label=""
-                              name="evaluationStatus"
-                              onChange={handleChange}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>2</td>
-                          <td>
-                            The candidate is recommended to do <b>major</b>{" "}
-                            changings.
-                          </td>
-                          <td>Candidate has to re-appear in next semester. </td>
-                          <td>
-                            <FormControlLabel
-                              value="Major Changings."
-                              control={<Radio color="secondary" />}
-                              label=""
-                              name="evaluationStatus"
-                              onChange={handleChange}
-                            />
-                          </td>
-                        </tr>
-                      </RadioGroup>
-                    </FormControl>
-                  </tbody>
+                        <>
+                          <FormControl
+                            sx={{ mt: 4 }}
+                            fullWidth
+                            color="secondary"
+                          >
+                            <InputLabel>Final Recommendation</InputLabel>
+                            <Select
+                              variant="outlined"
+                              //value={Program}
+                              label="Final Recommendation"
+                              //onChange={handleChange}
+                            >
+                              <MenuItem value="minor">Minor Changings</MenuItem>
+                              <MenuItem value="major">Major Changings</MenuItem>
+                              <MenuItem value="not">Not Allowed</MenuItem>
+                            </Select>
+                          </FormControl>
+                          <FormControl sx={{ mt: 4 }}>
+                            <FormLabel color="secondary">
+                              Presentation Required Again?
+                            </FormLabel>
+                            <RadioGroup
+                              row
+                              name="presentationRequired"
+                              /* value={studentType}
+                              onChange={(e) => setStudentType(e.target.value)} */
+                            >
+                              <FormControlLabel
+                                value="yes"
+                                control={<Radio color="secondary" />}
+                                label="Yes"
+                              />
+                              <FormControlLabel
+                                value="no"
+                                control={<Radio color="secondary" />}
+                                label="No"
+                              />
+                            </RadioGroup>
+                          </FormControl>
+                        </>
+                      </Box>
+                    </>
+                  ) : (
+                    <tbody>
+                      <tr>
+                        <th colSpan={4}>
+                          <b>
+                            After in depth examination of the manuscript
+                            following are the recommendations of GAC member
+                          </b>
+                        </th>
+                      </tr>
+                      <FormControl>
+                        <RadioGroup
+                          aria-labelledby="demo-radio-buttons-group-label"
+                          defaultValue="female"
+                          name="radio-buttons-group"
+                        >
+                          <tr>
+                            <td>1</td>
+                            <td>
+                              The candidate is recommended to do <b>minor</b>{" "}
+                              changings.
+                            </td>
+                            <td>
+                              A Candidate has to submit a manuscript within 1
+                              week.
+                            </td>
+                            <td>
+                              <FormControlLabel
+                                value="Minor Changings."
+                                control={<Radio color="secondary" />}
+                                label=""
+                                name="evaluationStatus"
+                                onChange={handleChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>2</td>
+                            <td>
+                              The candidate is recommended to do <b>major</b>{" "}
+                              changings.
+                            </td>
+                            <td>
+                              Candidate has to re-appear in next semester.{" "}
+                            </td>
+                            <td>
+                              <FormControlLabel
+                                value="Major Changings."
+                                control={<Radio color="secondary" />}
+                                label=""
+                                name="evaluationStatus"
+                                onChange={handleChange}
+                              />
+                            </td>
+                          </tr>
+                        </RadioGroup>
+                      </FormControl>
+                    </tbody>
+                  )}
                 </table>
                 <TextField
                   fullWidth
                   sx={{ my: 2 }}
                   multiline
                   rows={6}
-                  label="GAC Decision and Recommendations"
+                  label="Decision and Recommendations"
                   color="secondary"
                   name="comments"
                   variant="outlined"

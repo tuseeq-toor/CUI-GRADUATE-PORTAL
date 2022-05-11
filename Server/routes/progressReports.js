@@ -19,8 +19,8 @@ router.get("/", (req, res) => {
       res.status(500).json({ success: false, message: err.message });
     });
 });
-router.get("/delete/:id", (req, res) => {
-  ProgressReport.findOneAndDelete({ _id: id })
+router.delete("/delete/:id", (req, res) => {
+  ProgressReport.findOneAndDelete(req.params.id)
     .then((progressReports) => {
       res.setHeader("Content-Type", "application/json");
       res.status(200).json({ message: "Deleted Successfuly", progressReports });

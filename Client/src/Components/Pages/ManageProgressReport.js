@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { progressData, studentData } from "../DummyData/DummyData";
 import DataTable from "../UI/TableUI";
 import axios from "axios";
 
@@ -21,6 +20,7 @@ export default function ManageProgressReport() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [open, setOpen] = useState(false);
+  const [token, setToken] = useState("");
   const [reports, setReports] = useState([]);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -38,10 +38,20 @@ export default function ManageProgressReport() {
     console.log("Progress Report data", data);
   }
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    var { token } = user;
+    console.log(token);
+    setToken(token);
     fetchData();
   }, []);
 
   const progressHeader = [
+    {
+      field: "id",
+      headerName: "ID",
+      width: 80,
+    },
     {
       field: "Student",
       headerName: "Student",
@@ -60,11 +70,11 @@ export default function ManageProgressReport() {
             onClick={() => {
               axios
                 .delete(
-                  `${process.env.REACT_APP_URL}/programs/deleteprogram/` +
+                  `${process.env.REACT_APP_URL}/progress-report/delete/` +
                     props.row.id,
                   {
                     headers: {
-                      // Authorization: `Bearer ${getToken}`,
+                      Authorization: `Bearer ${token}`,
                     },
                   }
                 )
@@ -76,7 +86,6 @@ export default function ManageProgressReport() {
                   if (res.status === 200) {
                     setShowDeleteModal(true);
                   }
-                  // alert("Program deleted");
                 })
                 .catch((err) => console.log(err));
             }}
