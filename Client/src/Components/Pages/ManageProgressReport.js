@@ -15,13 +15,16 @@ import Box from "@mui/material/Box";
 import { TextField } from "@mui/material";
 import progressReportService from "../../API/progressReports";
 import BackdropModal from "../UI/BackdropModal";
+import { useFormik } from "formik";
 
 export default function ManageProgressReport() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [progressReportId, setProgressReportId] = useState("");
   const [open, setOpen] = useState(false);
   const [token, setToken] = useState("");
   const [reports, setReports] = useState([]);
+  const [reportData, setReportData] = useState([]);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -34,6 +37,14 @@ export default function ManageProgressReport() {
       Comment: res?.comment,
       id: res?._id,
     }));
+    setReportData({
+      ...reportData,
+      student_id: res?.student_id,
+      session_id: res?.session_id,
+      status: res?.status,
+      comment: res?.comment,
+      id: res?._id,
+    });
     setReports(data);
     console.log("Progress Report data", data);
   }
@@ -46,12 +57,27 @@ export default function ManageProgressReport() {
     fetchData();
   }, []);
 
-  const progressHeader = [
-    {
-      field: "id",
-      headerName: "ID",
-      width: 80,
+  const formik = useFormik({
+    initialValues: {
+      student_id: reportData.student_id,
+      session_id: reportData.session_id,
+      comment: reportData.comment,
+      status: reportData.status,
     },
+    /* validationSchema: validationSchema, */
+    onSubmit: async (values) => {
+      let res = await progressReportService.updateProfile(values);
+      if (res.status === 200) {
+        setShowUpdateModal(true);
+
+        console.log(res);
+      } else {
+      }
+      console.log(res);
+    },
+  });
+
+  const progressHeader = [
     {
       field: "Student",
       headerName: "Student",
@@ -81,13 +107,12 @@ export default function ManageProgressReport() {
                 .then((res) => {
                   console.log(res.data.msg);
 
-                  fetchData();
-
                   if (res.status === 200) {
                     setShowDeleteModal(true);
                   }
                 })
                 .catch((err) => console.log(err));
+              fetchData();
             }}
             variant="contained"
             color="secondary"
@@ -98,8 +123,9 @@ export default function ManageProgressReport() {
           </Button>
 
           <Button
-            onClick={(p) => {
+            onClick={() => {
               handleOpen();
+              setProgressReportId(props.row.id);
             }}
             variant="contained"
             color="secondary"
@@ -113,7 +139,6 @@ export default function ManageProgressReport() {
     },
   ];
 
-  const updateProgram = () => {};
   const style = {
     position: "absolute",
     display: "flex",
@@ -131,27 +156,26 @@ export default function ManageProgressReport() {
 
   return (
     <>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+      <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
           <TextField
-            id="standard-basic"
             color="secondary"
             label="Student"
+            name="student_id"
             variant="standard"
             sx={{ width: "100%", marginBottom: "15px" }}
+            value={formik.values.synopsisTitle}
+            onChange={formik.handleChange}
           />
 
           <TextField
-            id="standard-basic"
             color="secondary"
             label="Session"
+            name="session_id"
             variant="standard"
             sx={{ width: "100%", marginBottom: "15px" }}
+            value={formik.values.synopsisTitle}
+            onChange={formik.handleChange}
           />
 
           <TextField
@@ -159,10 +183,12 @@ export default function ManageProgressReport() {
             color="secondary"
             fullWidth
             sx={{ marginBottom: "15px" }}
-            id="outlined-multiline-flexible"
             label="Comment"
+            name="comment"
             multiline
             maxRows={8}
+            value={formik.values.synopsisTitle}
+            onChange={formik.handleChange}
           />
 
           <Box>
@@ -171,14 +197,13 @@ export default function ManageProgressReport() {
               fullWidth
               sx={{ marginBottom: "15px" }}
             >
-              <InputLabel id="demo-simple-select-label">Status</InputLabel>
+              <InputLabel>Status</InputLabel>
               <Select
                 variant="standard"
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                //v
                 label="Status"
-                //onChange={handleChange}
+                name="status"
+                value={formik.values.synopsisTitle}
+                onChange={formik.handleChange}
               >
                 <MenuItem value="Satisfactory">Satisfactory</MenuItem>
                 <MenuItem value="Unsatisfactory">Unsatisfactory</MenuItem>
@@ -193,12 +218,22 @@ export default function ManageProgressReport() {
               variant="contained"
               color="secondary"
               size="large"
-              onClick={(event) => {
-                updateProgram();
-                // if (response.status === 200) {
-                //   setShowDeleteModal(true);
-                // }
-                setShowUpdateModal(true);
+              onClick={async () => {
+                try {
+                  let res = await progressReportService.updateProgressReport(
+                    formik.values,
+                    progressReportId
+                  );
+                  console.log(res);
+                  if (res.status === 200) {
+                    setShowUpdateModal(true);
+
+                    console.log(res);
+                  }
+                } catch (error) {
+                  console.log(error);
+                }
+                fetchData();
               }}
             >
               Update Progress Report

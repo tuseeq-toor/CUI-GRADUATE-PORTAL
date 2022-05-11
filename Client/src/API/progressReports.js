@@ -46,8 +46,27 @@ const getReports = async () => {
     return error.response;
   }
 };
+const updateProgressReport = async (formData, reportId) => {
+  let token = getToken();
+  try {
+    const { data } = await API_ProgressReports.put(
+      `progress-report/update-report/${reportId}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 const progressReportService = {
   addProgressReport,
   getReports,
+  updateProgressReport,
 };
 export default progressReportService;

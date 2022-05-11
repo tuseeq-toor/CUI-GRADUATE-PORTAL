@@ -70,7 +70,6 @@ const uploadFile = (data) => {
 const studentService = {
   uploadFile,
   getSupervisors,
-
   updateProfile,
   getStudents,
 };

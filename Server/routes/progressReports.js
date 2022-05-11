@@ -46,7 +46,7 @@ router.put("/update-report/:id", (req, res) => {
   const { student_id, session_id, status, comment } = req.body;
 
   ProgressReport.findOneAndUpdate(
-    { _id: id },
+    { _id: req.params.id },
     {
       student_id: student_id,
       session_id: session_id,

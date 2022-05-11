@@ -84,6 +84,7 @@ export default function EditProfile() {
       console.log(res);
     },
   });
+
   const getSupervisors = async () => {
     let data = await studentService.getSupervisors();
 
@@ -93,10 +94,7 @@ export default function EditProfile() {
   useEffect(() => {
     getSupervisors();
   }, []);
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    alert("Submitted");
-  };
+
   return (
     <Box
       component="form"
