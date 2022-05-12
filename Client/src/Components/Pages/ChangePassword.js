@@ -26,6 +26,7 @@ export default function ChangePassword() {
     enableReinitialize: true,
     validationSchema: validationSchema,
     onSubmit: async (values) => {
+      console.log(values);
       setShowError(false);
       if (
         values.newPassword.trim().length !== 0 &&

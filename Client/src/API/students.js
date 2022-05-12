@@ -42,6 +42,7 @@ const getSupervisors = async () => {
     console.log(error);
   }
 };
+
 const updateProfile = async (formData) => {
   let token = getToken();
   try {

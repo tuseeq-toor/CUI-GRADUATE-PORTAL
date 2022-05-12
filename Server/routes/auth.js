@@ -173,7 +173,8 @@ router.get("/logout", (req, res, next) => {
 });
 
 //change password
-router.post("/change-password", (req, res) => {
+router.post("/change-password", auth.verifyUser, (req, res) => {
+  // const user = User.findOne({_id:req.user._id})
   req.user
     .changePassword(req.body.oldPassword, req.body.newPassword)
     .then((user) => {

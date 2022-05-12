@@ -1,6 +1,6 @@
 import ManagePrograms from "../../Pages/managePrograms";
 import AddManageProgram from "../../Pages/AddManageProgram";
-import AddManageSupervisoryCommittee from "../../Pages/AddManageSupervisoryCommittee";
+import AddSupervisoryCommittee from "../../Pages/AddSupervisoryCommittee";
 import AddProgressReport from "../../Pages/AddProgressReport";
 import AddSession from "../../Pages/AddSession";
 import AddStudent from "../../Pages/AddStudent";
@@ -53,7 +53,7 @@ import { useSelector } from "react-redux";
 import ManageMsDeadline from "../../Pages/ManageMsDeadline";
 import CreateSynopsisSchedule from "../../Pages/CreateSynopsisSchedule";
 import CreateSchedule from "../../Pages/CreateThesisScheduleMS";
-import ManageSupervisoryCommitteeStudent from "../../Pages/ManageSupervisoryCommitteeStudent";
+import AddSupervisoryCommitteeStudent from "../../Pages/AddSupervisoryCommitteeStudent";
 import HomeMsCor from "../../Pages/HomeMsCor";
 import HomePhdCor from "../../Pages/HomePhdCor";
 import HomeStudentMs from "../../Pages/HomeStudentMs";
@@ -170,7 +170,7 @@ const AdminRoutes = (props) => {
             />
             <Route
               path="/Dashboard/ManageCommittee"
-              element={<ManageSupervisoryCommitteeStudent />}
+              element={<AddSupervisoryCommitteeStudent />}
             />
             <Route
               path="/Dashboard/ManageSupervisoryCommittee"
@@ -178,7 +178,7 @@ const AdminRoutes = (props) => {
             />
             <Route
               path="/Dashboard/AddSupervisoryCommittee"
-              element={<AddManageSupervisoryCommittee />}
+              element={<AddSupervisoryCommittee />}
             />
             <Route
               path="/Dashboard/EvaluateSynopsis(MS)"

@@ -11,21 +11,23 @@ import {
   Select,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
+import adminService from "../../API/admin";
 import BackdropModal from "../UI/BackdropModal";
 
-export default function AddManageSupervisoryCommittee() {
+export default function AddSupervisoryCommitteeStudent() {
   const [showAddModal, setShowAddModal] = useState(false);
+
   const [supervisorsList, setSupervisorsList] = useState([]);
   const [selectedSupervisor, setSelectedSupervisor] = useState({});
   const [supervisors, setSupervisors] = useState([]);
   const [superviseData, setSuperviseData] = useState([]);
   const [error, setError] = useState(false);
+  const [isIncomplete, setIsIncomplete] = useState(false);
+  const user = JSON.parse(localStorage.getItem("user"));
+  const studentId = user.user?.student?._id;
+  console.log(studentId);
+
   const superviseHeader = [
-    {
-      field: "id",
-      headerName: "ID",
-      width: 300,
-    },
     {
       field: "facultyMember",
       headerName: "Faculty Member",
@@ -65,17 +67,9 @@ export default function AddManageSupervisoryCommittee() {
     console.table("SubmissionM", data?.supervisors);
     setSupervisors(data?.supervisors);
   };
-  /* useEffect(() => {
+  useEffect(() => {
     getSupervisors();
-  }, []); */
-
-  const submitHandler = () => {
-    alert("Selected Supervisors" + supervisorsList);
-    // if (res.status === 200) {
-    //   setShowAddModal(true);
-    // }
-    setShowAddModal(true);
-  };
+  }, []);
 
   const updateList = () => {
     console.log(error, supervisorsList.length);
@@ -92,6 +86,28 @@ export default function AddManageSupervisoryCommittee() {
           designation: "supervisor",
         },
       ]);
+    }
+  };
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    // alert("Selected Supervisors" + supervisorsList);
+    setIsIncomplete(false);
+    setError(false);
+    if (supervisorsList.length !== 0 && supervisorsList.length === 3) {
+      const res = await adminService.addSupervisoryCommittee(
+        { committee: supervisorsList },
+        studentId
+      );
+      setShowAddModal(true);
+
+      if (res.status === 200) {
+        setShowAddModal(true);
+      }
+
+      console.log("response", res);
+    } else {
+      setIsIncomplete(true);
     }
   };
 
@@ -114,6 +130,8 @@ export default function AddManageSupervisoryCommittee() {
 
             onChange={(e) => {
               setSelectedSupervisor(e.target.value);
+              setError(false);
+              setIsIncomplete(false);
             }}
             label="Supervisor"
           >
@@ -130,6 +148,7 @@ export default function AddManageSupervisoryCommittee() {
           <Button
             onClick={() => {
               updateList();
+              setIsIncomplete(false);
             }}
             variant="contained"
             color="secondary"
@@ -138,27 +157,26 @@ export default function AddManageSupervisoryCommittee() {
           </Button>
           <p style={{ marginBottom: "0px", color: red[400] }}>
             {error && "Maximun of 3 supervisors can be added"}
+            {isIncomplete && "Committee must have exactly 3 members"}
           </p>
         </Box>
+        <DataTable header={superviseHeader} data={superviseData} />
+        <Box
+          component={"div"}
+          sx={{ marginTop: "24px", display: "grid", placeItems: "center" }}
+        >
+          <Button type="submit" variant="contained" color="secondary">
+            Submit Supervisory Committee
+          </Button>
+        </Box>
       </Box>
-      {console.log(supervisorsList)}
-      <DataTable header={superviseHeader} data={superviseData} />
-      <Box
-        onClick={() => {
-          alert(supervisorsList);
-        }}
-        sx={{ marginTop: "24px", display: "grid", placeItems: "center" }}
-      >
-        <Button type="submit" variant="contained" color="secondary">
-          Submit Supervisory Committee
-        </Button>
-      </Box>
+
       <BackdropModal
         showModal={showAddModal}
         setShowModal={setShowAddModal}
-        title={"Add!"}
+        title={"Submit!"}
       >
-        Supervisory Committee has been Added.
+        Supervisory Committee submitted.
       </BackdropModal>
     </>
   );

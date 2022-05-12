@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const { ObjectId } = mongoose.Schema.Types;
 const studentSchema = new Schema({
+  _id: mongoose.Schema.Types.ObjectId,
   username: { type: String },
   fatherName: { type: String },
   registrationNo: { type: String /*required: true */ },
@@ -21,8 +22,8 @@ const studentSchema = new Schema({
   synopsisTitle: { type: String /*required: true */ },
   synopsisSemester: { type: String /*required: true */ },
   thesisTitle: { type: String /*required: true */ },
-  track:{type:String},
-  thesisTrack:{type:String},
+  track: { type: String },
+  thesisTrack: { type: String },
   thesisRegistration: { type: Number /*required: true */ },
   specialization: { type: String /*required: true */ },
   isActive: { type: Boolean, default: true },

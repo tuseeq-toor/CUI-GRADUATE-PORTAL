@@ -1,4 +1,12 @@
 import axios from "axios";
+const getToken = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user) {
+    var { token } = user;
+    console.log(token);
+    return token;
+  }
+};
 
 export const API = axios.create({
   baseURL: process.env.REACT_APP_URL,
@@ -45,9 +53,14 @@ const addFaculty = async (faculty) => {
   }
 };
 const changePassword = async (password) => {
+  let token = getToken();
   console.log("api" + password);
   try {
-    const res = await API.post("auth/change-password", password);
+    const res = await API.post("auth/change-password", password, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     if (res) {
       console.log("Api " + res);
       return res.data;

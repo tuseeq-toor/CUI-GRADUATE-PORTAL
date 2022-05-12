@@ -40,13 +40,15 @@ router.get(
     }
   }
 );
+
 router.delete(
   "/faculty/:id",
   auth.verifyUser,
   auth.checkAdmin,
   async (req, res, next) => {
     try {
-      const programe = await Faculty.findByIdAndDelete(req.params.id);
+      await Faculty.findByIdAndDelete(req.params.id);
+      await User.findOneAndDelete({ faculty_id: req.params.id });
       res.json({ msg: "Faculty Record Deleted" });
     } catch (err) {
       console.log(err);
@@ -60,8 +62,13 @@ router.patch(
   auth.verifyUser,
   auth.checkAdmin,
   async (req, res, next) => {
+    const { email, fullName, userRole } = req.body;
     try {
-      const programe = await Faculty.findByIdAndUpdate(req.params.id, req.body);
+      const faculty = await Faculty.findByIdAndUpdate(req.params.id, req.body);
+      const user = await User.findOneAndUpdate(
+        { faculty_id: req.params.id },
+        req.body
+      );
       res.json({ msg: "Faculty Record Updated" });
     } catch (err) {
       console.log(err);
@@ -76,7 +83,28 @@ router.get(
   // auth.checkAdmin,
   async (req, res, next) => {
     try {
-      const committeeData = await SupervisoryCommittee.find({});
+      const committeeData = await SupervisoryCommittee.find()
+        .populate("student_id")
+        // .populate("committee")
+        .exec();
+      //   SupervisoryCommittee.find().populate(
+      //     "committee"
+      //   ).exec(function(err, committee){
+      //     //do stuff
+      // });
+      // const committeeData = await SupervisoryCommittee.find()
+      //   .populate("committee")
+      //   .exec();
+      // console.log(first);
+      // const committee = await  Student.findById(committee.student_id)
+      // .select(student_id)
+      //   .populate(_id)
+      //   .exec();
+
+      // committeeData.committee.forEach((committee) => {
+      //   Student.findById(committee).populate().exec();
+      // });
+
       res.json(committeeData);
     } catch (err) {
       console.log(err);

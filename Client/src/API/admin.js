@@ -26,8 +26,22 @@ const scheduleSynopsisMS = async (data) => {
     return error.response;
   }
 };
+const addSupervisoryCommittee = async (data, id) => {
+  let token = getToken();
+  try {
+    const res = await API_ADMIN.post(`admin/addcommittee/${id}`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
 const adminService = {
   scheduleSynopsisMS,
+  addSupervisoryCommittee,
 };
 
 export default adminService;
