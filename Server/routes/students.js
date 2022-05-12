@@ -147,7 +147,7 @@ router.get("/:id", auth.verifyUser, auth.checkStudent, (req, res) => {
     });
 });
 
-//update student profile route== students/:id
+//update student profile route == students/:id
 
 router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
   uploadProfile(req, res, async function (err) {

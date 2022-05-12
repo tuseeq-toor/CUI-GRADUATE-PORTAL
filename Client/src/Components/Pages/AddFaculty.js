@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
+import { Box } from "@mui/system";
 import Button from "@mui/material/Button";
-import { Checkbox, FormControlLabel, valueToPercent } from "@mui/material";
-import { Field, useFormik } from "formik";
+import { Checkbox, FormControlLabel } from "@mui/material";
+import { useFormik } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { addFaculty } from "../../Store/authSlice";
@@ -12,27 +12,13 @@ import BackdropModal from "../UI/BackdropModal";
 export default function AddStudent() {
   const dispatch = useDispatch();
   const [showAddModal, setShowAddModal] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [admin, setAdmin] = useState(false);
   const [gac, setGac] = useState(false);
   const [go, setGo] = useState(false);
   const [ms, setMs] = useState(false);
   const [phd, setPhd] = useState(false);
   const [supervisor, setSupervisor] = useState(false);
-  const validationSchema = yup.object({
-    firstName: yup.string().required(),
-    lastName: yup.string().required(),
-    fullName: yup.string().required(),
-    fatherName: yup.string().required(),
-    nationality: yup.string().required(),
-    city: yup.string().required(),
-    email: yup.string().required(),
-    designation: yup.string().required(),
-    department: yup.string().required(),
-    campus: yup.string().required(),
-    userRole: yup.array().required(),
-  });
+
   const userRole = [
     {
       role: "ADMIN",
@@ -59,6 +45,21 @@ export default function AddStudent() {
       enable: supervisor,
     },
   ];
+
+  const validationSchema = yup.object({
+    firstName: yup.string().required(),
+    lastName: yup.string().required(),
+    fullName: yup.string().required(),
+    fatherName: yup.string().required(),
+    nationality: yup.string().required(),
+    city: yup.string().required(),
+    email: yup.string().required(),
+    designation: yup.string().required(),
+    department: yup.string().required(),
+    campus: yup.string().required(),
+    userRole: yup.array().required(),
+  });
+
   const formik = useFormik({
     initialValues: {
       firstName: "",
@@ -74,35 +75,31 @@ export default function AddStudent() {
       userRole: [],
       password: "dummy",
     },
+    enableReinitialize: true,
     validationSchema: validationSchema,
     onSubmit: (values) => {
+      console.log("submitted");
       values.fullName = `${values.firstName} ${values.lastName}`;
       values.userRole = userRole;
       console.log(values);
       dispatch(addFaculty(values));
       setShowAddModal(true);
-      // .unwrap()
-      /* .then((res) => {
-          console.log(res);
-          if (res.status === 200) {
-            setShowAddModal(true);
-          }
-          // navigate("/");
-        })
-        .catch((err) => {
-          console.log(err);
-        }); */
     },
   });
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("submitted");
+    formik.values.fullName = `${formik.values.firstName} ${formik.values.lastName}`;
+    formik.values.userRole = userRole;
+    console.log(formik.values);
+    dispatch(addFaculty(formik.values));
+    setShowAddModal(true);
+  };
+
   return (
     <>
-      <Box
-        component="form"
-        onSubmit={formik.handleSubmit}
-        noValidate
-        sx={{ mt: 1 }}
-      >
+      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
         <TextField
           fullWidth
           margin="dense"
@@ -112,10 +109,7 @@ export default function AddStudent() {
           color="secondary"
           variant="outlined"
           value={formik.values.firstName}
-          onChange={(e) => {
-            formik.handleChange(e);
-            setFirstName(e.target.value);
-          }}
+          onChange={formik.handleChange}
           error={formik.touched.firstName && Boolean(formik.errors.firstName)}
           helperText={formik.touched.firstName && formik.errors.firstName}
         />
@@ -129,10 +123,7 @@ export default function AddStudent() {
           color="secondary"
           variant="outlined"
           value={formik.values.lastName}
-          onChange={(e) => {
-            formik.handleChange(e);
-            setLastName(e.target.value);
-          }}
+          onChange={formik.handleChange}
           error={formik.touched.lastName && Boolean(formik.errors.lastName)}
           helperText={formik.touched.lastName && formik.errors.lastName}
         />
@@ -238,6 +229,7 @@ export default function AddStudent() {
           error={formik.touched.campus && Boolean(formik.errors.campus)}
           helperText={formik.touched.campus && formik.errors.campus}
         />
+
         <div
           style={{
             margin: ".25rem .75rem .25rem",
@@ -285,7 +277,6 @@ export default function AddStudent() {
           />
         </div>
         <Button
-          margin="normal"
           type="submit"
           variant="contained"
           size="large"

@@ -28,8 +28,8 @@ router.get("/", auth.verifyUser, auth.checkAdmin, (req, res) => {
 
 router.get(
   "/faculty",
-  auth.verifyUser,
-  auth.checkAdmin,
+  // auth.verifyUser,
+  // auth.checkAdmin,
   async (req, res, next) => {
     try {
       const programe = await Faculty.find({});
@@ -70,10 +70,25 @@ router.patch(
   }
 );
 
+router.get(
+  "/committee",
+  // auth.verifyUser,
+  // auth.checkAdmin,
+  async (req, res, next) => {
+    try {
+      const committeeData = await SupervisoryCommittee.find({});
+      res.json(committeeData);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ msg: err.message });
+    }
+  }
+);
+
 router.post(
   "/addcommittee/:id",
-  auth.verifyUser,
-  auth.checkAdmin,
+  // auth.verifyUser,
+  // auth.checkAdmin,
   async (req, res, next) => {
     try {
       const newcommit = await SupervisoryCommittee.create({

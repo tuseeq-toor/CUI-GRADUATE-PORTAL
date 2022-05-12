@@ -2,13 +2,7 @@ import React, { useEffect, useState } from "react";
 import Modal from "@mui/material/Modal";
 
 import Box from "@mui/material/Box";
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-} from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { TextField } from "@mui/material";
 
 import DataTable from "../UI/TableUI";
@@ -36,20 +30,9 @@ export default function ManageSession() {
   const [title, settitle] = useState("");
   const [description, setdescription] = useState("");
   const [status, setstatus] = useState("");
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  const [getprograms, setPrograms] = useState([]);
-
-  const [psname, setpsname] = useState("");
-  const [plname, setplname] = useState("");
-  const [pdesc, setpdesc] = useState("");
-  const [pminsem, setpminsem] = useState("");
-  const [pmaxsem, setpmaxsem] = useState("");
-  const [pdurat, setpdurat] = useState("");
-  const [pcredit, setpcredit] = useState("");
-  const [penable, setpenable] = useState("");
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -84,18 +67,17 @@ export default function ManageSession() {
       settitle("");
     }
 
-    if (description != "") {
+    if (description !== "") {
       obj.description = description;
       setdescription("");
     }
 
-    if (status != "") {
-      if (status == "enable") {
+    if (status !== "") {
+      if (status === "enable") {
         obj.status = true;
         setstatus("");
       } else {
         obj.status = false;
-
         setstatus("");
       }
     }
@@ -104,7 +86,8 @@ export default function ManageSession() {
 
     axios
       .patch(
-        `${process.env.REACT_APP_URL}sessions/updatesession/` + selectedobj._id,
+        `${process.env.REACT_APP_URL}/sessions/updatesession/` +
+          selectedobj._id,
         obj,
         {
           headers: {
@@ -210,34 +193,9 @@ export default function ManageSession() {
           </Button>
         </>
       ),
-
-      // renderCell: (props) => (
-      //   <Button style={{backgroundColor:"green"}}
-      //    >
-      //     Test
-      //   </Button>
-      // ),
     },
   ];
 
-  /*  const handleSubmit = (event) => {
-    event.preventDefault();
-    alert("Submitted")
-    const data = new FormData(event.currentTarget);
-    const userEmail = data.get("email");
-    const userPassword = data.get("password");
-    axios.post("${process.env.REACT_APP_URL}auth/login", {
-        email: userEmail,
-        password: userPassword,
-      })
-      .then((res) => {
-        const data = res.data.user;
-	console.log(data);
-        navigate("/Dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      });}; */
   return (
     <div>
       <Modal
@@ -286,7 +244,7 @@ export default function ManageSession() {
               color="secondary"
               /* value={age} */
               onChange={(event) => {
-                setpenable(event.target.value);
+                setstatus(event.target.value);
               }}
               label="Enable Program?:"
             >
