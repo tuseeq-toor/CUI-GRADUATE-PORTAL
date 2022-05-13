@@ -49,6 +49,7 @@ export default function AddSupervisoryCommitteeStudent() {
             var list = supervisorsList.filter((id) => id !== props.row.id);
 
             setSupervisorsList(list);
+            console.log(supervisorsList);
             setSuperviseData(data);
           }}
           variant="contained"
@@ -92,6 +93,7 @@ export default function AddSupervisoryCommitteeStudent() {
   const submitHandler = async (e) => {
     e.preventDefault();
     // alert("Selected Supervisors" + supervisorsList);
+    console.log(supervisorsList);
     setIsIncomplete(false);
     setError(false);
     if (supervisorsList.length !== 0 && supervisorsList.length === 3) {

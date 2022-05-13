@@ -83,10 +83,20 @@ router.get(
   // auth.checkAdmin,
   async (req, res, next) => {
     try {
-      const committeeData = await SupervisoryCommittee.find()
-        .populate("student_id")
-        // .populate("committee")
-        .exec();
+      const committeeData = await SupervisoryCommittee.find().populate(
+        "student_id"
+      );
+      /* Faculty.find().populate({
+        path: "comittee",
+        populate: { path: "committee" },
+      }); */
+
+      // .populate({
+      //   path: "committee",
+      //   populate: { path: "committee" },
+      // })
+      // .exec();
+      // .populate("committee")
       //   SupervisoryCommittee.find().populate(
       //     "committee"
       //   ).exec(function(err, committee){

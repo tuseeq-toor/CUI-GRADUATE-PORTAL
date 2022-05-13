@@ -27,6 +27,7 @@ const scheduleSynopsisMS = async (data) => {
   }
 };
 const addSupervisoryCommittee = async (data, id) => {
+  console.log(data);
   let token = getToken();
   try {
     const res = await API_ADMIN.post(`admin/addcommittee/${id}`, data, {
