@@ -32,8 +32,22 @@ router.get(
   // auth.checkAdmin,
   async (req, res, next) => {
     try {
-      const programe = await Faculty.find({});
-      res.json({ facultylist: programe });
+      const faculty = await Faculty.find({});
+      res.json({ facultylist: faculty });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ msg: err.message });
+    }
+  }
+);
+router.get(
+  "/faculty/:id",
+  // auth.verifyUser,
+  // auth.checkAdmin,
+  async (req, res, next) => {
+    try {
+      const singleFaculty = await Faculty.findById(req.params.id);
+      res.json(singleFaculty);
     } catch (err) {
       console.log(err);
       return res.status(500).json({ msg: err.message });
@@ -83,37 +97,18 @@ router.get(
   // auth.checkAdmin,
   async (req, res, next) => {
     try {
-      const committeeData = await SupervisoryCommittee.find().populate(
-        "student_id"
-      );
-      /* Faculty.find().populate({
-        path: "comittee",
-        populate: { path: "committee" },
-      }); */
-
-      // .populate({
-      //   path: "committee",
-      //   populate: { path: "committee" },
-      // })
-      // .exec();
-      // .populate("committee")
-      //   SupervisoryCommittee.find().populate(
-      //     "committee"
-      //   ).exec(function(err, committee){
-      //     //do stuff
-      // });
-      // const committeeData = await SupervisoryCommittee.find()
-      //   .populate("committee")
-      //   .exec();
-      // console.log(first);
-      // const committee = await  Student.findById(committee.student_id)
-      // .select(student_id)
-      //   .populate(_id)
-      //   .exec();
-
-      // committeeData.committee.forEach((committee) => {
-      //   Student.findById(committee).populate().exec();
-      // });
+      const committeeData = await SupervisoryCommittee.find()
+        .populate("student_id")
+        .exec();
+      var data = [];
+      committeeData.forEach(async (doc) => {
+        doc.committee.forEach(async (id) => {
+          let d = await Faculty.findOne(id);
+          data.push(d);
+          console.log("id of super" + d);
+        });
+      });
+      console.log("This" + data);
 
       res.json(committeeData);
     } catch (err) {

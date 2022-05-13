@@ -32,7 +32,7 @@ const addProgressReport = async (data) => {
 const getReports = async () => {
   let token = getToken();
   try {
-    const { data } = await API_ProgressReports.get(
+    const data = await API_ProgressReports.get(
       "/progress-report",
 
       {
@@ -46,6 +46,25 @@ const getReports = async () => {
     return error.response;
   }
 };
+
+const getSingleReport = async (studentId) => {
+  let token = getToken();
+  try {
+    const data = await API_ProgressReports.get(
+      `/progress-report/${studentId}`,
+
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    return error.response;
+  }
+};
+
 const updateProgressReport = async (formData, reportId) => {
   let token = getToken();
   try {
@@ -67,6 +86,7 @@ const updateProgressReport = async (formData, reportId) => {
 const progressReportService = {
   addProgressReport,
   getReports,
+  getSingleReport,
   updateProgressReport,
 };
 export default progressReportService;

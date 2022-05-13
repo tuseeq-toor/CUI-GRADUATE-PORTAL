@@ -9,6 +9,18 @@ const ProgressReport = require("../models/progressReport");
 router.get("/", (req, res) => {
   ProgressReport.find({})
     .populate("student_id session_id")
+    .populate({
+      path: "student_id",
+      populate: { path: "program_id" },
+    })
+    // .populate({
+    //   path: "student_id",
+    //   populate: { path: "coSupervisor_id" },
+    // })
+    // .populate({
+    //   path: "student_id",
+    //   populate: { path: "supervisor_id" },
+    // })
     .exec()
     .then((progressReports) => {
       res.setHeader("Content-Type", "application/json");
@@ -19,6 +31,21 @@ router.get("/", (req, res) => {
       res.status(500).json({ success: false, message: err.message });
     });
 });
+
+router.get("/:studentId", (req, res) => {
+  ProgressReport.findOne({ student_id: req.params.studentId })
+    .populate("student_id session_id")
+    .exec()
+    .then((progressReport) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json(progressReport);
+    })
+    .catch((err) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(500).json({ success: false, message: err.message });
+    });
+});
+
 router.delete("/delete/:id", (req, res) => {
   ProgressReport.findOneAndDelete(req.params.id)
     .then((progressReports) => {
