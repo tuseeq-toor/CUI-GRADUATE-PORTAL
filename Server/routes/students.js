@@ -147,7 +147,7 @@ router.get("/:id", auth.verifyUser, auth.checkStudent, (req, res) => {
     });
 });
 
-//update student profile route== students/:id
+//update student profile route == students/:id
 
 router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
   uploadProfile(req, res, async function (err) {
@@ -274,27 +274,6 @@ router.get("/session/:stud_id", (req, res) => {
     .then((session) => {
       res.setHeader("Content-Type", "application/json");
       res.status(200).json({ success: true, session });
-    })
-    .catch((err) => {
-      res.setHeader("Content-Type", "application/json");
-      res.status(500).json({ success: false, message: err.message });
-    });
-});
-
-//change password
-router.post("/change-password", auth.checkStudent, (req, res) => {
-  req.user
-    .changePassword(req.body.oldPassword, req.body.newPassword)
-    .then((user) => {
-      Student.findOne({ _id: user.student_id })
-        .then((student) => {
-          res.setHeader("Content-Type", "application/json");
-          res.status(200).json({ success: true, message: "Password Updated" });
-        })
-        .catch((err) => {
-          res.setHeader("Content-Type", "application/json");
-          res.status(500).json({ success: false, message: err.message });
-        });
     })
     .catch((err) => {
       res.setHeader("Content-Type", "application/json");

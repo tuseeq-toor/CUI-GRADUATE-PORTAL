@@ -58,6 +58,7 @@ const createSchedule = async (data) => {
     return error.response;
   }
 };
+
 const addEvaluation = async (data) => {
   let token = getToken();
   try {
@@ -71,6 +72,7 @@ const addEvaluation = async (data) => {
     return error.response;
   }
 };
+
 const updateEvaluation = async (data) => {
   let token = getToken();
   try {

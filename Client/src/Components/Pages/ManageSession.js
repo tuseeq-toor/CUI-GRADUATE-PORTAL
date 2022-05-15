@@ -2,18 +2,13 @@ import React, { useEffect, useState } from "react";
 import Modal from "@mui/material/Modal";
 
 import Box from "@mui/material/Box";
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-} from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { TextField } from "@mui/material";
 
 import DataTable from "../UI/TableUI";
 import axios from "axios";
 import { Button } from "@mui/material";
+import BackdropModal from "../UI/BackdropModal";
 const style = {
   position: "absolute",
   top: "40%",
@@ -27,26 +22,17 @@ const style = {
 };
 
 export default function ManageSession() {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [sessionlist, setsessionlist] = useState([]);
   const [gettoken, settoken] = useState("");
   const [selectedobj, setselectedobj] = useState({});
   const [title, settitle] = useState("");
   const [description, setdescription] = useState("");
   const [status, setstatus] = useState("");
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  const [getprograms, setPrograms] = useState([]);
-
-  const [psname, setpsname] = useState("");
-  const [plname, setplname] = useState("");
-  const [pdesc, setpdesc] = useState("");
-  const [pminsem, setpminsem] = useState("");
-  const [pmaxsem, setpmaxsem] = useState("");
-  const [pdurat, setpdurat] = useState("");
-  const [pcredit, setpcredit] = useState("");
-  const [penable, setpenable] = useState("");
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -81,18 +67,17 @@ export default function ManageSession() {
       settitle("");
     }
 
-    if (description != "") {
+    if (description !== "") {
       obj.description = description;
       setdescription("");
     }
 
-    if (status != "") {
-      if (status == "enable") {
+    if (status !== "") {
+      if (status === "enable") {
         obj.status = true;
         setstatus("");
       } else {
         obj.status = false;
-
         setstatus("");
       }
     }
@@ -101,7 +86,8 @@ export default function ManageSession() {
 
     axios
       .patch(
-        `${process.env.REACT_APP_URL}sessions/updatesession/` + selectedobj._id,
+        `${process.env.REACT_APP_URL}/sessions/updatesession/` +
+          selectedobj._id,
         obj,
         {
           headers: {
@@ -113,7 +99,10 @@ export default function ManageSession() {
         console.log(response.data.msg);
 
         getData();
-        alert("Session Updated");
+        if (response.status === 200) {
+          setShowUpdateModal(true);
+        }
+        // alert("Session Updated");
       })
       .catch((err) => console.log(err));
   };
@@ -175,7 +164,10 @@ export default function ManageSession() {
                   console.log(response.data.msg);
 
                   getData();
-                  alert("session deleted");
+                  if (response.status === 200) {
+                    setShowDeleteModal(true);
+                  }
+                  // alert("session deleted");
                 })
                 .catch((err) => console.log(err));
             }}
@@ -201,34 +193,9 @@ export default function ManageSession() {
           </Button>
         </>
       ),
-
-      // renderCell: (props) => (
-      //   <Button style={{backgroundColor:"green"}}
-      //    >
-      //     Test
-      //   </Button>
-      // ),
     },
   ];
 
-  /*  const handleSubmit = (event) => {
-    event.preventDefault();
-    alert("Submitted")
-    const data = new FormData(event.currentTarget);
-    const userEmail = data.get("email");
-    const userPassword = data.get("password");
-    axios.post("${process.env.REACT_APP_URL}auth/login", {
-        email: userEmail,
-        password: userPassword,
-      })
-      .then((res) => {
-        const data = res.data.user;
-	console.log(data);
-        navigate("/Dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      });}; */
   return (
     <div>
       <Modal
@@ -277,7 +244,7 @@ export default function ManageSession() {
               color="secondary"
               /* value={age} */
               onChange={(event) => {
-                setpenable(event.target.value);
+                setstatus(event.target.value);
               }}
               label="Enable Program?:"
             >
@@ -301,6 +268,20 @@ export default function ManageSession() {
       <div style={{ height: 400, width: "100%", backgroundColor: "white" }}>
         <DataTable header={sessionHeader} data={sessionlist} />
       </div>
+      <BackdropModal
+        showModal={showDeleteModal}
+        setShowModal={setShowDeleteModal}
+        title={"Delete!"}
+      >
+        The Session has been Deleted.
+      </BackdropModal>
+      <BackdropModal
+        showModal={showUpdateModal}
+        setShowModal={setShowUpdateModal}
+        title={"Update!"}
+      >
+        The Session has been Updated.
+      </BackdropModal>
     </div>
   );
 }

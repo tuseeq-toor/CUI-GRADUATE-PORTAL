@@ -27,6 +27,7 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import { TextField } from "@mui/material";
+import BackdropModal from "../UI/BackdropModal";
 
 const style = {
   position: "absolute",
@@ -45,7 +46,9 @@ const style = {
 };
 
 export default function ManageSupervisoryCommittee() {
-  const [open, setOpen] = React.useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -389,6 +392,20 @@ export default function ManageSupervisoryCommittee() {
       <div style={{ height: 400, width: "100%", backgroundColor: "white" }}>
         <DataTable header={supervisorHeader} data={supervisorData} />
       </div>
+      <BackdropModal
+        showModal={showDeleteModal}
+        setShowModal={setShowDeleteModal}
+        title={"Delete!"}
+      >
+        The Session has been Deleted.
+      </BackdropModal>
+      <BackdropModal
+        showModal={showUpdateModal}
+        setShowModal={setShowUpdateModal}
+        title={"Update!"}
+      >
+        The Session has been Updated.
+      </BackdropModal>
     </>
   );
 }

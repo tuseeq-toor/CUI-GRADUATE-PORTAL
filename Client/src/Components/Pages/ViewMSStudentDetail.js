@@ -9,47 +9,15 @@ import { Autocomplete, Paper, TextField } from "@mui/material";
 import synopsisService from "../../API/synopsis";
 import { useSelector } from "react-redux";
 import studentService from "../../API/students";
+import progressReportService from "../../API/progressReports";
 
-const data = {
-  candidateName: "Waqas Zafar",
-  registrationNumber: "FA18-BCS-107",
-  supervisor: "Dr. Nadeem Javaid",
-  dated: "Mar 18, 2022",
-  email: "waqaszafar@gmail.com",
-  mobile: "090078601",
-  profilePic: profile,
-  synopsisTitle:
-    "Efficient Electricity Theft Detection in Smart Grids using Data Driven Models",
-  coursesPassed: ["CS-101, ", "CS-102, ", "PH-101, ", "PH-103, "],
-  supervisoryCommittee: [
-    "Dr. Nadeem Javaid, ",
-    "Dr. Nadeem Javaid, ",
-    "Dr. Nadeem Javaid, ",
-  ],
-  recommendations: [
-    {
-      comment:
-        'The problem statement focuses on class imbalance, dimension reduction. These are generic issues. Rather the candidate should focus on the limitations of the techniques in literature. The manuscipt is written in a bt informal way. For example in the sentence "Therefore, ETD is an important thing and needs immediate attention to avoid ever-increasing electricity theft rate. Keeping this" avoid using the words like "thing" etc. Comparisons should be done with the relevant baseline techniques rather than any arbitrary techniques. Discussion on handling the identical issues should be is a way such that they are aligned with the objectives of the proposed research.',
-      evaluatorName: "Dr. Assad Abbas",
-      evaluationStatus: "Minor Changings",
-      isRequiredAgain: "No",
-    },
-    {
-      comment:
-        'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using "Content here, content here", making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for "lorem ipsum" will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).',
-      evaluatorName: "Dr. Basit Raza",
-      evaluationStatus: "Major Changings",
-      isRequiredAgain: "Yes",
-    },
-  ],
-};
-
-export default function ViewMSStudent() {
-  const { isLoggedIn, user } = useSelector((state) => state.auth);
+export default function ViewMSStudentDetails() {
+  // const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
 
   const [autocompleteValue, setAutocompleteValue] = useState(null);
-
+  const [progressReport, setProgressReport] = useState(null);
+  const [selectedStudentId, setSelectedStudentId] = useState("");
   const [students, setStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState([]);
   const [data, setData] = useState({});
@@ -57,10 +25,15 @@ export default function ViewMSStudent() {
   useEffect(() => {
     async function fetchData() {
       const studs = await studentService.getStudents();
-      setStudents(studs);
+      // console.log(studs);
+      const phdStuds = studs.filter((stud) =>
+        stud?.program_id?.programShortName.toLowerCase().includes("ms")
+      );
+      setStudents(phdStuds);
       setLoading(true);
     }
     fetchData();
+    // console.log(students);
   }, []);
 
   const handleRegistrationNo = (reg) => {
@@ -70,22 +43,34 @@ export default function ViewMSStudent() {
         oneStudent?.program_id?.programShortName.toLowerCase().includes("ms")
       ) {
         setSelectedStudent(oneStudent);
-
+        setSelectedStudentId(oneStudent._id);
         console.log("Selected Schedule", selectedStudent);
         setData({ ...data, student_id: oneStudent._id });
       }
     });
   };
 
-  const handleChange = (event) => {
-    setData({ ...data, [event.target.name]: event.target.value });
-    console.log(data);
-  };
+  useEffect(() => {
+    async function fetchProgressData(selectedStudentId) {
+      if (selectedStudentId) {
+        const progressData = await progressReportService.getSingleReport(
+          selectedStudentId
+        );
+        console.log(progressData);
+        // setProgressReport(progressData);
+        setProgressReport({
+          sessionTitle: progressData.data.session_id.title,
+          comment: progressData.data.comment,
+          status: progressData.data.status,
+        });
+      }
+    }
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const res = await synopsisService.addEvaluation(data);
-  };
+    fetchProgressData(selectedStudentId);
+    // console.log(students);
+  }, [selectedStudentId]);
+
+  console.log(progressReport);
 
   const defaultProps = {
     options: students,
@@ -118,110 +103,118 @@ export default function ViewMSStudent() {
           />
         </Box>
       </Box>
-      <Box
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "1rem",
-        }}
-      >
-        <div>
-          <div
-            style={{
-              margin: "1rem 0 0 0",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <div
+
+      <div>
+        {selectedStudent.length === 0 ? (
+          <div style={{ fontSize: "22px", color: "", textAlign: "center" }}>
+            No Student Selected !
+          </div>
+        ) : (
+          <>
+            <Box
               style={{
-                width: "20rem",
-                margin: "0",
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "space-between",
+                padding: "1rem",
               }}
             >
-              <h3 style={{ margin: "0 1rem 0 0" }}>Candidate:</h3>
-              <p style={{ margin: "0" }}>{selectedStudent?.username}</p>
-            </div>
-            <h3
-              style={{
-                marginRight: "1rem",
-                marginTop: "0",
-                marginBottom: "0",
-              }}
-            >
-              Registration Number:
-            </h3>
-            <p style={{ marginTop: "0", marginBottom: "0" }}>
-              {selectedStudent?.registrationNo}
-            </p>
-          </div>
-          <div
-            style={{
-              margin: "1rem 0 0 0",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <div
-              style={{
-                width: "20rem",
-                margin: "0",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <h3 style={{ margin: "0 1rem 0 0" }}>Dated:</h3>
-              <p style={{ margin: "0" }}>{"date"}</p>
-            </div>
-            <h3
-              style={{
-                marginRight: "1rem",
-                marginTop: "0",
-                marginBottom: "0",
-              }}
-            >
-              Supervisor:
-            </h3>
-            <p style={{ marginTop: "0", marginBottom: "0" }}>
-              {selectedStudent?.supervisor_id?.fullName}
-            </p>
-          </div>
-          <div
-            style={{
-              margin: "1rem 0 0 0",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <div
-              style={{
-                width: "20rem",
-                margin: "0",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <h3 style={{ margin: "0 1rem 0 0" }}>Email:</h3>
-              <p style={{ margin: "0" }}>{selectedStudent?.email}</p>
-            </div>
-            <h3
-              style={{
-                marginRight: "1rem",
-                marginTop: "0",
-                marginBottom: "0",
-              }}
-            >
-              Mobile Number:
-            </h3>
-            <p style={{ marginTop: "0", marginBottom: "0" }}>
-              {selectedStudent?.mobile}
-            </p>
-          </div>
-        </div>
-        {/* <div
+              <div>
+                <div
+                  style={{
+                    margin: "1rem 0 0 0",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "20rem",
+                      margin: "0",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <h3 style={{ margin: "0 1rem 0 0" }}>Candidate:</h3>
+                    <p style={{ margin: "0" }}>{selectedStudent?.username}</p>
+                  </div>
+                  <h3
+                    style={{
+                      marginRight: "1rem",
+                      marginTop: "0",
+                      marginBottom: "0",
+                    }}
+                  >
+                    Registration Number:
+                  </h3>
+                  <p style={{ marginTop: "0", marginBottom: "0" }}>
+                    {selectedStudent?.registrationNo}
+                  </p>
+                </div>
+                <div
+                  style={{
+                    margin: "1rem 0 0 0",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "20rem",
+                      margin: "0",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <h3 style={{ margin: "0 1rem 0 0" }}>Dated:</h3>
+                    <p style={{ margin: "0" }}>{"date"}</p>
+                  </div>
+                  <h3
+                    style={{
+                      marginRight: "1rem",
+                      marginTop: "0",
+                      marginBottom: "0",
+                    }}
+                  >
+                    Supervisor:
+                  </h3>
+                  <p style={{ marginTop: "0", marginBottom: "0" }}>
+                    {selectedStudent?.supervisor_id?.fullName}
+                  </p>
+                </div>
+                <div
+                  style={{
+                    margin: "1rem 0 0 0",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "20rem",
+                      margin: "0",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <h3 style={{ margin: "0 1rem 0 0" }}>Email:</h3>
+                    <p style={{ margin: "0" }}>{selectedStudent?.email}</p>
+                  </div>
+                  <h3
+                    style={{
+                      marginRight: "1rem",
+                      marginTop: "0",
+                      marginBottom: "0",
+                    }}
+                  >
+                    Mobile Number:
+                  </h3>
+                  <p style={{ marginTop: "0", marginBottom: "0" }}>
+                    {selectedStudent?.mobile}
+                  </p>
+                </div>
+              </div>
+              {/* <div
           style={{
             display: "grid",
             placeContent: "center",
@@ -235,164 +228,179 @@ export default function ViewMSStudent() {
         >
           A
         </div>*/}
-        <img
-          src={process.env.REACT_APP_URL + "/" + selectedStudent.profilePic}
-          alt=""
-          style={{ objectFit: "contain", height: "6rem", borderRadius: "50%" }}
-        />
-      </Box>
+              <img
+                src={
+                  process.env.REACT_APP_URL + "/" + selectedStudent.profilePic
+                }
+                alt=""
+                style={{
+                  objectFit: "contain",
+                  height: "6rem",
+                  borderRadius: "50%",
+                }}
+              />
+            </Box>
 
-      <Box sx={{ mt: 4 }}>
-        <div>
-          <h3
-            style={{
-              margin: "1rem 1rem 0",
-              fontSize: "1.1rem",
-            }}
-          >
-            Courses Passed:
-          </h3>
-          <div
-            style={{
-              margin: "0.5rem 1rem 0",
-              display: "flex",
-              alignItems: "center",
-
-              textAlign: "justify",
-            }}
-          >
-            {data.coursesPassed}
-          </div>
-        </div>
-      </Box>
-
-      <Box sx={{ mt: 2 }}>
-        <div>
-          <h3
-            style={{
-              margin: "1rem 1rem 0",
-              fontSize: "1.1rem",
-            }}
-          >
-            Supervisory Committee:
-          </h3>
-          <div
-            style={{
-              margin: "0.5rem 1rem 0",
-              display: "flex",
-              alignItems: "center",
-
-              textAlign: "justify",
-            }}
-          >
-            {selectedStudent?.supervisor_id?.fullName}
-          </div>
-        </div>
-      </Box>
-
-      <Box sx={{ mt: 2 }}>
-        <div>
-          <h3
-            style={{
-              margin: "1rem 1rem 0",
-              fontSize: "1.1rem",
-            }}
-          >
-            Progress Reports:
-          </h3>
-          <div
-            style={{
-              margin: "0.5rem 1rem 0",
-              display: "flex",
-              alignItems: "center",
-
-              textAlign: "justify",
-            }}
-          >
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur
-            adipisci ratione ipsum modi autem. Molestias.
-          </div>
-        </div>
-        <div className="">
-          <table
-            cellSpacing={0}
-            cellPadding={6}
-            style={{
-              margin: "1rem",
-              color: "#333333",
-              height: "50px",
-            }}
-          >
-            <tbody>
-              <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
-                <td
-                  valign="top"
+            {/* <Box sx={{ mt: 4 }}>
+              <div>
+                <h3
                   style={{
-                    backgroundColor: "#E9ECF1",
-                    fontWeight: "bold",
-                    width: "20%",
+                    margin: "1rem 1rem 0",
+                    fontSize: "1.1rem",
                   }}
                 >
-                  Session
-                </td>
-                <td>FA15</td>
-              </tr>
-              <tr style={{ backgroundColor: "White" }}>
-                <td
-                  valign="top"
+                  Courses Passed:
+                </h3>
+                <div
                   style={{
-                    backgroundColor: "#E9ECF1",
-                    fontWeight: "bold",
-                    width: "20%",
+                    margin: "0.5rem 1rem 0",
+                    display: "flex",
+                    alignItems: "center",
+
+                    textAlign: "justify",
                   }}
                 >
-                  Status
-                </td>
-                <td>Regular</td>
-              </tr>
-              <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
-                <td
-                  valign="top"
+                  {data.coursesPassed}
+                </div>
+              </div>
+            </Box> */}
+
+            {/* <Box sx={{ mt: 2 }}>
+              <div>
+                <h3
                   style={{
-                    backgroundColor: "#E9ECF1",
-                    fontWeight: "bold",
-                    width: "20%",
+                    margin: "1rem 1rem 0",
+                    fontSize: "1.1rem",
                   }}
                 >
-                  Comments
-                </td>
-                <td>CSCL</td>
-              </tr>
-              <tr style={{ backgroundColor: "White" }}>
-                <td
-                  valign="top"
+                  Supervisory Committee:
+                </h3>
+                <div
                   style={{
-                    backgroundColor: "#E9ECF1",
-                    fontWeight: "bold",
-                    width: "20%",
+                    margin: "0.5rem 1rem 0",
+                    display: "flex",
+                    alignItems: "center",
+
+                    textAlign: "justify",
                   }}
                 >
-                  Synopsis Evaluation
-                </td>
-                <td>Successful</td>
-              </tr>
-              <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
-                <td
-                  valign="top"
+                  {selectedStudent?.supervisor_id?.fullName}
+                </div>
+              </div>
+            </Box> */}
+
+            <Box sx={{ mt: 2 }}>
+              <div>
+                <h3
                   style={{
-                    backgroundColor: "#E9ECF1",
-                    fontWeight: "bold",
-                    width: "20%",
+                    margin: "1rem 1rem 0",
+                    fontSize: "1.1rem",
                   }}
                 >
-                  Thesis Evaluation
-                </td>
-                <td>Successful</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </Box>
+                  Progress Reports:
+                </h3>
+                <div
+                  style={{
+                    margin: "0.5rem 1rem 0",
+                    display: "flex",
+                    alignItems: "center",
+
+                    textAlign: "justify",
+                  }}
+                >
+                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                  Pariatur adipisci ratione ipsum modi autem. Molestias.
+                </div>
+              </div>
+              <div className="">
+                <table
+                  cellSpacing={0}
+                  cellPadding={6}
+                  style={{
+                    margin: "1rem",
+                    color: "#333333",
+                    height: "50px",
+                  }}
+                >
+                  <tbody>
+                    <tr
+                      style={{ color: "#333333", backgroundColor: "#F7F6F3" }}
+                    >
+                      <td
+                        valign="top"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                          width: "20%",
+                        }}
+                      >
+                        Session
+                      </td>
+                      <td>{progressReport?.sessionTitle}</td>
+                    </tr>
+                    <tr style={{ backgroundColor: "White" }}>
+                      <td
+                        valign="top"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                          width: "20%",
+                        }}
+                      >
+                        Status
+                      </td>
+                      <td>{progressReport?.status}</td>
+                    </tr>
+                    <tr
+                      style={{ color: "#333333", backgroundColor: "#F7F6F3" }}
+                    >
+                      <td
+                        valign="top"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                          width: "20%",
+                        }}
+                      >
+                        Comments
+                      </td>
+                      <td>{progressReport?.comment}</td>
+                    </tr>
+                    <tr style={{ backgroundColor: "White" }}>
+                      <td
+                        valign="top"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                          width: "20%",
+                        }}
+                      >
+                        Synopsis Evaluation
+                      </td>
+                      <td>Successful</td>
+                    </tr>
+                    <tr
+                      style={{ color: "#333333", backgroundColor: "#F7F6F3" }}
+                    >
+                      <td
+                        valign="top"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                          width: "20%",
+                        }}
+                      >
+                        Thesis Evaluation
+                      </td>
+                      <td>Successful</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </Box>
+          </>
+        )}
+      </div>
     </>
   );
 }

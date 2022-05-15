@@ -42,6 +42,7 @@ const getSupervisors = async () => {
     console.log(error);
   }
 };
+
 const updateProfile = async (formData) => {
   let token = getToken();
   try {
@@ -70,7 +71,6 @@ const uploadFile = (data) => {
 const studentService = {
   uploadFile,
   getSupervisors,
-
   updateProfile,
   getStudents,
 };

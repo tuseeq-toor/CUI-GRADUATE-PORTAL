@@ -26,7 +26,7 @@ import ManageSupervisoryCommittee from "../Components/Pages/ManageSupervisoryCom
 import ChangePassword from "../Components/Pages/ChangePassword";
 import ManagePrograms from "../Components/Pages/managePrograms";
 import AddManageProgram from "../Components/Pages/AddManageProgram";
-import AddManageSupervisoryCommittee from "../Components/Pages/AddManageSupervisoryCommittee";
+import AddManageSupervisoryCommittee from "../Components/Pages/AddSupervisoryCommittee";
 import AddProgressReport from "../Components/Pages/AddProgressReport";
 import AddSession from "../Components/Pages/AddSession";
 import AddStudent from "../Components/Pages/AddStudent";

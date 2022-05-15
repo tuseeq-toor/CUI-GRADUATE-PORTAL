@@ -27,6 +27,7 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import { TextField } from "@mui/material";
+import BackdropModal from "../UI/BackdropModal";
 
 const style = {
   position: "absolute",
@@ -45,7 +46,9 @@ const style = {
 };
 
 export default function ManageStudent() {
-  const [open, setOpen] = React.useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -157,7 +160,10 @@ export default function ManageStudent() {
                   console.log(response.data.msg);
 
                   getData();
-                  alert("Program deleted");
+                  if (response.status === 200) {
+                    setShowDeleteModal(true);
+                  }
+                  // alert("Program deleted");
                 })
                 .catch((err) => console.log(err));
             }}
@@ -272,7 +278,10 @@ export default function ManageStudent() {
         console.log(response.data.msg);
 
         getData();
-        alert("Program Updated");
+        if (response.status === 200) {
+          setShowUpdateModal(true);
+        }
+        // alert("Program Updated");
       })
       .catch((err) => console.log(err));
   };
@@ -500,46 +509,6 @@ export default function ManageStudent() {
                 />
               </Box>
             </Box>
-
-            {/* {formik.values.studentType === "PhD" && (
-              <>
-              <TextField
-                id="standard-basic"
-                sx={{ width: "100%", marginBottom: "5px" }}
-                label="Thesis Track"
-                color="secondary"
-                variant="standard"
-              />
-              <TextField
-                id="standard-basic"
-                sx={{ width: "100%", marginBottom: "5px" }}
-                label="Area of Specialization"
-                color="secondary"
-                variant="standard"
-              />
-              <TextField
-                id="standard-basic"
-                sx={{ width: "100%", marginBottom: "5px" }}
-                label="Comprehensive"
-                color="secondary"
-                variant="standard"
-              />
-              <TextField
-                id="standard-basic"
-                sx={{ width: "100%", marginBottom: "5px" }}
-                label="Foriegn Submission"
-                color="secondary"
-                variant="standard"
-              />
-              <TextField
-                id="standard-basic"
-                sx={{ width: "100%", marginBottom: "5px" }}
-                label="Other Issue"
-                color="secondary"
-                variant="standard"
-              />
-            </>
-            )} */}
           </Box>
           <Box>
             <Button
@@ -561,6 +530,20 @@ export default function ManageStudent() {
           data={studentData} /* data={studentData} */
         />
       </div>
+      <BackdropModal
+        showModal={showDeleteModal}
+        setShowModal={setShowDeleteModal}
+        title={"Delete!"}
+      >
+        Student has been Deleted.
+      </BackdropModal>
+      <BackdropModal
+        showModal={showUpdateModal}
+        setShowModal={setShowUpdateModal}
+        title={"Update!"}
+      >
+        Student has been Updated.
+      </BackdropModal>
     </>
   );
 }

@@ -28,25 +28,41 @@ router.get("/", auth.verifyUser, auth.checkAdmin, (req, res) => {
 
 router.get(
   "/faculty",
-  auth.verifyUser,
-  auth.checkAdmin,
+  // auth.verifyUser,
+  // auth.checkAdmin,
   async (req, res, next) => {
     try {
-      const programe = await Faculty.find({});
-      res.json({ facultylist: programe });
+      const faculty = await Faculty.find({});
+      res.json({ facultylist: faculty });
     } catch (err) {
       console.log(err);
       return res.status(500).json({ msg: err.message });
     }
   }
 );
+router.get(
+  "/faculty/:id",
+  // auth.verifyUser,
+  // auth.checkAdmin,
+  async (req, res, next) => {
+    try {
+      const singleFaculty = await Faculty.findById(req.params.id);
+      res.json(singleFaculty);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ msg: err.message });
+    }
+  }
+);
+
 router.delete(
   "/faculty/:id",
   auth.verifyUser,
   auth.checkAdmin,
   async (req, res, next) => {
     try {
-      const programe = await Faculty.findByIdAndDelete(req.params.id);
+      await Faculty.findByIdAndDelete(req.params.id);
+      await User.findOneAndDelete({ faculty_id: req.params.id });
       res.json({ msg: "Faculty Record Deleted" });
     } catch (err) {
       console.log(err);
@@ -60,9 +76,41 @@ router.patch(
   auth.verifyUser,
   auth.checkAdmin,
   async (req, res, next) => {
+    const { email, fullName, userRole } = req.body;
     try {
-      const programe = await Faculty.findByIdAndUpdate(req.params.id, req.body);
+      const faculty = await Faculty.findByIdAndUpdate(req.params.id, req.body);
+      const user = await User.findOneAndUpdate(
+        { faculty_id: req.params.id },
+        req.body
+      );
       res.json({ msg: "Faculty Record Updated" });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ msg: err.message });
+    }
+  }
+);
+
+router.get(
+  "/committee",
+  // auth.verifyUser,
+  // auth.checkAdmin,
+  async (req, res, next) => {
+    try {
+      const committeeData = await SupervisoryCommittee.find()
+        .populate("student_id")
+        .exec();
+      var data = [];
+      committeeData.forEach(async (doc) => {
+        doc.committee.forEach(async (id) => {
+          let d = await Faculty.findOne(id);
+          data.push(d);
+          console.log("id of super" + d);
+        });
+      });
+      console.log("This" + data);
+
+      res.json(committeeData);
     } catch (err) {
       console.log(err);
       return res.status(500).json({ msg: err.message });
@@ -72,8 +120,8 @@ router.patch(
 
 router.post(
   "/addcommittee/:id",
-  auth.verifyUser,
-  auth.checkAdmin,
+  // auth.verifyUser,
+  // auth.checkAdmin,
   async (req, res, next) => {
     try {
       const newcommit = await SupervisoryCommittee.create({
