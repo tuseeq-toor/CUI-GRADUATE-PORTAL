@@ -416,13 +416,19 @@ export default function EvaluateSynopsisMS() {
                             <InputLabel>Final Recommendation</InputLabel>
                             <Select
                               variant="outlined"
-                              //value={Program}
+                              name="finalRecommendation"
                               label="Final Recommendation"
-                              //onChange={handleChange}
+                              onChange={handleChange}
                             >
-                              <MenuItem value="minor">Minor Changings</MenuItem>
-                              <MenuItem value="major">Major Changings</MenuItem>
-                              <MenuItem value="not">Not Allowed</MenuItem>
+                              <MenuItem value="Minor Changings">
+                                Minor Changings
+                              </MenuItem>
+                              <MenuItem value="Major Changings">
+                                Major Changings
+                              </MenuItem>
+                              <MenuItem value="Not Allowed">
+                                Not Allowed
+                              </MenuItem>
                             </Select>
                           </FormControl>
                           <FormControl sx={{ mt: 4 }}>
@@ -431,17 +437,16 @@ export default function EvaluateSynopsisMS() {
                             </FormLabel>
                             <RadioGroup
                               row
-                              name="presentationRequired"
-                              /* value={studentType}
-                              onChange={(e) => setStudentType(e.target.value)} */
+                              name="goRequiredAgain"
+                              onChange={handleChange}
                             >
                               <FormControlLabel
-                                value="yes"
+                                value="Yes"
                                 control={<Radio color="secondary" />}
                                 label="Yes"
                               />
                               <FormControlLabel
-                                value="no"
+                                value="No"
                                 control={<Radio color="secondary" />}
                                 label="No"
                               />
@@ -449,6 +454,17 @@ export default function EvaluateSynopsisMS() {
                           </FormControl>
                         </>
                       </Box>
+                      <TextField
+                        fullWidth
+                        sx={{ my: 2 }}
+                        multiline
+                        rows={6}
+                        label="GO's Decision and Recommendations"
+                        color="secondary"
+                        name="goComment"
+                        variant="outlined"
+                        onChange={handleChange}
+                      />
                     </>
                   ) : (
                     <tbody>
@@ -507,21 +523,20 @@ export default function EvaluateSynopsisMS() {
                           </tr>
                         </RadioGroup>
                       </FormControl>
+                      <TextField
+                        fullWidth
+                        sx={{ my: 2 }}
+                        multiline
+                        rows={6}
+                        label="Decision and Recommendations"
+                        color="secondary"
+                        name="comments"
+                        variant="outlined"
+                        onChange={handleChange}
+                      />
                     </tbody>
                   )}
                 </table>
-
-                <TextField
-                  fullWidth
-                  sx={{ my: 2 }}
-                  multiline
-                  rows={6}
-                  label="Decision and Recommendations"
-                  color="secondary"
-                  name="comments"
-                  variant="outlined"
-                  onChange={handleChange}
-                />
 
                 <Button
                   type="submit"

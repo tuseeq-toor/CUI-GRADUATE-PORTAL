@@ -10,6 +10,11 @@ const synopsisEvaluationSchema = new Schema({
   creationDate: { type: Date, default: Date.now() /* required: true */ },
   isActive: { type: Boolean /* required: true */ },
   IP_address: { type: String /* required: true */ },
+  goEvaluation: {
+    goRequiredAgain: { type: Boolean /* required: true */ },
+    goComment: { type: String /* required: true */ },
+    finalRecommendation: { type: String },
+  },
 });
 
 module.exports = mongoose.model("SynopsisEvaluation", synopsisEvaluationSchema);
