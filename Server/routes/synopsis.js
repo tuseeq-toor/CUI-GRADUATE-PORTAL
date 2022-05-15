@@ -92,7 +92,7 @@ router.post(
       .then((evaluationStatus) => {
         SynopsisEvaluation.create({
           ...body,
-          evaluationStatus: evaluationStatus._id,
+          evaluationStatus: evaluationStatus?._id,
           evaluator_id: req.user._id,
         })
           .then((synopsisEvaluation) => {
