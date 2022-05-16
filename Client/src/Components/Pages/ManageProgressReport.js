@@ -30,7 +30,9 @@ export default function ManageProgressReport() {
 
   async function fetchData() {
     const res = await progressReportService.getReports();
-    const data = res.map((res) => ({
+
+    console.log("reshere", res);
+    const data = res?.data?.map((res) => ({
       Student: res.student_id?.username,
       Session: res.session_id?.title,
       Status: res?.status,
@@ -49,12 +51,12 @@ export default function ManageProgressReport() {
     console.log("Progress Report data", data);
   }
   useEffect(() => {
+    fetchData();
     const user = JSON.parse(localStorage.getItem("user"));
 
     var { token } = user;
     console.log(token);
     setToken(token);
-    fetchData();
   }, []);
 
   const formik = useFormik({
