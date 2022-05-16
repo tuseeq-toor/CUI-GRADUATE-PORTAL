@@ -139,7 +139,7 @@ router.patch(
     try {
       const newcommit = await SupervisoryCommittee.findByIdAndUpdate(
         req.params.id,
-        req.body
+        { committee: req.body }
       );
       res.json({ msg: "Commitee Updated" });
     } catch (err) {

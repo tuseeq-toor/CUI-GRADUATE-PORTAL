@@ -59,6 +59,7 @@ export default function ManageSupervisoryCommittee() {
   const [supervisoryCommittee, setSupervisoryCommittee] = useState([]);
   const [committeeMembers, setCommitteeMembers] = useState([]);
   const [supervisors, setSupervisors] = useState([]);
+  const [committeeId, setCommitteeId] = useState("");
 
   // async function facultyData() {
   //   const res = await facultyService.getSingleFaculty();
@@ -74,13 +75,23 @@ export default function ManageSupervisoryCommittee() {
     const res = await adminService.getSupervisoryCommittee();
 
     console.log("reshere", res);
-    const data = res?.data?.map((res) => ({
-      RegistrationNo: res.student_id?.registrationNo,
-      StudentName: res.student_id?.username,
-      FacultyMembers: res?.committee,
-      id: res?._id,
-    }));
-    // setCommitteeMembers(data.FacultyMembers);
+
+    const committeeData = res.data.map((data) => data.committee);
+    const committeeD = committeeData.map((data) => data.username);
+
+    const data = res?.data?.map((res) => {
+      let d = res?.committee.map((data) => data.username);
+
+      return {
+        RegistrationNo: res.student_id?.registrationNo,
+        StudentName: res.student_id?.username,
+        FacultyMembers: d,
+        // FacultyMembers: ,
+        id: res?._id,
+      };
+    });
+
+    setCommitteeMembers(committeeData);
     /* setReportData({
       ...reportData,
       student_id: res?.student_id,
@@ -97,7 +108,7 @@ export default function ManageSupervisoryCommittee() {
   }, []);
 
   console.log("supervisory data", supervisoryCommittee);
-  // console.log("committee data", committeeMembers);
+  console.log("committee data", committeeMembers);
 
   const supervisorHeader = [
     // {
@@ -135,6 +146,8 @@ export default function ManageSupervisoryCommittee() {
 
           <Button
             onClick={() => {
+              console.log(props.row);
+              setCommitteeId(props.row.id);
               // setselectedobj(props.row);
               handleOpen();
             }}
@@ -163,15 +176,21 @@ export default function ManageSupervisoryCommittee() {
     enableReinitialize: true,
     onSubmit: async (values) => {
       console.log(values);
+      formik.values.committee.push(formik.values.committeeMember1);
+      formik.values.committee.push(formik.values.committeeMember2);
+      formik.values.committee.push(formik.values.committeeMember3);
       // formik.values.committee.map(())
-      // let res = await adminService.updateSupervisoryCommittee(values);
-      // if (res.status === 200) {
-      //   setShowUpdateModal(true);
-
-      //   console.log(res);
-      // } else {
-      // }
-      // console.log(res);
+      let res = await adminService.updateSupervisoryCommittee(
+        values.committee,
+        committeeId
+      );
+      if (res.status === 200) {
+        setShowUpdateModal(true);
+        fetchData();
+        console.log(res);
+      } else {
+      }
+      console.log(res);
     },
   });
 
@@ -209,7 +228,7 @@ export default function ManageSupervisoryCommittee() {
             >
               {supervisors.map((item) => {
                 return (
-                  <MenuItem key={item._id} value={item}>
+                  <MenuItem key={item._id} value={item._id}>
                     {item.username}
                   </MenuItem>
                 );
@@ -231,7 +250,7 @@ export default function ManageSupervisoryCommittee() {
             >
               {supervisors.map((item) => {
                 return (
-                  <MenuItem key={item._id} value={item}>
+                  <MenuItem key={item._id} value={item._id}>
                     {item.username}
                   </MenuItem>
                 );
@@ -253,7 +272,7 @@ export default function ManageSupervisoryCommittee() {
             >
               {supervisors.map((item) => {
                 return (
-                  <MenuItem key={item._id} value={item}>
+                  <MenuItem key={item._id} value={item._id}>
                     {item.username}
                   </MenuItem>
                 );

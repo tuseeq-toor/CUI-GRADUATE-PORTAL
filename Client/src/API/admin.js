@@ -55,11 +55,11 @@ const deleteSupervisoryCommittee = async (id) => {
   }
 };
 
-const updateSupervisoryCommittee = async (id) => {
+const updateSupervisoryCommittee = async (data, id) => {
   // console.log(data);
   let token = getToken();
   try {
-    const res = await API_ADMIN.patch(`admin/updatecommittee/${id}`, {
+    const res = await API_ADMIN.patch(`admin/updatecommittee/${id}`, data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
