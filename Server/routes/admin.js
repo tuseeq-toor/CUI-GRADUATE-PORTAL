@@ -99,16 +99,11 @@ router.get(
     try {
       const committeeData = await SupervisoryCommittee.find()
         .populate("student_id")
+        .populate({
+          path: "committee",
+          populate: [{ path: "faculty_id", model: "Faculty" }],
+        })
         .exec();
-      var data = [];
-      committeeData.forEach(async (doc) => {
-        doc.committee.forEach(async (id) => {
-          let d = await Faculty.findOne(id);
-          data.push(d);
-          console.log("id of super" + d);
-        });
-      });
-      console.log("This" + data);
 
       res.json(committeeData);
     } catch (err) {

@@ -40,9 +40,57 @@ const addSupervisoryCommittee = async (data, id) => {
     return error.response;
   }
 };
+const deleteSupervisoryCommittee = async (id) => {
+  // console.log(data);
+  let token = getToken();
+  try {
+    const res = await API_ADMIN.delete(`admin/deletecommittee/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+const updateSupervisoryCommittee = async (id) => {
+  // console.log(data);
+  let token = getToken();
+  try {
+    const res = await API_ADMIN.patch(`admin/updatecommittee/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+const getSupervisoryCommittee = async () => {
+  // console.log(data);
+  let token = getToken();
+  try {
+    const res = await API_ADMIN.get(`admin/committee`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
+
 const adminService = {
   scheduleSynopsisMS,
   addSupervisoryCommittee,
+  getSupervisoryCommittee,
+  deleteSupervisoryCommittee,
+  updateSupervisoryCommittee,
 };
 
 export default adminService;

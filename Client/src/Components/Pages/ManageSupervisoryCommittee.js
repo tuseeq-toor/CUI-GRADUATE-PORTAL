@@ -28,6 +28,10 @@ import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import { TextField } from "@mui/material";
 import BackdropModal from "../UI/BackdropModal";
+import adminService from "../../API/admin";
+import facultyService from "../../API/faculty";
+import { useFormik } from "formik";
+import studentService from "../../API/students";
 
 const style = {
   position: "absolute",
@@ -52,78 +56,59 @@ export default function ManageSupervisoryCommittee() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [getprograms, setPrograms] = useState([]);
-  const [gettoken, settoken] = useState("");
-  const [psname, setpsname] = useState("");
-  const [plname, setplname] = useState("");
-  const [pdesc, setpdesc] = useState("");
-  const [pminsem, setpminsem] = useState("");
-  const [pmaxsem, setpmaxsem] = useState("");
-  const [pdurat, setpdurat] = useState("");
-  const [pcredit, setpcredit] = useState("");
-  const [penable, setpenable] = useState("");
-  const [selectedobj, setselectedobj] = useState({});
+  const [supervisoryCommittee, setSupervisoryCommittee] = useState([]);
+  const [committeeMembers, setCommitteeMembers] = useState([]);
+  const [supervisors, setSupervisors] = useState([]);
+
+  // async function facultyData() {
+  //   const res = await facultyService.getSingleFaculty();
+  //   supervisoryCommittee
+  // }
+  const getSupervisors = async () => {
+    let data = await studentService.getSupervisors();
+
+    console.table("SubmissionM", data?.supervisors);
+    setSupervisors(data?.supervisors);
+  };
+  async function fetchData() {
+    const res = await adminService.getSupervisoryCommittee();
+
+    console.log("reshere", res);
+    const data = res?.data?.map((res) => ({
+      RegistrationNo: res.student_id?.registrationNo,
+      StudentName: res.student_id?.username,
+      FacultyMembers: res?.committee,
+      id: res?._id,
+    }));
+    // setCommitteeMembers(data.FacultyMembers);
+    /* setReportData({
+      ...reportData,
+      student_id: res?.student_id,
+      session_id: res?.session_id,
+      status: res?.status,
+      comment: res?.comment,
+      id: res?._id,
+    }); */
+    setSupervisoryCommittee(data);
+  }
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    var { token } = user;
-    console.log(token);
-    settoken(token);
-
-    axios
-      .get(`${process.env.REACT_APP_URL}/programs/getprogram`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        console.log("testing new get data");
-        console.log(response.data.programlist);
-        var newarr = response.data.programlist.map((obj) => ({
-          ...obj,
-          id: obj._id,
-        }));
-        console.log(newarr);
-        setPrograms(newarr);
-      })
-      .catch((err) => console.log(err));
+    getSupervisors();
+    fetchData();
   }, []);
 
-  function getData() {
-    const user = JSON.parse(localStorage.getItem("user"));
+  console.log("supervisory data", supervisoryCommittee);
+  // console.log("committee data", committeeMembers);
 
-    var { token } = user;
-    console.log(token);
-    settoken(token);
-
-    axios
-      .get(`${process.env.REACT_APP_URL}/programs/getprogram`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        console.log("testing another get data");
-        console.log(response.data.programlist);
-        var newarr = response.data.programlist.map((obj) => ({
-          ...obj,
-          id: obj._id,
-        }));
-        console.log(newarr);
-        setPrograms(newarr);
-      })
-      .catch((err) => console.log(err));
-  }
   const supervisorHeader = [
-    {
-      field: "id",
-      headerName: "ID",
-      width: 80,
-    },
-    { field: "Session", headerName: "Registration No.", width: 200 },
-    { field: "Description", headerName: "Student Name", width: 300 },
-    { field: "Status", headerName: "Faculty Member", width: 300 },
-    { field: "Comments", headerName: "Designation", width: 200 },
+    // {
+    //   field: "id",
+    //   headerName: "ID",
+    //   width: 80,
+    // },
+    { field: "RegistrationNo", headerName: "Registration No.", width: 150 },
+    { field: "StudentName", headerName: "Student Name", width: 150 },
+    { field: "FacultyMembers", headerName: "Faculty Members", width: 450 },
+    // { field: "Comments", headerName: "Designation", width: 200 },
     {
       field: "Action",
       headerName: "Action",
@@ -131,24 +116,14 @@ export default function ManageSupervisoryCommittee() {
       renderCell: (props) => (
         <>
           <Button
-            onClick={() => {
-              axios
-                .delete(
-                  `${process.env.REACT_APP_URL}/programs/deleteprogram/` +
-                    props.row.id,
-                  {
-                    headers: {
-                      Authorization: `Bearer ${gettoken}`,
-                    },
-                  }
-                )
-                .then((response) => {
-                  console.log(response.data.msg);
-
-                  getData();
-                  alert("Program deleted");
-                })
-                .catch((err) => console.log(err));
+            onClick={async () => {
+              const res = await adminService.deleteSupervisoryCommittee(
+                props.row.id
+              );
+              fetchData();
+              if (res.status === 200) {
+                setShowDeleteModal(true);
+              }
             }}
             variant="contained"
             color="secondary"
@@ -160,7 +135,7 @@ export default function ManageSupervisoryCommittee() {
 
           <Button
             onClick={() => {
-              setselectedobj(props.row);
+              // setselectedobj(props.row);
               handleOpen();
             }}
             variant="contained"
@@ -174,73 +149,32 @@ export default function ManageSupervisoryCommittee() {
       ),
     },
   ];
+  // console.log(supervisoryCommittee[0].StudentName);
+  const formik = useFormik({
+    initialValues: {
+      studentName: supervisoryCommittee.StudentName,
+      regestrationNo: supervisoryCommittee.RegistrationNo,
+      committeeMember1: "",
+      committeeMember2: "",
+      committeeMember3: "",
+      committee: [],
+    },
+    /* validationSchema: validationSchema, */
+    enableReinitialize: true,
+    onSubmit: async (values) => {
+      console.log(values);
+      // formik.values.committee.map(())
+      // let res = await adminService.updateSupervisoryCommittee(values);
+      // if (res.status === 200) {
+      //   setShowUpdateModal(true);
 
-  const updateProgram = () => {
-    var s = "";
-    if (s == "") {
-      console.log("checked");
-    }
-    var obj = {};
-    if (psname !== "") {
-      obj.programShortName = psname;
-      setpsname("");
-    }
-    if (plname != "") {
-      obj.programLongName = plname;
-      setplname("");
-    }
-    if (pdesc != "") {
-      obj.description = pdesc;
-      setpdesc("");
-    }
-    if (pminsem != "") {
-      obj.minSemesters = pminsem;
-      setpminsem("");
-    }
-    if (pmaxsem != "") {
-      obj.maxSemesters = pmaxsem;
-      setpmaxsem("");
-    }
-    if (pdurat != "") {
-      obj.duration = pdurat;
-      setpdurat("");
-    }
-    if (pcredit != "") {
-      obj.credits = pcredit;
-      setpcredit("");
-    }
-    if (penable != "") {
-      if (penable == "enable") {
-        obj.enable = true;
-        setpenable("");
-      } else {
-        obj.enable = false;
+      //   console.log(res);
+      // } else {
+      // }
+      // console.log(res);
+    },
+  });
 
-        setpenable("");
-      }
-    }
-
-    console.log(obj);
-
-    axios
-      .patch(
-        `${process.env.REACT_APP_URL}/programs/updateprogram/` +
-          selectedobj._id,
-        obj,
-        {
-          headers: {
-            Authorization: `Bearer ${gettoken}`,
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response.data.msg);
-
-        getData();
-        alert("Program Updated");
-      })
-      .catch((err) => console.log(err));
-  };
   return (
     <>
       <Modal
@@ -249,140 +183,93 @@ export default function ManageSupervisoryCommittee() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        <Box sx={style} component="form" onSubmit={formik.handleSubmit}>
           <TextField
-            label="Short Name"
-            variant="standard"
             color="secondary"
-            focused
-            value={psname}
-            placeholder={selectedobj.programShortName}
-            style={{ width: "100%" }}
-            onChange={(event) => {
-              setpsname(event.target.value);
-            }}
+            label="Student Name"
+            name="studentName"
+            variant="standard"
+            defaultValue={formik.values.studentName}
+            sx={{ width: "100%", marginBottom: "15px" }}
+            // value={formik.values.studentName}
+            onChange={formik.handleChange}
           />
+          <FormControl
+            color="secondary"
+            fullWidth
+            sx={{ marginBottom: "15px" }}
+          >
+            <InputLabel>Faculty Member</InputLabel>
+            <Select
+              variant="standard"
+              label="Faculty Member"
+              name="committeeMember1"
+              value={formik.values.committeeMember1}
+              onChange={formik.handleChange}
+            >
+              {supervisors.map((item) => {
+                return (
+                  <MenuItem key={item._id} value={item}>
+                    {item.username}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+          <FormControl
+            color="secondary"
+            fullWidth
+            sx={{ marginBottom: "15px" }}
+          >
+            <InputLabel>Faculty Member</InputLabel>
+            <Select
+              variant="standard"
+              label="Faculty Member"
+              name="committeeMember2"
+              value={formik.values.committeeMember2}
+              onChange={formik.handleChange}
+            >
+              {supervisors.map((item) => {
+                return (
+                  <MenuItem key={item._id} value={item}>
+                    {item.username}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+          <FormControl
+            color="secondary"
+            fullWidth
+            sx={{ marginBottom: "15px" }}
+          >
+            <InputLabel>Faculty Member</InputLabel>
+            <Select
+              variant="standard"
+              label="Faculty Member"
+              name="committeeMember3"
+              value={formik.values.committeeMember3}
+              onChange={formik.handleChange}
+            >
+              {supervisors.map((item) => {
+                return (
+                  <MenuItem key={item._id} value={item}>
+                    {item.username}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
 
-          <TextField
-            label="Long Name"
-            variant="standard"
-            color="secondary"
-            focused
-            sx={{ mt: 1 }}
-            style={{ width: "100%" }}
-            placeholder={selectedobj.programLongName}
-            value={plname}
-            onChange={(event) => {
-              setplname(event.target.value);
-            }}
-          />
-
-          <TextField
-            label="Description"
-            variant="standard"
-            color="secondary"
-            focused
-            sx={{ mt: 1 }}
-            style={{ width: "100%" }}
-            value={pdesc}
-            placeholder={selectedobj.description}
-            onChange={(event) => {
-              setpdesc(event.target.value);
-            }}
-          />
-          <TextField
-            label="Min Semester"
-            variant="standard"
-            color="secondary"
-            focused
-            sx={{ mt: 1 }}
-            style={{ width: "100%" }}
-            value={pminsem}
-            placeholder={selectedobj.minSemesters}
-            onChange={(event) => {
-              setpminsem(event.target.value);
-            }}
-          />
-
-          <TextField
-            label="Max Semester"
-            variant="standard"
-            color="secondary"
-            focused
-            sx={{ mt: 1 }}
-            style={{ width: "100%" }}
-            placeholder={selectedobj.maxSemesters}
-            value={pmaxsem}
-            onChange={(event) => {
-              setpmaxsem(event.target.value);
-            }}
-          />
-          <TextField
-            label="Duration"
-            variant="standard"
-            color="secondary"
-            focused
-            sx={{ mt: 1 }}
-            style={{ width: "100%" }}
-            value={pdurat}
-            placeholder={selectedobj.duration}
-            onChange={(event) => {
-              setpdurat(event.target.value);
-            }}
-          />
-          <TextField
-            label="Credits"
-            variant="standard"
-            color="secondary"
-            focused
-            sx={{ mt: 1 }}
-            style={{ width: "100%" }}
-            value={pcredit}
-            placeholder={selectedobj.credits}
-            onChange={(event) => {
-              setpcredit(event.target.value);
-            }}
-          />
           <Box>
-            <FormControl variant="standard" sx={{ width: 220, mt: 1.5 }}>
-              <InputLabel color="secondary" id="cars">
-                Enable Program?:
-              </InputLabel>
-              <Select
-                variant="standard"
-                name="cars"
-                labelId="cars"
-                id="cars"
-                color="secondary"
-                /* value={age} */
-                onChange={(event) => {
-                  setpenable(event.target.value);
-                }}
-                label="Enable Program?:"
-              >
-                <MenuItem value="enable">enable</MenuItem>
-                <MenuItem value="disable">disable</MenuItem>
-              </Select>
-            </FormControl>
-            {/* <label htmlFor="cars">Enable Program?: </label>
-        <select
-          name="cars"
-          id="cars"
-          onChange={(event) => {
-            setpenable(event.target.value);
-          }}
-        >
-          <option value="enable">enable</option>
-          <option value="disable">disable</option>
-        </select> */}
-            <br />
             <Button
+              type="submit"
               variant="contained"
               color="secondary"
               sx={{ mt: 1.5 }}
-              onClick={(event) => {
-                updateProgram();
-              }}
+              /* onClick={(event) => {
+                // updateProgram();
+              }} */
             >
               Update
             </Button>
@@ -390,7 +277,7 @@ export default function ManageSupervisoryCommittee() {
         </Box>
       </Modal>
       <div style={{ height: 400, width: "100%", backgroundColor: "white" }}>
-        <DataTable header={supervisorHeader} data={supervisorData} />
+        <DataTable header={supervisorHeader} data={supervisoryCommittee} />
       </div>
       <BackdropModal
         showModal={showDeleteModal}
