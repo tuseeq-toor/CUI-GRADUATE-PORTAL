@@ -28,7 +28,18 @@ export default function AddStudent() {
   const [programs, setPrograms] = useState([]);
   const [supervisors, setSupervisors] = useState([]);
 
-  const validationSchema = yup.object({
+  const msdValidationSchema = yup.object({
+    registrationNo: yup.string().required(),
+    username: yup.string().required(),
+    fatherName: yup.string().required(),
+    email: yup.string().required(),
+    mobile: yup.number().required(),
+    supervisor_id: yup.string().required(),
+    coSupervisor_id: yup.string().required(),
+    program_id: yup.string().required(),
+    thesisRegistration: yup.string().required(),
+  });
+  const phdValidationSchema = yup.object({
     registrationNo: yup.string().required(),
     username: yup.string().required(),
     fatherName: yup.string().required(),
@@ -42,6 +53,10 @@ export default function AddStudent() {
     impactFactorPublications: yup.number().required(),
     thesisTrack: yup.string().required(),
   });
+
+  const [selectedSchema, setSelectedSchema] = useState(msdValidationSchema);
+
+  console.log(selectedSchema);
 
   const formik = useFormik({
     initialValues: {
@@ -61,7 +76,7 @@ export default function AddStudent() {
       impactFactorPublications: "",
     },
     enableReinitialize: true,
-    validationSchema: validationSchema,
+    validationSchema: selectedSchema,
     onSubmit: (values) => {
       console.log(values);
       dispatch(Signup(values));
@@ -90,7 +105,14 @@ export default function AddStudent() {
           row
           name="studentType"
           value={studentType}
-          onChange={(e) => setStudentType(e.target.value)}
+          onChange={(e) => {
+            setStudentType(e.target.value);
+            if (e.target.value === "MS") {
+              setSelectedSchema(msdValidationSchema);
+            } else {
+              setSelectedSchema(phdValidationSchema);
+            }
+          }}
         >
           <FormControlLabel
             value="MS"

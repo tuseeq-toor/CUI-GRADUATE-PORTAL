@@ -17,7 +17,7 @@ export const API_STUD = axios.create({
 const getStudents = async () => {
   let token = getToken();
   try {
-    const { data } = await API_STUD.get("students", {
+    const { data } = await API_STUD.get("/students", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -28,10 +28,26 @@ const getStudents = async () => {
     console.log(error);
   }
 };
+
+const deleteStudent = async (id) => {
+  // console.log(data);
+  let token = getToken();
+  try {
+    const res = await API_STUD.delete(`students/delete/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    return error.message;
+  }
+};
+
 const getSupervisors = async () => {
   let token = getToken();
   try {
-    const { data } = await API_STUD.get("students/supervisors", {
+    const { data } = await API_STUD.get("/students/supervisors", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -73,6 +89,7 @@ const studentService = {
   getSupervisors,
   updateProfile,
   getStudents,
+  deleteStudent,
 };
 
 export default studentService;

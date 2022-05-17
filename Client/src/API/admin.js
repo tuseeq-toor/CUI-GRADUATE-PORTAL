@@ -85,12 +85,28 @@ const getSupervisoryCommittee = async () => {
   }
 };
 
+const updateStudent = async (formData, id) => {
+  let token = getToken();
+  try {
+    const { data } = await API_ADMIN.patch(`admin/student/${id}`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const adminService = {
   scheduleSynopsisMS,
   addSupervisoryCommittee,
   getSupervisoryCommittee,
   deleteSupervisoryCommittee,
   updateSupervisoryCommittee,
+  updateStudent,
 };
 
 export default adminService;
