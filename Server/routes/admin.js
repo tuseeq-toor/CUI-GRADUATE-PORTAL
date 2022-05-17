@@ -99,16 +99,11 @@ router.get(
     try {
       const committeeData = await SupervisoryCommittee.find()
         .populate("student_id")
+        .populate({
+          path: "committee",
+          populate: [{ path: "faculty_id", model: "Faculty" }],
+        })
         .exec();
-      var data = [];
-      committeeData.forEach(async (doc) => {
-        doc.committee.forEach(async (id) => {
-          let d = await Faculty.findOne(id);
-          data.push(d);
-          console.log("id of super" + d);
-        });
-      });
-      console.log("This" + data);
 
       res.json(committeeData);
     } catch (err) {
@@ -144,7 +139,7 @@ router.patch(
     try {
       const newcommit = await SupervisoryCommittee.findByIdAndUpdate(
         req.params.id,
-        req.body
+        { committee: req.body }
       );
       res.json({ msg: "Commitee Updated" });
     } catch (err) {
@@ -183,6 +178,42 @@ router.get(
       console.log(err);
       return res.status(500).json({ msg: err.message });
     }
+  }
+);
+
+router.patch(
+  "/student/:id",
+  // auth.verifyUser, auth.checkStudent,
+  async (req, res) => {
+    console.log("Req", req);
+    // let needs = await helpers.studentUpdateNeeds(req);
+    await User.findOneAndUpdate(
+      { student_id: req.params.id },
+      { $set: req.body }
+    )
+      .then(async () => {
+        await Student.findOneAndUpdate(
+          { _id: req.params.id },
+          {
+            $set: req.body,
+          },
+          { upsert: true }
+        )
+          .then((faculty) => {
+            res.setHeader("Content-Type", "application/json");
+            res
+              .status(200)
+              .json({ beforeUpdate: faculty, afterUpdate: req.body });
+          })
+          .catch((err) => {
+            res.setHeader("Content-Type", "application/json");
+            res.status(500).json({ success: false, message: err.message });
+          });
+      })
+      .catch((err) => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(500).json({ success: false, message: err.message });
+      });
   }
 );
 

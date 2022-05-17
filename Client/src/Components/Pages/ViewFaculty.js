@@ -373,7 +373,7 @@ export default function ViewFaculty() {
             sx={{ mt: 1 }}
             style={{ width: "100%" }}
             placeholder={selectedobj.email}
-            value={city}
+            value={email}
             onChange={(event) => {
               setemail(event.target.value);
             }}

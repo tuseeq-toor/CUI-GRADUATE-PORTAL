@@ -8,19 +8,26 @@
     </head>
 
 
-    <body>
+    <body style="margin: 4rem;" >
 
-        <table style="background-color:#572e74" width="100%" border="0" cellspacing="0" cellpadding="0">
-            <tr>
-                <td>
-                    <img class="rounded" src="data:image/png;base64,{{logo}}" alt="Logo" />
-
-                </td>
-                <td>
-
-                    <h2 class="text-center mt-5" style="color: #f0f0f0">
-                        Synopsis Evaluation
-                    </h2>
+        <table style="margin-top: 2rem;" width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr >
+                <td  width="20%">
+                    <img  style="margin-left: 0; height: 94px;" src="data:image/png;base64,{{logo}}" alt="Logo" />
+                </td>   
+                <td   width="80%">
+                    <div style="display: flex; flex-direction:column; align-items: center; justify-content: center;">
+                        <h2  style="text-align:center; margin:0 0 0.25rem 0;" style="color: black">
+                            COMSATS UNIVERSITY ISLAMABAD
+                        </h2>
+                        <h4  style="text-align:center; margin:0 0 0.75rem 0;" style="color: black">
+                            (Department of Computer Science)
+                        </h4>
+                        <h2  style="position: absolute; display: inline-block; left: 44%; text-align:center; margin:0 0 1rem 0; border-bottom: 2px solid black;" style="color: black">
+                            Synopsis Comments
+                        </h2>
+                    </div>
+                    
                 </td>
             </tr>
 
@@ -29,117 +36,69 @@
 
         {{#each synopsis}}
 
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top:50px">
+        <table style="margin-top: 4rem;" width="100%" border="1px solid black" cellspacing="0" cellpadding="0" >
             <tr>
-                <td width="5%">
-                    <h3>
-                        Candidate:
-                    </h3>
+                <td width="30%">
+                    <h4 style="margin: 0; padding: 6px;">
+                        Name
+                    </h4>
                 </td>
-                <td width="15%">
-                    <p>
+                <td width="70%">
+                    <p style="margin: 0; padding: 6px;">
                         {{this.student_id.username}}
                     </p>
                 </td>
-                <td width="10%">
-                    <h3>
-                        Registration No:
-                    </h3>
+            </tr>
+                <tr>
+                <td width="30%">
+                    <h4 style="margin: 0; padding: 6px;">
+                        Registration No
+                    </h4>
                 </td>
-                <td width="25%">
-                    <p>
+                <td width="70%">
+                    <p style="margin: 0; padding: 6px;">
                         {{this.student_id.registrationNo}}
                     </p>
                 </td>
             </tr>
-        </table>
-        <table width="100%" border="0" cellspacing="0" cellpadding="0">
             <tr>
-                <td width="5%">
-                    <h3>
-                        Supervisor:
-                    </h3>
+                <td width="30%">
+                    <h4 style="margin: 0; padding: 6px;">
+                        Title
+                    </h4>
                 </td>
-                <td width="15%">
-                    <p>
+                <td width="70%">
+                    <p style="margin: 0; padding: 6px;">
+                        {{this.student_id.synopsisTitle}}
+
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td width="30%">
+                    <h4 style="margin: 0; padding: 6px;">
+                        Supervisor
+                    </h4>
+                </td>
+                <td width="70%">
+                    <p style="margin: 0; padding: 6px;">
                         {{this.supervisor_id.fullName}}
                     </p>
                 </td>
-                <td width="10%">
-                    <h3>
-                        Dated:
-                    </h3>
-                </td>
-                <td width="25%">
-                    <p>
-                        March 13, 2022
-                    </p>
-                </td>
             </tr>
+                
         </table>
 
-        <table width="100%" border="0" cellspacing="0" cellpadding="0">
-
-            <tr>
-                <td width="15%">
-                    <h3>
-                        Synopsis Title:
-                    </h3>
-                </td>
-                <td width="85%">
-                    <p>
-                        {{this.student_id.synopsisTitle}}
-                    </p>
-                </td>
-
-
-
-            </tr>
-        </table>
         {{/each}}
-        <h3>
-            After in depth examination of the manuscript following are the
-            recommendations of the GAC member(s)
+        <h3 style="display: inline-block; border-bottom:2px solid black;" >
+         Comments:
 
         </h3>
         {{#each evaluations}}
-        <table width="100%" border="0" cellspacing="0" cellpadding="0">
-
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 0;">
             <tr>
-                <td width="12%">
-                    <h3>
-                        Evaluator:
-
-                    </h3>
-                </td>
-                <td width="18%">
-                    <p> {{this.evaluator_id.username}}</p>
-                </td>
-                <td width="20%">
-                    <h3>
-                        Recommendation:
-
-                    </h3>
-                </td>
-                <td width="20%">
-                    <p> {{this.evaluationStatus.evaluationStatus}}</p>
-                </td>
-                <td width="20%">
-                    <h3>
-                        Is Required Again:
-
-                    </h3>
-                </td>
-                <td width="15%">
-                    <p>Yes</p>
-                </td>
-            </tr>
-
-        </table>
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom:50px; margin-top:-25px;">
-            <tr>
-                <td>
-                    <h3>Comment:</h3>
+                <td style="margin-bottom: -2rem;" >
+                    <h3>Reviewer:</h3>
                 </td>
 
             </tr>
@@ -151,6 +110,22 @@
 
 
         {{/each}}
+
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 0;">
+            <tr>
+                <td>
+                    <h3 style="display: inline-block; border-bottom:2px solid black; margin-top: 2rem;">GAC Decision and Recommendations:</h3>
+                </td>
+
+            </tr>
+
+            <tr>
+                <td>Reasonable work done as far as synopsis scope is concerned. The student is
+                    recommended to do the above minor changes and must re-submit a revised manuscript
+                    with Rebuttal until 28th June 2021.
+                    The overall decision is ACCEPTED.</td>
+            </tr>
+        </table>
 
 
         </div>

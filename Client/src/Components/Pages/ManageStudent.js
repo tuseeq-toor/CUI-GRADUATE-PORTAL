@@ -28,6 +28,11 @@ import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import { TextField } from "@mui/material";
 import BackdropModal from "../UI/BackdropModal";
+import studentService from "../../API/students";
+import { useFormik } from "formik";
+import sessionsService from "../../API/sessions";
+import programsService from "../../API/programs";
+import adminService from "../../API/admin";
 
 const style = {
   position: "absolute",
@@ -52,92 +57,52 @@ export default function ManageStudent() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [getprograms, setPrograms] = useState([]);
-  const [gettoken, settoken] = useState("");
-  const [registrationNo, setRegistrationNo] = useState("");
-  const [name, setName] = useState("");
-  const [mail, setmail] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [status, setStatus] = useState("");
-  const [program, setProgram] = useState("");
-  const [supervisor, setSupervisor] = useState("");
-  const [cosupervisor, setCosupervisor] = useState("");
-  const [thesisTitle, setThesisTitle] = useState("");
-  const [thesisReg, setThesisReg] = useState("");
-  const [thesisTrack, setThesisTrack] = useState("");
-  const [specialization, setSpecialization] = useState("");
-  const [comprehensive, setComprehensive] = useState("");
-  const [foriegn, setForiegn] = useState("");
-  const [issue, setIssue] = useState("");
-  const [synopsisStatus, setSynopsisStatus] = useState("");
-  const [thesisStatus, setThesisStatus] = useState("");
+  const [students, setStudents] = useState([]);
+  const [supervisors, setSupervisors] = useState([]);
+  const [programs, setPrograms] = useState([]);
+  const [selectedStudent, setselectedStudent] = useState({});
 
-  const [selectedobj, setselectedobj] = useState({});
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
+  const getSupervisors = async () => {
+    let data = await studentService.getSupervisors();
 
-    var { token } = user;
-    console.log(token);
-    settoken(token);
+    console.table("SubmissionM", data?.supervisors);
+    setSupervisors(data?.supervisors);
+  };
+  const getPrograms = async () => {
+    let data = await programsService.getPrograms();
+    console.log(data);
+    setPrograms(data);
+  };
 
-    axios
-      .get(`${process.env.REACT_APP_URL}/programs/getprogram`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        console.log("testing new get data");
-        console.log(response.data.programlist);
-        var newarr = response.data.programlist.map((obj) => ({
-          ...obj,
-          id: obj._id,
-        }));
-        console.log(newarr);
-        setPrograms(newarr);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+  async function getData() {
+    const res = await studentService.getStudents();
+    console.log(res);
 
-  function getData() {
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    var { token } = user;
-    console.log(token);
-    settoken(token);
-
-    axios
-      .get(`${process.env.REACT_APP_URL}/programs/getprogram`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        console.log("testing another get data");
-        console.log(response.data.programlist);
-        var newarr = response.data.programlist.map((obj) => ({
-          ...obj,
-          id: obj._id,
-        }));
-        console.log(newarr);
-        setPrograms(newarr);
-      })
-      .catch((err) => console.log(err));
+    let data = res.map((stud) => ({
+      Name: stud?.username,
+      RegistrationNo: stud?.registrationNo,
+      Email: stud?.email,
+      id: stud?._id,
+      Program: stud?.program_id?.programShortName,
+      data: stud,
+    }));
+    setStudents(data);
   }
+
+  useEffect(() => {
+    getData();
+    getSupervisors();
+    getPrograms();
+  }, []);
 
   const studentHeader = [
     {
-      field: "id",
-      headerName: "ID",
-      width: 80,
-    },
-    {
-      field: "Session",
+      field: "Name",
       headerName: "Name",
-      width: 300,
+      width: 150,
     },
-    { field: "Description", headerName: "Registration No.", width: 300 },
-    { field: "Status", headerName: "Email", width: 300 },
+    { field: "RegistrationNo", headerName: "Registration No.", width: 150 },
+    { field: "Email", headerName: "Email", width: 350 },
     {
       field: "Action",
       headerName: "Action",
@@ -145,27 +110,14 @@ export default function ManageStudent() {
       renderCell: (props) => (
         <>
           <Button
-            onClick={() => {
-              axios
-                .delete(
-                  `${process.env.REACT_APP_URL}/programs/deleteprogram/` +
-                    props.row.id,
-                  {
-                    headers: {
-                      Authorization: `Bearer ${gettoken}`,
-                    },
-                  }
-                )
-                .then((response) => {
-                  console.log(response.data.msg);
+            onClick={async () => {
+              console.log(props.row);
+              const res = await studentService.deleteStudent(props.row.id);
 
-                  getData();
-                  if (response.status === 200) {
-                    setShowDeleteModal(true);
-                  }
-                  // alert("Program deleted");
-                })
-                .catch((err) => console.log(err));
+              getData();
+              if (res.status === 200) {
+                setShowDeleteModal(true);
+              }
             }}
             variant="contained"
             color="secondary"
@@ -177,7 +129,7 @@ export default function ManageStudent() {
 
           <Button
             onClick={() => {
-              setselectedobj(props.row);
+              setselectedStudent(props.row);
               handleOpen();
             }}
             variant="contained"
@@ -192,190 +144,111 @@ export default function ManageStudent() {
     },
   ];
 
-  const updateProgram = () => {
-    var s = "";
-    if (s == "") {
-      console.log("checked");
-    }
-    var obj = {};
-    if (registrationNo !== "") {
-      obj.programShortName = registrationNo;
-      setRegistrationNo("");
-    }
-    if (name != "") {
-      obj.programLongName = name;
-      setName("");
-    }
-    if (mail != "") {
-      obj.description = mail;
-      setmail("");
-    }
-    if (mobile != "") {
-      obj.minSemesters = mobile;
-      setMobile("");
-    }
-    if (status != "") {
-      obj.maxSemesters = status;
-      setStatus("");
-    }
-    if (program != "") {
-      obj.duration = program;
-      setProgram("");
-    }
-    if (supervisor != "") {
-      obj.credits = supervisor;
-      setSupervisor("");
-    }
-    if (cosupervisor != "") {
-      if (cosupervisor == "enable") {
-        obj.enable = true;
-        setCosupervisor("");
+  const formik = useFormik({
+    initialValues: {
+      registrationNo: selectedStudent?.data?.registrationNo,
+      username: selectedStudent?.data?.username,
+      fatherName: selectedStudent?.data?.fatherName,
+      email: selectedStudent?.data?.email,
+      mobile: selectedStudent?.data?.mobile,
+      supervisor_id: selectedStudent?.data?.supervisor_id?._id,
+      coSupervisor_id: selectedStudent?.data?.coSupervisor_id?._id,
+      program_id: selectedStudent?.data?.program_id?._id,
+      thesisRegistration: selectedStudent?.data?.thesisRegistration,
+      thesisTrack: selectedStudent?.data?.thesisTrack,
+      totalPublications: selectedStudent?.data?.totalPublications,
+      impactFactorPublications: selectedStudent?.data?.impactFactorPublications,
+    },
+    enableReinitialize: true,
+    onSubmit: async (values) => {
+      let res = await adminService.updateStudent(values, selectedStudent.id);
+      if (res.status === 200) {
+        setShowUpdateModal(true);
+
+        console.log(res);
       } else {
-        obj.enable = false;
-
-        setCosupervisor("");
       }
-    }
-    if (status != "") {
-      obj.maxSemesters = status;
-      setStatus("");
-    }
-    if (program != "") {
-      obj.duration = program;
-      setProgram("");
-    }
-    if (supervisor != "") {
-      obj.credits = supervisor;
-      setSupervisor("");
-    }
-    if (status != "") {
-      obj.maxSemesters = status;
-      setStatus("");
-    }
-    if (program != "") {
-      obj.duration = program;
-      setProgram("");
-    }
-    if (supervisor != "") {
-      obj.credits = supervisor;
-      setSupervisor("");
-    }
+      console.log(res);
+    },
+  });
 
-    console.log(obj);
+  console.log(selectedStudent);
 
-    axios
-      .patch(
-        `${process.env.REACT_APP_URL}/programs/updateprogram/` +
-          selectedobj._id,
-        obj,
-        {
-          headers: {
-            Authorization: `Bearer ${gettoken}`,
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response.data.msg);
-
-        getData();
-        if (response.status === 200) {
-          setShowUpdateModal(true);
-        }
-        // alert("Program Updated");
-      })
-      .catch((err) => console.log(err));
-  };
   return (
     <>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
+      <Modal open={open} onClose={handleClose}>
+        <Box sx={style} component="form" onSubmit={formik.handleSubmit}>
           <Box>
-            <FormControl>
-              <FormLabel color="secondary">Student</FormLabel>
-              <RadioGroup
-                row
-                name="studentType"
-                /* value={formik.values.studentType}
-                onChange={formik.handleChange} */
-              >
-                <FormControlLabel
-                  value="MS"
-                  control={<Radio color="secondary" />}
-                  label="MS"
-                />
-                <FormControlLabel
-                  value="PhD"
-                  control={<Radio color="secondary" />}
-                  label="PhD"
-                />
-              </RadioGroup>
-            </FormControl>
-
             <Box sx={{ display: "flex", gap: "1rem" }}>
               <Box sx={{ width: "50%" }}>
                 <TextField
-                  id="standard-basic"
                   sx={{
                     width: "100%",
                     marginBottom: "5px",
                   }}
                   label="Registration No."
+                  name="registrationNo"
                   color="secondary"
                   variant="standard"
+                  value={formik.values.registrationNo}
+                  onChange={formik.handleChange}
                 />
 
                 <TextField
-                  id="standard-basic"
                   sx={{ width: "100%", marginBottom: "5px" }}
                   label="Name"
+                  name="username"
                   color="secondary"
                   variant="standard"
+                  value={formik.values.username}
+                  onChange={formik.handleChange}
                 />
                 <TextField
-                  id="standard-basic"
+                  sx={{ width: "100%", marginBottom: "5px" }}
+                  label="Father Name"
+                  name="fatherName"
+                  color="secondary"
+                  variant="standard"
+                  value={formik.values.fatherName}
+                  onChange={formik.handleChange}
+                />
+                <TextField
                   sx={{ width: "100%", marginBottom: "5px" }}
                   label="Email"
+                  name="email"
                   color="secondary"
                   variant="standard"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
                 />
                 <TextField
-                  id="standard-basic"
                   sx={{ width: "100%", marginBottom: "5px" }}
                   label="Mobile"
+                  name="mobile"
                   color="secondary"
                   variant="standard"
-                />
-                <TextField
-                  id="standard-basic"
-                  sx={{ width: "100%", marginBottom: "5px" }}
-                  label="Status"
-                  color="secondary"
-                  variant="standard"
+                  value={formik.values.mobile}
+                  onChange={formik.handleChange}
                 />
                 <Box
                   sx={{ minWidth: 120, marginBottom: "5px", marginTop: "10px" }}
                 >
                   <FormControl fullWidth color="secondary">
-                    <InputLabel id="demo-simple-select-label">
-                      Program
-                    </InputLabel>
+                    <InputLabel>Program</InputLabel>
                     <Select
                       variant="standard"
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      //value={Program}
                       label="Program"
-                      //onChange={handleChange}
+                      name="program_id"
+                      value={formik.values.program_id}
+                      onChange={formik.handleChange}
                     >
-                      <MenuItem value={12}>PhD (CS)</MenuItem>
-                      <MenuItem value={14}>MS (CS)</MenuItem>
-                      <MenuItem value={15}>MS (SE)</MenuItem>
-                      <MenuItem value={15}>MS (IS)</MenuItem>
+                      {programs.map((item) => {
+                        return (
+                          <MenuItem key={item._id} value={item._id}>
+                            {item.programShortName}
+                          </MenuItem>
+                        );
+                      })}
                     </Select>
                   </FormControl>
                 </Box>
@@ -383,39 +256,22 @@ export default function ManageStudent() {
                   sx={{ minWidth: 120, marginBottom: "5px", marginTop: "10px" }}
                 >
                   <FormControl fullWidth color="secondary">
-                    <InputLabel id="demo-simple-select-label">
-                      Course Work Completion
-                    </InputLabel>
+                    <InputLabel>Supervisor</InputLabel>
                     <Select
                       variant="standard"
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      //value={Program}
-                      label="Course Work Completion"
-                      //onChange={handleChange}
-                    >
-                      <MenuItem value="1">N/A</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Box>
-
-                <Box
-                  sx={{ minWidth: 120, marginBottom: "5px", marginTop: "10px" }}
-                >
-                  <FormControl fullWidth color="secondary">
-                    <InputLabel id="demo-simple-select-label">
-                      Supervisor
-                    </InputLabel>
-                    <Select
-                      variant="standard"
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      //value={Program}
                       label="Supervisor"
-                      //onChange={handleChange}
+                      name="supervisor_id"
+                      value={formik.values.supervisor_id}
+                      defaultValue={formik.values.supervisor_id}
+                      onChange={formik.handleChange}
                     >
-                      <MenuItem value="237">-</MenuItem>
-                      <MenuItem value="4209">Dr. Adeel Anjum</MenuItem>
+                      {supervisors.map((item) => {
+                        return (
+                          <MenuItem key={item._id} value={item._id}>
+                            {item.username}
+                          </MenuItem>
+                        );
+                      })}
                     </Select>
                   </FormControl>
                 </Box>
@@ -423,101 +279,76 @@ export default function ManageStudent() {
                   sx={{ minWidth: 120, marginBottom: "5px", marginTop: "10px" }}
                 >
                   <FormControl fullWidth color="secondary">
-                    <InputLabel id="demo-simple-select-label">
-                      Co-Supervisor
-                    </InputLabel>
+                    <InputLabel>Co-Supervisor</InputLabel>
                     <Select
                       variant="standard"
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      //value={Program}
                       label="Co-Supervisor"
-                      //onChange={handleChange}
+                      name="coSupervisor_id"
+                      value={formik.values.coSupervisor_id}
+                      onChange={formik.handleChange}
                     >
-                      <MenuItem value="237">-</MenuItem>
-                      <MenuItem value="4209">Dr. Adeel Anjum</MenuItem>
+                      {supervisors.map((item) => {
+                        return (
+                          <MenuItem key={item._id} value={item._id}>
+                            {item.username}
+                          </MenuItem>
+                        );
+                      })}
                     </Select>
                   </FormControl>
                 </Box>
               </Box>
               <Box sx={{ width: "50%" }}>
                 <TextField
-                  id="standard-basic"
-                  sx={{ width: "100%", marginBottom: "5px" }}
-                  label="Thesis Title"
-                  color="secondary"
-                  variant="standard"
-                />
-                <TextField
-                  id="standard-basic"
                   sx={{ width: "100%", marginBottom: "5px" }}
                   label="Thesis Registration"
+                  name="thesisRegistration"
                   color="secondary"
                   variant="standard"
+                  value={formik.values.thesisRegistration}
+                  onChange={formik.handleChange}
                 />
-                <>
-                  <TextField
-                    id="standard-basic"
-                    sx={{ width: "100%", marginBottom: "5px" }}
-                    label="Thesis Track"
-                    color="secondary"
-                    variant="standard"
-                  />
-                  <TextField
-                    id="standard-basic"
-                    sx={{ width: "100%", marginBottom: "5px" }}
-                    label="Area of Specialization"
-                    color="secondary"
-                    variant="standard"
-                  />
-                  <TextField
-                    id="standard-basic"
-                    sx={{ width: "100%", marginBottom: "5px" }}
-                    label="Comprehensive"
-                    color="secondary"
-                    variant="standard"
-                  />
-                  <TextField
-                    id="standard-basic"
-                    sx={{ width: "100%", marginBottom: "5px" }}
-                    label="Foriegn Submission"
-                    color="secondary"
-                    variant="standard"
-                  />
-                  <TextField
-                    id="standard-basic"
-                    sx={{ width: "100%", marginBottom: "5px" }}
-                    label="Other Issue"
-                    color="secondary"
-                    variant="standard"
-                  />
-                </>
 
                 <TextField
-                  id="standard-basic"
                   sx={{ width: "100%", marginBottom: "5px" }}
-                  label="Synopsis Status"
+                  label="Thesis Track"
+                  name="thesisTrack"
                   color="secondary"
                   variant="standard"
+                  value={formik.values.thesisTrack}
+                  onChange={formik.handleChange}
                 />
-                <TextField
-                  id="standard-basic"
-                  sx={{ width: "100%", marginBottom: "5px" }}
-                  label="Thesis Status"
-                  color="secondary"
-                  variant="standard"
-                />
+                {selectedStudent?.Program?.toLowerCase().includes("phd") && (
+                  <>
+                    <TextField
+                      sx={{ width: "100%", marginBottom: "5px" }}
+                      label="Total Publications"
+                      name="totalPublications"
+                      color="secondary"
+                      variant="standard"
+                      value={formik.values.totalPublications}
+                      onChange={formik.handleChange}
+                    />
+                    <TextField
+                      sx={{ width: "100%", marginBottom: "5px" }}
+                      label="Impact Factor Publications"
+                      name="impactFactorPublications"
+                      color="secondary"
+                      variant="standard"
+                      value={formik.values.impactFactorPublications}
+                      onChange={formik.handleChange}
+                    />
+                  </>
+                )}
               </Box>
             </Box>
           </Box>
           <Box>
             <Button
+              type="submit"
               variant="contained"
               color="secondary"
               sx={{ mt: 1.5 }}
-              onClick={(event) => {
-                updateProgram();
-              }}
             >
               Update
             </Button>
@@ -525,10 +356,7 @@ export default function ManageStudent() {
         </Box>
       </Modal>
       <div style={{ height: 400, width: "100%", backgroundColor: "white" }}>
-        <DataTable
-          header={studentHeader}
-          data={studentData} /* data={studentData} */
-        />
+        <DataTable header={studentHeader} data={students} />
       </div>
       <BackdropModal
         showModal={showDeleteModal}

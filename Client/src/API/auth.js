@@ -40,6 +40,7 @@ const signup = async (data) => {
     console.log(error);
   }
 };
+
 const addFaculty = async (faculty) => {
   console.log("api" + faculty);
   try {

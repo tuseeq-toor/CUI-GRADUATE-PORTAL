@@ -45,7 +45,7 @@ router.post("/signup", async (req, res, next) => {
               if (err) {
                 res.statusCode = 500;
                 res.setHeader("Content-Type", "application/json");
-                res.json({ err });
+                res.json({ err: err.message });
               } else {
                 passport.authenticate("local")(req, res, () => {
                   res.statusCode = 200;
@@ -63,7 +63,7 @@ router.post("/signup", async (req, res, next) => {
         .catch((err) => {
           res.statusCode = 500;
           res.setHeader("Content-Type", "application/json");
-          res.json({ err });
+          res.json({ err: err.message });
         });
     }
   } else {
@@ -111,7 +111,7 @@ router.post("/signup", async (req, res, next) => {
         .catch((err) => {
           res.statusCode = 500;
           res.setHeader("Content-Type", "application/json");
-          res.json({ err });
+          res.json({ err: err.message });
         });
     }
   }
