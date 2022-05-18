@@ -85,7 +85,7 @@ export const Sidebar = () => {
             </ListItem>
             <Collapse in={item.active} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                {item.subMenu.map((subItem) => {
+                {item?.subMenu.map((subItem) => {
                   return (
                     <div
                       className={
@@ -120,7 +120,7 @@ export const Sidebar = () => {
   };
 
   if (roles[0] === "STUDENT") {
-    userProgram = user.user.student.program_id.programShortName;
+    userProgram = user?.user?.student?.program_id?.programShortName;
   }
   useEffect(() => {
     checkrole(currentRole);
@@ -163,10 +163,10 @@ export const Sidebar = () => {
         navigate("/Dashboard/HomeSupervisor");
         break;
       case "STUDENT":
-        if (userProgram.toLowerCase().includes("ms")) {
+        if (userProgram?.toLowerCase().includes("ms")) {
           setList(MsStudentListitems);
           navigate("/Dashboard/HomeMs");
-        } else if (userProgram.toLowerCase().includes("phd")) {
+        } else if (userProgram?.toLowerCase().includes("phd")) {
           setList(PhdStudentListitems);
           navigate("/Dashboard/HomePhd");
         }

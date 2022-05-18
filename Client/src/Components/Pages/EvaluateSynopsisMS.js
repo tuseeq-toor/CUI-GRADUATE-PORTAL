@@ -41,14 +41,27 @@ export default function EvaluateSynopsisMS() {
         await synopsisService.getSynopsisEvaluations();
       const alreadysubmittedSynopsis =
         await synopsisService.getSubmittedSynopsis();
+
+      let filteredMsSchedules = schd.map((msSchedule) => {
+        if (
+          msSchedule.program_id.programShortName.toLowerCase().includes("ms")
+        ) {
+          return msSchedule;
+        }
+      });
+
+      // console.log(filteredMsSchedules);
+      setSchedules(filteredMsSchedules);
+
       setEvaluations(alreadyevaluatedSynopsis);
-      setSchedules(schd);
       setSubmittedSynopsis(alreadysubmittedSynopsis);
 
       setLoading(true);
     }
     fetchData();
   }, []);
+
+  console.log(schedules);
 
   const handleRegistrationNo = (reg) => {
     setHasEvaluatedSynopsis(false);

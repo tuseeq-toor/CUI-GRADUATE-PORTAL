@@ -115,8 +115,8 @@ export default function ManagePrograms() {
   }
 
   const programHeader = [
-    { field: "programShortName", headerName: "Program", width: 150 },
-    { field: "programLongName", headerName: "Long Name", width: 150 },
+    { field: "programShortName", headerName: "Program", width: 100 },
+    { field: "programLongName", headerName: "Long Name", width: 250 },
 
     {
       field: "duration",
@@ -126,7 +126,7 @@ export default function ManagePrograms() {
     {
       field: "credits",
       headerName: "Credits",
-      width: 150,
+      width: 100,
     },
     {
       field: "Action",

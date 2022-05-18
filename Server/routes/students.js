@@ -155,8 +155,8 @@ router.get("/:id", auth.verifyUser, auth.checkStudent, (req, res) => {
 router.delete(
   "/delete/:id",
   // auth.verifyUser, auth.checkStudent,
-  (req, res) => {
-    User.findOneAndDelete({ student_id: req.params.id });
+  async (req, res) => {
+    await User.findOneAndDelete({ student_id: req.params.id });
     Student.findByIdAndDelete(req.params.id)
       .then((students) => {
         res
@@ -171,103 +171,95 @@ router.delete(
 
 //update student profile route == students/:id
 
-router.patch(
-  "/",
-  // auth.verifyUser, auth.checkStudent,
-  async (req, res) => {
-    uploadProfile(req, res, async function (err) {
-      const body = req.body;
+router.patch("/", auth.verifyUser, auth.checkStudent, async (req, res) => {
+  uploadProfile(req, res, async function (err) {
+    const body = req.body;
 
-      if (err instanceof multer.MulterError) {
-        console.log("mul", err);
+    if (err instanceof multer.MulterError) {
+      console.log("mul", err);
 
-        res.setHeader("Content-Type", "application/json");
+      res.setHeader("Content-Type", "application/json");
 
-        return res.status(500).json({ success: false, message: err });
-      } else if (err) {
-        res.setHeader("Content-Type", "application/json");
+      return res.status(500).json({ success: false, message: err });
+    } else if (err) {
+      res.setHeader("Content-Type", "application/json");
 
-        return res.status(500).json({ success: false, message: err });
-      } else {
-        console.log("Req", req);
-        let needs = await helpers.studentUpdateNeeds(req);
-        await User.findOneAndUpdate(
-          { _id: req.user._id },
-          { $set: { username: body.name } }
-        )
-          .then(async () => {
-            if (needs.programShortName.toLowerCase().includes("ms")) {
-              await Student.findOneAndUpdate(
-                { _id: needs.student_id },
-                {
-                  $set: {
-                    username: body.name,
-                    fatherName: body.fatherName,
-                    mobile: body.mobile,
-                    supervisor_id: body.supervisor,
-                    coSupervisor_id: body.coSupervisor,
-                    synopsisTitle: body.synopsisTitle,
-                    thesisRegistration: body.thesisRegistration,
-                    thesisTrack: body.thesisTrack,
-                    profilePicture: `public/uploads/${req.file.filename}`,
-                  },
+      return res.status(500).json({ success: false, message: err });
+    } else {
+      console.log("Req", req);
+      let needs = await helpers.studentUpdateNeeds(req);
+      await User.findOneAndUpdate(
+        { _id: req.user._id },
+        { $set: { username: body.name } }
+      )
+        .then(async () => {
+          if (needs.programShortName.toLowerCase().includes("ms")) {
+            await Student.findOneAndUpdate(
+              { _id: needs.student_id },
+              {
+                $set: {
+                  username: body.name,
+                  fatherName: body.fatherName,
+                  mobile: body.mobile,
+                  supervisor_id: body.supervisor,
+                  coSupervisor_id: body.coSupervisor,
+                  synopsisTitle: body.synopsisTitle,
+                  thesisRegistration: body.thesisRegistration,
+                  thesisTrack: body.thesisTrack,
+                  profilePicture: `public/uploads/${req.file.filename}`,
                 },
-                { upsert: true }
-              )
-                .then((faculty) => {
-                  res.setHeader("Content-Type", "application/json");
-                  res
-                    .status(200)
-                    .json({ beforeUpdate: faculty, afterUpdate: body });
-                })
-                .catch((err) => {
-                  res.setHeader("Content-Type", "application/json");
-                  res
-                    .status(500)
-                    .json({ success: false, message: err.message });
-                });
-            } else {
-              await Student.findOneAndUpdate(
-                { _id: needs.student_id },
-                {
-                  $set: {
-                    username: body.name,
-                    fatherName: body.fatherName,
-                    mobile: body.mobile,
-                    supervisor_id: body.supervisor,
-                    coSupervisor_id: body.coSupervisor,
-                    synopsisTitle: body.synopsisTitle,
-                    thesisRegistration: body.thesisRegistration,
-                    thesisTrack: body.thesisTrack,
-                    totalPublications: body.totalPublications,
-                    impactFactorPublications: body.impactFactorPublications,
-                    profilePicture: `public/uploads/${req.file.filename}`,
-                  },
+              },
+              { upsert: true }
+            )
+              .then((faculty) => {
+                res.setHeader("Content-Type", "application/json");
+                res
+                  .status(200)
+                  .json({ beforeUpdate: faculty, afterUpdate: body });
+              })
+              .catch((err) => {
+                res.setHeader("Content-Type", "application/json");
+                res.status(500).json({ success: false, message: err.message });
+              });
+          } else {
+            await Student.findOneAndUpdate(
+              { _id: needs.student_id },
+              {
+                $set: {
+                  username: body.name,
+                  fatherName: body.fatherName,
+                  mobile: body.mobile,
+                  supervisor_id: body.supervisor,
+                  coSupervisor_id: body.coSupervisor,
+                  synopsisTitle: body.synopsisTitle,
+                  thesisRegistration: body.thesisRegistration,
+                  thesisTrack: body.thesisTrack,
+                  totalPublications: body.totalPublications,
+                  impactFactorPublications: body.impactFactorPublications,
+                  profilePicture: `public/uploads/${req.file.filename}`,
                 },
-                { upsert: true }
-              )
-                .then((faculty) => {
-                  res.setHeader("Content-Type", "application/json");
-                  res
-                    .status(200)
-                    .json({ beforeUpdate: faculty, afterUpdate: body });
-                })
-                .catch((err) => {
-                  res.setHeader("Content-Type", "application/json");
-                  res
-                    .status(500)
-                    .json({ success: false, message: err.message });
-                });
-            }
-          })
-          .catch((err) => {
-            res.setHeader("Content-Type", "application/json");
-            res.status(500).json({ success: false, message: err.message });
-          });
-      }
-    });
-  }
-);
+              },
+              { upsert: true }
+            )
+              .then((faculty) => {
+                res.setHeader("Content-Type", "application/json");
+                res
+                  .status(200)
+                  .json({ beforeUpdate: faculty, afterUpdate: body });
+              })
+              .catch((err) => {
+                res.setHeader("Content-Type", "application/json");
+                res.status(500).json({ success: false, message: err.message });
+              });
+          }
+        })
+        .catch((err) => {
+          res.setHeader("Content-Type", "application/json");
+          res.status(500).json({ success: false, message: err.message });
+        });
+    }
+  });
+});
 
 //view notifications
 router.get("/notifications", auth.verifyUser, auth.checkStudent, (req, res) => {

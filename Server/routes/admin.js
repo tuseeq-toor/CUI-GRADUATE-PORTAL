@@ -76,12 +76,15 @@ router.patch(
   auth.verifyUser,
   auth.checkAdmin,
   async (req, res, next) => {
-    const { email, fullName, userRole } = req.body;
+    // const { email, fullName, userRole } = req.body;
     try {
-      const faculty = await Faculty.findByIdAndUpdate(req.params.id, req.body);
+      const faculty = await Faculty.findOneAndUpdate(
+        { _id: req.params.id },
+        req.body
+      );
       const user = await User.findOneAndUpdate(
         { faculty_id: req.params.id },
-        req.body
+        { ...req.body, username: `${req.body.firstName} ${req.body.lastName}` }
       );
       res.json({ msg: "Faculty Record Updated" });
     } catch (err) {

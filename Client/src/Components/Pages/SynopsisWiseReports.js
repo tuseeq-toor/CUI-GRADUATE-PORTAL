@@ -7,111 +7,170 @@ import Box from "@mui/material/Box";
 import studentService from "../../API/students";
 import profile from "../../../src/avatar-1.jpg";
 import synopsisService from "../../API/synopsis";
-import { Autocomplete, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  TextField,
+} from "@mui/material";
 import { useSelector } from "react-redux";
+import thesisService from "../../API/thesis";
 
 export default function SuperivorReport() {
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
 
-  const [selectedSynopsis, setSelectedSynopsis] = useState([]);
+  const [reportType, setReportType] = useState("Synopsis");
+  const [selectedReport, setselectedReport] = useState([]);
   const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
+  const [submittedThesis, setSubmittedThesis] = useState([]);
+  const [submittedReport, setSubmittedReport] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
       const alreadysubmittedSynopsis =
         await synopsisService.getSubmittedSynopsis();
+      const alreadysubmittedThesis = await thesisService.getSubmittedThesis();
 
       setSubmittedSynopsis(alreadysubmittedSynopsis);
+      setSubmittedThesis(alreadysubmittedThesis);
+
+      if (reportType === "Synopsis") {
+        setSubmittedReport(alreadysubmittedSynopsis);
+      } else {
+        setSubmittedReport(alreadysubmittedThesis);
+      }
 
       setLoading(true);
     }
     fetchData();
   }, []);
 
+  console.log(submittedSynopsis);
+  console.log(submittedThesis);
+  console.log(submittedReport);
+
   const handleRegistrationNo = (e) => {
-    setSelectedSynopsis([]);
-    let array = submittedSynopsis.filter(
-      (oneSynopsis) => e.target.value === oneSynopsis.thesisStatus
-    );
-    setSelectedSynopsis(array);
-    if (array.length !== 0) {
-      setIsSelected(true);
+    setselectedReport([]);
+    if (reportType === "Synopsis") {
+      let array = submittedSynopsis.filter(
+        (oneSynopsis) => e.target.value === oneSynopsis.synopsisStatus
+      );
+      setselectedReport(array);
+      // if (array.length !== 0) {
+      //   setIsSelected(true);
+      // }
+    } else {
+      let array = submittedThesis.filter(
+        (oneThesis) => e.target.value === oneThesis.thesisStatus
+      );
+      setselectedReport(array);
+      // if (array.length !== 0) {
+      //   setIsSelected(true);
+      // }
     }
   };
 
   return (
     <>
       <Box sx={{ minWidth: 120, mb: 6 }}>
+        <FormControl sx={{ mb: 1 }}>
+          <FormLabel color="secondary">Student</FormLabel>
+          <RadioGroup
+            row
+            name="studentType"
+            value={reportType}
+            onChange={(e) => {
+              setReportType(e.target.value);
+              if (e.target.value === "Synopsis") {
+                setselectedReport([]);
+                setSubmittedReport(submittedSynopsis);
+              } else {
+                setselectedReport([]);
+                setSubmittedReport(submittedThesis);
+              }
+            }}
+          >
+            <FormControlLabel
+              value="Synopsis"
+              control={<Radio color="secondary" />}
+              label="Synopsis"
+            />
+            <FormControlLabel
+              value="Thesis"
+              control={<Radio color="secondary" />}
+              label="Thesis"
+            />
+          </RadioGroup>
+        </FormControl>
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">
-            Update Thesis Status
-          </InputLabel>
+          <InputLabel color="secondary">Select Status</InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={selectedSynopsis.thesisStatus || ""}
+            color="secondary"
+            value={selectedReport.thesisStatus || selectedReport.syopsisStatus}
             name="thesisStatus"
             label="Select Status"
             onChange={handleRegistrationNo}
           >
-            <MenuItem value={"synopsisEvaluation"}>
+            <MenuItem value={"Synopsis Evaluation"}>
               Synopsis Evaluation
             </MenuItem>
-            <MenuItem value={"internalEvaluation"}>
+            <MenuItem value={"Internal Evaluation"}>
               Internal Evaluation
             </MenuItem>
-            <MenuItem value={"externalEvaluation"}>
+            <MenuItem value={"External Evaluation"}>
               External Evaluation
             </MenuItem>
-            <MenuItem value={"passOut"}>Pass Out</MenuItem>
-            <MenuItem value={"dismissed"}>Dismissed</MenuItem>
-            <MenuItem value={"synopsisNotSubmittedForGac"}>
+            <MenuItem value={"Pass Out"}>Pass Out</MenuItem>
+            <MenuItem value={"Dismissed"}>Dismissed</MenuItem>
+            <MenuItem value={"Synopsis Not Submitted for GAC"}>
               Synopsis Not Submitted for GAC
             </MenuItem>
-            <MenuItem value={"unscheduled"}>Unscheduled</MenuItem>
-            <MenuItem value={"scheduled"}>Scheduled</MenuItem>
-            <MenuItem value={"conducted"}>Conducted</MenuItem>
-            <MenuItem value={"approvedByGac"}>Approved By GAC</MenuItem>
-            <MenuItem value={"minorChanges"}>Minor Changes</MenuItem>
-            <MenuItem value={"synopsisNotSubmittedForDeanOffice"}>
+            <MenuItem value={"Unscheduled"}>Unscheduled</MenuItem>
+            <MenuItem value={"Scheduled"}>Scheduled</MenuItem>
+            <MenuItem value={"Conducted"}>Conducted</MenuItem>
+            <MenuItem value={"Approved By GAC"}>Approved By GAC</MenuItem>
+            <MenuItem value={"Minor Changes"}>Minor Changes</MenuItem>
+            <MenuItem value={"Synopsis Not Submitted for DEAN office"}>
               Synopsis Not Submitted for DEAN office
             </MenuItem>
-            <MenuItem value={"synopsisSubmittedForDeanOffice"}>
+            <MenuItem value={"Synopsis Submitted for DEAN office"}>
               Synopsis Submitted for DEAN office
             </MenuItem>
-            <MenuItem value={"forwardedToDeanOffice "}>
+            <MenuItem value={"Forwarded to DEAN Office "}>
               Forwarded to DEAN Office
             </MenuItem>
-            <MenuItem value={"changesSuggestedByDeanOffice"}>
+            <MenuItem value={"Changes suggested by DEAN office"}>
               Changes suggested by DEAN office
             </MenuItem>
             <MenuItem value={"Approved By DEAN"}>Approved By DEAN</MenuItem>
-            <MenuItem value={"thesisNotSubmittedForInternal"}>
+            <MenuItem value={"Thesis Not Submitted for Internal"}>
               Thesis Not Submitted for Internal
             </MenuItem>
-            <MenuItem value={"thesisSubmittedForInternal"}>
+            <MenuItem value={"Thesis Submitted for Internal"}>
               Thesis Submitted for Internal
             </MenuItem>
-            <MenuItem value={"acceptedByInternal"}>
+            <MenuItem value={"Accepted by Internal"}>
               Accepted by Internal
             </MenuItem>
-            <MenuItem value={"thesisNotSubmittedForInternal"}>
+            <MenuItem value={"Thesis not Submitted for Internal"}>
               Thesis not Submitted for Internal
             </MenuItem>
-            <MenuItem value={"thesisSubmittedfForInternal"}>
+            <MenuItem value={"Thesis Submitted for Internal"}>
               Thesis Submitted for Internal
             </MenuItem>
-            <MenuItem value={"deffered"}>Deffered</MenuItem>
-            <MenuItem value={"accepted"}>Accepted</MenuItem>
-            <MenuItem value={"majorChanges"}>Major Changes</MenuItem>
-            <MenuItem value={"rejected"}>Rejected</MenuItem>
+            <MenuItem value={"Deffered"}>Deffered</MenuItem>
+            <MenuItem value={"Accepted"}>Accepted</MenuItem>
+            <MenuItem value={"Major Changes"}>Major Changes</MenuItem>
+            <MenuItem value={"Rejected"}>Rejected</MenuItem>
           </Select>
         </FormControl>
       </Box>
 
-      {selectedSynopsis.map((synopsis) => {
+      {selectedReport.map((report) => {
         return (
           <>
             <Box
@@ -127,7 +186,7 @@ export default function SuperivorReport() {
                   src={
                     process.env.REACT_APP_URL +
                       "/" +
-                      synopsis?.student_id?.profilePicture || profile
+                      report?.student_id?.profilePicture || profile
                   }
                   alt="Student Profile"
                   style={{
@@ -140,7 +199,7 @@ export default function SuperivorReport() {
                 {console.log(
                   process.env.REACT_APP_URL +
                     "/" +
-                    synopsis?.student_id?.profilePicture
+                    report?.student_id?.profilePicture
                 )}
                 <div
                   style={{
@@ -159,7 +218,7 @@ export default function SuperivorReport() {
                   >
                     <h3 style={{ margin: "0 1rem 0 0" }}>Name:</h3>
                     <p style={{ margin: "0" }}>
-                      {synopsis?.student_id?.username}
+                      {report?.student_id?.username}
                     </p>
                   </div>
                   <h3
@@ -172,7 +231,7 @@ export default function SuperivorReport() {
                     Registration Number:
                   </h3>
                   <p style={{ marginTop: "0", marginBottom: "0" }}>
-                    {synopsis?.student_id?.registrationNo}
+                    {report?.student_id?.registrationNo}
                   </p>
                 </div>
                 <div
@@ -192,7 +251,7 @@ export default function SuperivorReport() {
                   >
                     <h3 style={{ margin: "0 1rem 0 0" }}>Father Name:</h3>
                     <p style={{ margin: "0" }}>
-                      {synopsis?.student_id?.fatherName}
+                      {report?.student_id?.fatherName}
                     </p>
                   </div>
                   <h3
@@ -205,7 +264,7 @@ export default function SuperivorReport() {
                     Supervisor:
                   </h3>
                   <p style={{ marginTop: "0", marginBottom: "0" }}>
-                    {synopsis?.supervisor_id?.fullName}
+                    {report?.supervisor_id?.fullName}
                   </p>
                 </div>
               </div>
@@ -249,7 +308,7 @@ export default function SuperivorReport() {
                   >
                     Email
                   </td>
-                  <td>{synopsis?.student_id?.email}</td>
+                  <td>{report?.student_id?.email}</td>
                 </tr>
                 <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
                   <td
@@ -262,7 +321,7 @@ export default function SuperivorReport() {
                   >
                     Mobile No.
                   </td>
-                  <td>{synopsis?.student_id?.mobile}</td>
+                  <td>{report?.student_id?.mobile}</td>
                 </tr>
                 <tr
                   style={{
@@ -279,7 +338,7 @@ export default function SuperivorReport() {
                   >
                     Track
                   </td>
-                  <td>{synopsis?.student_id?.thesisTrack}</td>
+                  <td>{report?.student_id?.thesisTrack}</td>
                 </tr>
 
                 <tr
@@ -296,9 +355,13 @@ export default function SuperivorReport() {
                       width: "20%",
                     }}
                   >
-                    Thesis Title
+                    {reportType === "Synopsis" ? (
+                      <>Synopsis Title</>
+                    ) : (
+                      <>Thesis Title</>
+                    )}
                   </td>
-                  <td>{synopsis?.synopsisTitle}</td>
+                  <td>{report.thesisTitle || report.synopsisTitle}</td>
                 </tr>
                 <tr
                   style={{
@@ -315,7 +378,7 @@ export default function SuperivorReport() {
                   >
                     Registration Date
                   </td>
-                  <td>{synopsis?.student_id?.thesisRegistration}</td>
+                  <td>{report?.student_id?.thesisRegistration}</td>
                 </tr>
                 {/* <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
               <td
@@ -328,7 +391,7 @@ export default function SuperivorReport() {
               >
                 External
               </td>
-              <td> {selectedSchedule?.student_id?.synopsisTitle} </td>
+              <td> {selectedSchedule?.student_id?.reportTitle} </td>
             </tr> */}
                 <tr
                   style={{
@@ -343,10 +406,14 @@ export default function SuperivorReport() {
                       width: "20%",
                     }}
                   >
-                    Thesis Status
+                    {reportType === "Synopsis" ? (
+                      <>Synopsis Status</>
+                    ) : (
+                      <>Thesis Status</>
+                    )}
                   </td>
 
-                  <td>{synopsis?.thesisStatus}</td>
+                  <td>{report.thesisStatus || report.synopsisStatus}</td>
                 </tr>
               </tbody>
             </table>

@@ -68,6 +68,7 @@ export default function ManageStudent() {
     console.table("SubmissionM", data?.supervisors);
     setSupervisors(data?.supervisors);
   };
+
   const getPrograms = async () => {
     let data = await programsService.getPrograms();
     console.log(data);
@@ -162,6 +163,7 @@ export default function ManageStudent() {
     enableReinitialize: true,
     onSubmit: async (values) => {
       let res = await adminService.updateStudent(values, selectedStudent.id);
+      getData();
       if (res.status === 200) {
         setShowUpdateModal(true);
 
@@ -262,7 +264,6 @@ export default function ManageStudent() {
                       label="Supervisor"
                       name="supervisor_id"
                       value={formik.values.supervisor_id}
-                      defaultValue={formik.values.supervisor_id}
                       onChange={formik.handleChange}
                     >
                       {supervisors.map((item) => {

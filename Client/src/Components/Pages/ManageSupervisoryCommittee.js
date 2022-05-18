@@ -118,7 +118,7 @@ export default function ManageSupervisoryCommittee() {
     // },
     { field: "RegistrationNo", headerName: "Registration No.", width: 150 },
     { field: "StudentName", headerName: "Student Name", width: 150 },
-    { field: "FacultyMembers", headerName: "Faculty Members", width: 450 },
+    { field: "FacultyMembers", headerName: "Faculty Members", width: 500 },
     // { field: "Comments", headerName: "Designation", width: 200 },
     {
       field: "Action",
@@ -203,7 +203,7 @@ export default function ManageSupervisoryCommittee() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style} component="form" onSubmit={formik.handleSubmit}>
-          <TextField
+          {/* <TextField
             color="secondary"
             label="Student Name"
             name="studentName"
@@ -212,7 +212,7 @@ export default function ManageSupervisoryCommittee() {
             sx={{ width: "100%", marginBottom: "15px" }}
             // value={formik.values.studentName}
             onChange={formik.handleChange}
-          />
+          /> */}
           <FormControl
             color="secondary"
             fullWidth

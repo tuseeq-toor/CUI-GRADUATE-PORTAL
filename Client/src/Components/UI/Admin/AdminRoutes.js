@@ -82,7 +82,7 @@ const AdminRoutes = (props) => {
             <Route path="/Dashboard/HomeGo" element={<HomeGo />} />
             <Route path="/Dashboard/HomeGac" element={<HomeGac />} />
             <Route
-              path="/Dashboard/UpdateThesisStatus"
+              path="/Dashboard/UpdateStatus"
               element={<UpdateThesisStatus />}
             />
             <Route
