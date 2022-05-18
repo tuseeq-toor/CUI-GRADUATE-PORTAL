@@ -118,7 +118,7 @@ export default function ManageSupervisoryCommittee() {
     // },
     { field: "RegistrationNo", headerName: "Registration No.", width: 150 },
     { field: "StudentName", headerName: "Student Name", width: 150 },
-    { field: "FacultyMembers", headerName: "Faculty Members", width: 450 },
+    { field: "FacultyMembers", headerName: "Faculty Members", width: 500 },
     // { field: "Comments", headerName: "Designation", width: 200 },
     {
       field: "Action",

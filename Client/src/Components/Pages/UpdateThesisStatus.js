@@ -6,15 +6,25 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
-import { Button } from "@mui/material";
+import {
+  Button,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import studentService from "../../API/students";
 import synopsisService from "../../API/synopsis";
 import programsService from "../../API/programs";
+import thesisService from "../../API/thesis";
 
 export default function UpdateThesisStatus() {
   const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
+  const [submittedThesis, setSubmittedThesis] = useState([]);
+  const [submittedReport, setSubmittedReport] = useState([]);
   const [programs, setPrograms] = useState([]);
+  const [statusType, setStatusType] = useState("Synopsis");
 
   const [data, setData] = React.useState({
     thesisStatus: "",
@@ -24,22 +34,38 @@ export default function UpdateThesisStatus() {
   const handleChange = (event) => {
     console.log(event.target.value);
     setData({ ...data, [event.target.name]: event.target.value });
+    console.log(data);
   };
 
   useEffect(() => {
     async function fetchData() {
       const submittedSynopsis = await synopsisService.getSubmittedSynopsis();
+      const submittedThesis = await thesisService.getSubmittedThesis();
 
       setSubmittedSynopsis(submittedSynopsis);
+      setSubmittedThesis(submittedThesis);
+      if (statusType === "Synopsis") {
+        setSubmittedReport(submittedSynopsis);
+      } else {
+        setSubmittedReport(submittedThesis);
+      }
     }
 
     fetchData();
   }, []);
 
+  console.log(submittedSynopsis);
+  console.log(submittedThesis);
+  console.log(submittedReport);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(data);
-    synopsisService.updateSynopsisStatus(data);
+    if (statusType === "Synopsis") {
+      synopsisService.updateSynopsisStatus(data);
+    } else {
+      thesisService.updateThesisStatus(data);
+    }
   };
 
   return (
@@ -51,72 +77,116 @@ export default function UpdateThesisStatus() {
           marginBottom: "2%",
         }}
       >
-        <h1>Thesis Status</h1>
+        <h1>Thesis/Synopsis Status</h1>
       </div>
       {/* Form starts here */}
       <Box component="form" noValidate sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
+          <Grid container style={{ marginLeft: "1.25rem" }}>
+            <FormControl sx={{ mb: 1 }}>
+              <FormLabel color="secondary">Status</FormLabel>
+              <RadioGroup
+                row
+                name="studentType"
+                value={statusType}
+                onChange={(e) => {
+                  setStatusType(e.target.value);
+                  if (e.target.value === "Synopsis") {
+                    setSubmittedReport(submittedSynopsis);
+                  } else {
+                    setSubmittedReport(submittedThesis);
+                  }
+                }}
+              >
+                <FormControlLabel
+                  value="Synopsis"
+                  control={<Radio color="secondary" />}
+                  label="Synopsis"
+                />
+                <FormControlLabel
+                  value="Thesis"
+                  control={<Radio color="secondary" />}
+                  label="Thesis"
+                />
+              </RadioGroup>
+            </FormControl>
+            <Box
+              style={{
+                marginTop: "1rem",
+                marginLeft: "4rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div>Current Status:</div>
+              <div>Completed </div>
+            </Box>
+          </Grid>
+
           <Grid item xs={6}>
             <FormControl fullWidth>
-              <InputLabel color="secondary">Update Thesis Status</InputLabel>
+              <InputLabel color="secondary">
+                Update Thesis/Synopsis Status
+              </InputLabel>
               <Select
                 color="secondary"
                 name="thesisStatus"
                 value={data.session_id}
-                label="Update Thesis Status"
+                label="Update Thesis/Synopsis Status"
                 onChange={handleChange}
               >
-                <MenuItem value={"synopsisEvaluation"}>
+                <MenuItem value={"Synopsis Evaluation"}>
                   Synopsis Evaluation
                 </MenuItem>
-                <MenuItem value={"internalEvaluation"}>
+                <MenuItem value={"Internal Evaluation"}>
                   Internal Evaluation
                 </MenuItem>
-                <MenuItem value={"externalEvaluation"}>
+                <MenuItem value={"External Evaluation"}>
                   External Evaluation
                 </MenuItem>
-                <MenuItem value={"passOut"}>Pass Out</MenuItem>
-                <MenuItem value={"dismissed"}>Dismissed</MenuItem>
-                <MenuItem value={"synopsisNotSubmittedForGac"}>
+                <MenuItem value={"Pass Out"}>Pass Out</MenuItem>
+                <MenuItem value={"Dismissed"}>Dismissed</MenuItem>
+                <MenuItem value={"Synopsis Not Submitted for GAC"}>
                   Synopsis Not Submitted for GAC
                 </MenuItem>
-                <MenuItem value={"unscheduled"}>Unscheduled</MenuItem>
-                <MenuItem value={"scheduled"}>Scheduled</MenuItem>
-                <MenuItem value={"conducted"}>Conducted</MenuItem>
-                <MenuItem value={"approvedByGac"}>Approved By GAC</MenuItem>
-                <MenuItem value={"minorChanges"}>Minor Changes</MenuItem>
-                <MenuItem value={"synopsisNotSubmittedForDeanOffice"}>
+                <MenuItem value={"Unscheduled"}>Unscheduled</MenuItem>
+                <MenuItem value={"Scheduled"}>Scheduled</MenuItem>
+                <MenuItem value={"Conducted"}>Conducted</MenuItem>
+                <MenuItem value={"Approved By GAC"}>Approved By GAC</MenuItem>
+                <MenuItem value={"Minor Changes"}>Minor Changes</MenuItem>
+                <MenuItem value={"Synopsis Not Submitted for DEAN office"}>
                   Synopsis Not Submitted for DEAN office
                 </MenuItem>
-                <MenuItem value={"synopsisSubmittedForDeanOffice"}>
+                <MenuItem value={"Synopsis Submitted for DEAN office"}>
                   Synopsis Submitted for DEAN office
                 </MenuItem>
-                <MenuItem value={"forwardedToDeanOffice "}>
+                <MenuItem value={"Forwarded to DEAN Office "}>
                   Forwarded to DEAN Office
                 </MenuItem>
-                <MenuItem value={"changesSuggestedByDeanOffice"}>
+                <MenuItem value={"Changes suggested by DEAN office"}>
                   Changes suggested by DEAN office
                 </MenuItem>
                 <MenuItem value={"Approved By DEAN"}>Approved By DEAN</MenuItem>
-                <MenuItem value={"thesisNotSubmittedForInternal"}>
+                <MenuItem value={"Thesis Not Submitted for Internal"}>
                   Thesis Not Submitted for Internal
                 </MenuItem>
-                <MenuItem value={"thesisSubmittedForInternal"}>
+                <MenuItem value={"Thesis Submitted for Internal"}>
                   Thesis Submitted for Internal
                 </MenuItem>
-                <MenuItem value={"acceptedByInternal"}>
+                <MenuItem value={"Accepted by Internal"}>
                   Accepted by Internal
                 </MenuItem>
-                <MenuItem value={"thesisNotSubmittedForInternal"}>
+                <MenuItem value={"Thesis not Submitted for Internal"}>
                   Thesis not Submitted for Internal
                 </MenuItem>
-                <MenuItem value={"thesisSubmittedfForInternal"}>
+                <MenuItem value={"Thesis Submitted for Internal"}>
                   Thesis Submitted for Internal
                 </MenuItem>
-                <MenuItem value={"deffered"}>Deffered</MenuItem>
-                <MenuItem value={"accepted"}>Accepted</MenuItem>
-                <MenuItem value={"majorChanges"}>Major Changes</MenuItem>
-                <MenuItem value={"rejected"}>Rejected</MenuItem>
+                <MenuItem value={"Deffered"}>Deffered</MenuItem>
+                <MenuItem value={"Accepted"}>Accepted</MenuItem>
+                <MenuItem value={"Major Changes"}>Major Changes</MenuItem>
+                <MenuItem value={"Rejected"}>Rejected</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -128,10 +198,10 @@ export default function UpdateThesisStatus() {
                 color="secondary"
                 label="Registration No."
                 name="student_id"
-                value={data.student_id}
+                value={submittedReport[0]?.student_id?.registrationNo}
                 onChange={handleChange}
               >
-                {submittedSynopsis.map((oneSynopsis) => (
+                {submittedReport.map((oneSynopsis) => (
                   <MenuItem
                     selected="selected"
                     value={oneSynopsis?.student_id?._id}

@@ -137,10 +137,10 @@ export default function ManageSession() {
     {
       field: "title",
       headerName: "Ttile",
-      width: 300,
+      width: 150,
     },
-    { field: "description", headerName: "Description", width: 300 },
-    { field: "status", headerName: "Status", width: 300 },
+    { field: "description", headerName: "Description", width: 250 },
+    { field: "status", headerName: "Status", width: 150 },
     {
       field: "Action",
       headerName: "Action",

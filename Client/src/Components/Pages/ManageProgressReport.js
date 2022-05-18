@@ -83,11 +83,11 @@ export default function ManageProgressReport() {
     {
       field: "Student",
       headerName: "Student",
-      width: 200,
+      width: 150,
     },
-    { field: "Session", headerName: "Session", width: 200 },
-    { field: "Status", headerName: "Status", width: 200 },
-    { field: "Comment", headerName: "Comment", width: 400 },
+    { field: "Session", headerName: "Session", width: 100 },
+    { field: "Status", headerName: "Status", width: 150 },
+    { field: "Comment", headerName: "Comment", width: 300 },
     {
       field: "Action",
       headerName: "Action",
@@ -108,13 +108,12 @@ export default function ManageProgressReport() {
                 )
                 .then((res) => {
                   console.log(res.data.msg);
-
+                  fetchData();
                   if (res.status === 200) {
                     setShowDeleteModal(true);
                   }
                 })
                 .catch((err) => console.log(err));
-              fetchData();
             }}
             variant="contained"
             color="secondary"
@@ -227,6 +226,7 @@ export default function ManageProgressReport() {
                     progressReportId
                   );
                   console.log(res);
+                  fetchData();
                   if (res.status === 200) {
                     setShowUpdateModal(true);
 
@@ -235,7 +235,6 @@ export default function ManageProgressReport() {
                 } catch (error) {
                   console.log(error);
                 }
-                fetchData();
               }}
             >
               Update Progress Report

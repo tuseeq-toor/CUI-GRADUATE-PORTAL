@@ -67,9 +67,9 @@ export const gacListitems = [
     ],
   },
   {
-    text: "Update Thesis Status",
+    text: "Update Thesis/Synopsis Status",
     icon: <PersonAddIcon />,
-    path: "/Dashboard/UpdateThesisStatus",
+    path: "/Dashboard/UpdateStatus",
   },
 
   {

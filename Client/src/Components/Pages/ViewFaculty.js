@@ -71,6 +71,7 @@ export default function ViewFaculty() {
         console.log(response.data.facultylist);
         var newarr = response.data.facultylist.map((obj) => ({
           ...obj,
+          fullName: obj.firstName + " " + obj.lastName,
           id: obj._id,
         }));
         console.log(newarr);
@@ -222,9 +223,9 @@ export default function ViewFaculty() {
       headerName: "Name",
       width: 200,
     },
-    { field: "designation", headerName: "Designation", width: 150 },
-    { field: "email", headerName: "Email", width: 300 },
-    { field: "department", headerName: "Department", width: 300 },
+    { field: "designation", headerName: "Designation", width: 200 },
+    { field: "email", headerName: "Email", width: 250 },
+    { field: "department", headerName: "Department", width: 120 },
     {
       field: "actions",
       headerName: "Action",
