@@ -11,6 +11,8 @@ const synopsisRouter = require("./routes/synopsis");
 const pdfReportsRouter = require("./routes/pdfReports");
 const progressReportsRouter = require("./routes/progressReports");
 const authRouter = require("./routes/auth");
+const notification = require("./routes/notifications") 
+
 var passport = require("passport");
 const path = require("path");
 
@@ -67,6 +69,9 @@ app.use("/programs", programsRouter);
 app.use("/synopsis", synopsisRouter);
 app.use("/pdfReports", pdfReportsRouter);
 app.use("/progress-report", progressReportsRouter);
+app.use("/Notification", notification);
+
+
 app.get("/", async (req, res, next) => {
   console.log("Hello");
   res.json({ msg: "Hello from Server" });
