@@ -5,7 +5,7 @@ const notificationSchema = new Schema({
   notification: { type: String, required: true },
   sentTo: { type: mongoose.Types.ObjectId, ref: "User" },
   createdBy: { type: mongoose.Types.ObjectId, ref: "User" },
-  creationDate: { type: Date, required: true },
+  creationDate: { type: String, required: true },
   isActive: { type: Boolean, required: true },
   isRead: { type: Boolean },
 });

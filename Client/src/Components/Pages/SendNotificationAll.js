@@ -1,27 +1,33 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import { Button, Box } from "@mui/material";
+import axios from "axios";
 
 export default function SendNotificationAll() {
-  const handleSubmit = (event) => {
+  const[notification,setnotification] = useState("")
+  const handleSubmit = async(event) => {
     event.preventDefault();
+    let token = getToken();
     alert("Submitted");
-    const data = new FormData(event.currentTarget);
-    const userEmail = data.get("email");
-    const userPassword = data.get("password");
-    /*  axios.post("${process.env.REACT_APP_URL}auth/login", {
-        email: userEmail,
-        password: userPassword,
-      })
-      .then((res) => {
-        const data = res.data.user;
-	console.log(data);
-        navigate("/Dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      }); */
+    await axios.post("http://localhost:3000/Notification/send-All",{ 
+      notification
+    },
+    {headers: {
+      Authorization: `Bearer ${token}`,
+    }})
+       
   };
+ 
+  const getToken = () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      var { token } = user;
+      console.log(token);
+      return token;
+    }
+  };
+  
+
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
       <TextField
@@ -30,6 +36,8 @@ export default function SendNotificationAll() {
         label="Notification"
         color="secondary"
         variant="outlined"
+        value={notification}
+        onChange={(e)=>setnotification(e.target.value)}
       />
       <Button type="submit" variant="contained" size="large" color="secondary">
         Send Notification
