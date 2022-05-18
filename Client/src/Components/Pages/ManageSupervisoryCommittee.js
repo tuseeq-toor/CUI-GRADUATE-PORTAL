@@ -203,7 +203,7 @@ export default function ManageSupervisoryCommittee() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style} component="form" onSubmit={formik.handleSubmit}>
-          <TextField
+          {/* <TextField
             color="secondary"
             label="Student Name"
             name="studentName"
@@ -212,7 +212,7 @@ export default function ManageSupervisoryCommittee() {
             sx={{ width: "100%", marginBottom: "15px" }}
             // value={formik.values.studentName}
             onChange={formik.handleChange}
-          />
+          /> */}
           <FormControl
             color="secondary"
             fullWidth

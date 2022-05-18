@@ -155,8 +155,8 @@ router.get("/:id", auth.verifyUser, auth.checkStudent, (req, res) => {
 router.delete(
   "/delete/:id",
   // auth.verifyUser, auth.checkStudent,
-  (req, res) => {
-    User.findOneAndDelete({ student_id: req.params.id });
+  async (req, res) => {
+    await User.findOneAndDelete({ student_id: req.params.id });
     Student.findByIdAndDelete(req.params.id)
       .then((students) => {
         res
