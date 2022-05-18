@@ -41,8 +41,17 @@ export default function EvaluateSynopsisPhD() {
         await synopsisService.getSynopsisEvaluations();
       const alreadysubmittedSynopsis =
         await synopsisService.getSubmittedSynopsis();
+
+      let filteredPhdSchedules = schd.map((phdSchedule) => {
+        if (
+          phdSchedule.program_id.programShortName.toLowerCase().includes("phd")
+        ) {
+          return phdSchedule;
+        }
+      });
+
+      setSchedules(filteredPhdSchedules);
       setEvaluations(alreadyevaluatedSynopsis);
-      setSchedules(schd);
       setSubmittedSynopsis(alreadysubmittedSynopsis);
 
       setLoading(true);

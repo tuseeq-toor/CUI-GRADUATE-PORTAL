@@ -58,12 +58,9 @@ export default function UpdateThesisStatus() {
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">
-                Update Thesis Status
-              </InputLabel>
+              <InputLabel color="secondary">Update Thesis Status</InputLabel>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
+                color="secondary"
                 name="thesisStatus"
                 value={data.session_id}
                 label="Update Thesis Status"
@@ -126,23 +123,20 @@ export default function UpdateThesisStatus() {
 
           <Grid item xs={6}>
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">
-                Registration No.
-              </InputLabel>
+              <InputLabel color="secondary">Registration No.</InputLabel>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={data.student_id}
+                color="secondary"
                 label="Registration No."
                 name="student_id"
+                value={data.student_id}
                 onChange={handleChange}
               >
                 {submittedSynopsis.map((oneSynopsis) => (
                   <MenuItem
                     selected="selected"
-                    value={oneSynopsis.student_id._id}
+                    value={oneSynopsis?.student_id?._id}
                   >
-                    {oneSynopsis.student_id.registrationNo}
+                    {oneSynopsis?.student_id?.registrationNo}
                   </MenuItem>
                 ))}
               </Select>

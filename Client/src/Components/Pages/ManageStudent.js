@@ -262,7 +262,6 @@ export default function ManageStudent() {
                       label="Supervisor"
                       name="supervisor_id"
                       value={formik.values.supervisor_id}
-                      defaultValue={formik.values.supervisor_id}
                       onChange={formik.handleChange}
                     >
                       {supervisors.map((item) => {

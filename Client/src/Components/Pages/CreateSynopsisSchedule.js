@@ -91,23 +91,28 @@ export default function CreateThesisSchedule() {
             </FormControl>
           </Grid> */}
           <Grid item xs={4}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <LocalizationProvider
+              color="secondary"
+              dateAdapter={AdapterDateFns}
+            >
               <DateTimePicker
+                color="secondary"
                 fullWidth
                 name="defenseDate"
                 label="Defense Date"
                 value={data.defenseDate}
                 onChange={handleChangeDate}
-                renderInput={(params) => <TextField fullWidth {...params} />}
+                renderInput={(params) => (
+                  <TextField color="secondary" fullWidth {...params} />
+                )}
               />
             </LocalizationProvider>
           </Grid>
           <Grid item xs={4}>
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Student</InputLabel>
+              <InputLabel color="secondary">Student</InputLabel>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
+                color="secondary"
                 value={data.student_id}
                 label="Student"
                 name="student_id"
@@ -116,9 +121,9 @@ export default function CreateThesisSchedule() {
                 {submittedSynopsis.map((oneSubmission) => (
                   <MenuItem
                     selected="selected"
-                    value={oneSubmission.student_id._id}
+                    value={oneSubmission?.student_id?._id}
                   >
-                    {oneSubmission.student_id.registrationNo}
+                    {oneSubmission?.student_id?.registrationNo}
                   </MenuItem>
                 ))}
               </Select>
@@ -126,10 +131,9 @@ export default function CreateThesisSchedule() {
           </Grid>
           <Grid item xs={4}>
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Program</InputLabel>
+              <InputLabel color="secondary">Program</InputLabel>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
+                color="secondary"
                 name="program_id"
                 value={data.program_id}
                 label="Program"
@@ -140,16 +144,12 @@ export default function CreateThesisSchedule() {
                     {program.programShortName}
                   </MenuItem>
                 ))}
-                {/* <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem> */}
               </Select>
             </FormControl>
           </Grid>
         </Grid>
       </Box>
 
-      {/* Pinitial-body start */}
       <div style={{ display: "flex", justifyContent: "end" }}>
         <Button
           variant="contained"
