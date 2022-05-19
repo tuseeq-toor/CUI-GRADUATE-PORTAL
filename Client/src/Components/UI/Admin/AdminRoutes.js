@@ -11,9 +11,10 @@ import ManageSession from "../../Pages/ManageSession";
 import ManageStudent from "../../Pages/ManageStudent";
 import ManageSupervisoryCommittee from "../../Pages/ManageSupervisoryCommittee";
 import ProgramWiseReports from "../../Pages/ProgramWiseReports";
-import SendNotification from "../../Pages/SendNotification";
+
 import SendNotificationAll from "../../Pages/SendNotificationAll";
 import SendNotificationMS from "../../Pages/SendNotificationMS";
+
 import EvaluateSynopsisMS from "../../Pages/EvaluateSynopsisMS";
 import EvaluateSynopsisPhD from "../../Pages/EvaluateSynopsisPhD";
 import SessionWiseReports from "../../Pages/SessionWiseReports";
@@ -64,6 +65,7 @@ import HomeSupervisor from "../../Pages/HomeSupervisor";
 import ManagePhdDeadline from "../../Pages/ManagePhdDeadline";
 import UpdateThesisStatus from "../../Pages/UpdateThesisStatus";
 import StatusCodes from "../StatusCodes";
+import SendNotificationPhD from "../../Pages/SendNotificationPhD";
 const AdminRoutes = (props) => {
   const { isLoggedIn } = useSelector((state) => state.auth);
   console.log(isLoggedIn);
@@ -206,7 +208,7 @@ const AdminRoutes = (props) => {
             />
             <Route
               path="/Dashboard/SendNotification(PhD)"
-              element={<SendNotification />}
+              element={<SendNotificationPhD />}
             />
             <Route
               path="/Dashboard/SendNotification(MS)"

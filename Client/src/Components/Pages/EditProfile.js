@@ -10,44 +10,65 @@ import studentService from "../../API/students";
 import { useSelector } from "react-redux";
 import * as yup from "yup";
 import { useFormik } from "formik";
+import programsService from "../../API/programs";
+import BackdropModal from "../UI/BackdropModal";
 
 export default function EditProfile() {
   const { user } = useSelector((state) => state.auth);
   const [supervisors, setSupervisors] = useState([]);
+  const [programs, setPrograms] = useState([]);
   const [isError, setIsError] = useState(false);
   const [error, setError] = useState("");
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [validationSchema, setValidationSchema] = useState(null);
 
   const userProgram = user.user.student.program_id.programShortName;
 
-  /*   const validationSchema = yup.object({
-    firstName: yup.string(),
-    lastName: yup.string(),
-    fullName: yup.string(),
-    fatherName: yup.string(),
-    email: yup.string(),
-    designation: yup.string(),
-    department: yup.string(),
-    campus: yup.string(),
-  }); */
+  const msdValidationSchema = yup.object({
+    name: yup.string().required(),
+    registrationNo: yup.string().required(),
+    fatherName: yup.string().required(),
+    email: yup.string().required(),
+    mobile: yup.number().required(),
+    supervisor: yup.string().required(),
+    coSupervisor: yup.string().required(),
+    program: yup.string().required(),
+    thesisTrack: yup.string().required(),
+    thesisRegistration: yup.string().required(),
+  });
+  const phdValidationSchema = yup.object({
+    name: yup.string().required(),
+    registrationNo: yup.string().required(),
+    fatherName: yup.string().required(),
+    email: yup.string().required(),
+    mobile: yup.number().required(),
+    supervisor: yup.string().required(),
+    coSupervisor: yup.string().required(),
+    program: yup.string().required(),
+    thesisTrack: yup.string().required(),
+    thesisRegistration: yup.string().required(),
+    totalPublications: yup.number().required(),
+    impactFactorPublications: yup.number().required(),
+  });
 
   const formik = useFormik({
     initialValues: {
       name: "",
       fatherName: "",
-
       password: "dummy",
       mobile: "",
       supervisor: "",
       coSupervisor: "",
-      synopsisTitle: "",
-      track: "",
+      // synopsisTitle: "",
+      program: "",
+      thesisTrack: "",
       thesisRegistration: "",
       totalPublications: "",
       impactFactorPublications: "",
-      thesisTrack: "",
       profilePic: [],
     },
-    /* validationSchema: validationSchema, */
+    validationSchema: validationSchema,
     onSubmit: async (values) => {
       let formData = new FormData();
 
@@ -56,8 +77,8 @@ export default function EditProfile() {
       formData.append("mobile", values.mobile);
       formData.append("supervisor", values.supervisor);
       formData.append("coSupervisor", values.coSupervisor);
-      formData.append("synopsisTitle", values.synopsisTitle);
-      formData.append("track", values.track);
+      // formData.append("synopsisTitle", values.synopsisTitle);
+      formData.append("program", values.program);
       formData.append("thesisRegistration", values.thesisRegistration);
       formData.append("thesisTrack", values.thesisTrack);
       formData.append("profilePic", values.profilePic[0]);
@@ -75,11 +96,10 @@ export default function EditProfile() {
       }
       let res = await studentService.updateProfile(formData);
       if (res?.status === 500) {
-        setError(res.data.message);
-        setIsError(true);
+        setShowErrorModal(true);
         console.log(res);
       } else {
-        setIsError(false);
+        setShowUpdateModal(true);
       }
       console.log(res);
     },
@@ -91,7 +111,19 @@ export default function EditProfile() {
     console.table("SubmissionM", data?.supervisors);
     setSupervisors(data?.supervisors);
   };
+
+  const getPrograms = async () => {
+    let data = await programsService.getPrograms();
+    setPrograms(data);
+  };
+
   useEffect(() => {
+    if (userProgram.toLowerCase().includes("ms")) {
+      setValidationSchema(msdValidationSchema);
+    } else {
+      setValidationSchema(phdValidationSchema);
+    }
+    getPrograms();
     getSupervisors();
   }, []);
 
@@ -111,6 +143,8 @@ export default function EditProfile() {
         variant="outlined"
         value={formik.values.name}
         onChange={formik.handleChange}
+        error={formik.touched.name && Boolean(formik.errors.name)}
+        helperText={formik.touched.name && formik.errors.name}
       />
 
       <TextField
@@ -122,6 +156,8 @@ export default function EditProfile() {
         variant="outlined"
         value={formik.values.fatherName}
         onChange={formik.handleChange}
+        error={formik.touched.fatherName && Boolean(formik.errors.fatherName)}
+        helperText={formik.touched.fatherName && formik.errors.fatherName}
       />
 
       <TextField
@@ -133,6 +169,8 @@ export default function EditProfile() {
         variant="outlined"
         value={formik.values.mobile}
         onChange={formik.handleChange}
+        error={formik.touched.mobile && Boolean(formik.errors.mobile)}
+        helperText={formik.touched.mobile && formik.errors.mobile}
       />
       <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
         <FormControl fullWidth color="secondary">
@@ -140,12 +178,14 @@ export default function EditProfile() {
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            //value={Program}
             name="supervisor"
             label="Supervisor"
-            //onChange={handleChange}
             value={formik.values.supervisor}
             onChange={formik.handleChange}
+            error={
+              formik.touched.supervisor && Boolean(formik.errors.supervisor)
+            }
+            helperText={formik.touched.supervisor && formik.errors.supervisor}
           >
             {supervisors.map((item) => {
               return (
@@ -168,6 +208,12 @@ export default function EditProfile() {
             label="Co-Supervisor"
             value={formik.values.coSupervisor}
             onChange={formik.handleChange}
+            error={
+              formik.touched.coSupervisor && Boolean(formik.errors.coSupervisor)
+            }
+            helperText={
+              formik.touched.coSupervisor && formik.errors.coSupervisor
+            }
           >
             {supervisors.map((item) => {
               return (
@@ -180,7 +226,7 @@ export default function EditProfile() {
         </FormControl>
       </Box>
 
-      <TextField
+      {/* <TextField
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
         label="Synopsis Title"
@@ -189,7 +235,11 @@ export default function EditProfile() {
         variant="outlined"
         value={formik.values.synopsisTitle}
         onChange={formik.handleChange}
-      />
+        error={
+          formik.touched.synopsisTitle && Boolean(formik.errors.synopsisTitle)
+        }
+        helperText={formik.touched.synopsisTitle && formik.errors.synopsisTitle}
+      /> */}
 
       <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
         <FormControl fullWidth color="secondary">
@@ -197,16 +247,20 @@ export default function EditProfile() {
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            name="track"
-            label="Track"
-            value={formik.values.track}
+            name="program"
+            label="Program"
+            value={formik.values.program}
             onChange={formik.handleChange}
+            error={formik.touched.program && Boolean(formik.errors.program)}
+            helperText={formik.touched.program && formik.errors.program}
           >
-            <MenuItem value={""} disabled>
-              N/A
-            </MenuItem>
-            <MenuItem value={"Regular"}>Regular</MenuItem>
-            <MenuItem value={"Publication"}>Publication</MenuItem>
+            {programs.map((item) => {
+              return (
+                <MenuItem key={item._id} value={item._id}>
+                  {item.programShortName}
+                </MenuItem>
+              );
+            })}
           </Select>
         </FormControl>
       </Box>
@@ -219,6 +273,13 @@ export default function EditProfile() {
         variant="outlined"
         value={formik.values.thesisRegistration}
         onChange={formik.handleChange}
+        error={
+          formik.touched.thesisRegistration &&
+          Boolean(formik.errors.thesisRegistration)
+        }
+        helperText={
+          formik.touched.thesisRegistration && formik.errors.thesisRegistration
+        }
       />
 
       <TextField
@@ -230,9 +291,11 @@ export default function EditProfile() {
         variant="outlined"
         value={formik.values.thesisTrack}
         onChange={formik.handleChange}
+        error={formik.touched.thesisTrack && Boolean(formik.errors.thesisTrack)}
+        helperText={formik.touched.thesisTrack && formik.errors.thesisTrack}
       />
 
-      <TextField
+      {/* <TextField
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
         label="Area of Specialization"
@@ -241,9 +304,9 @@ export default function EditProfile() {
         variant="outlined"
         value={formik.values.specialization}
         onChange={formik.handleChange}
-      />
+      /> */}
 
-      <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
+      {/* <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
         <FormControl fullWidth color="secondary">
           <InputLabel id="demo-simple-select-label">
             Comprehensive Passing Semester
@@ -263,12 +326,11 @@ export default function EditProfile() {
             <MenuItem value="FA11">FA11</MenuItem>
           </Select>
         </FormControl>
-      </Box>
+      </Box> */}
 
       {userProgram.toLowerCase().includes("phd") && (
         <>
           <TextField
-            id="standard-basic"
             sx={{ width: "100%", marginBottom: "15px" }}
             label="Total Publication (during PhD)"
             color="secondary"
@@ -276,9 +338,16 @@ export default function EditProfile() {
             variant="outlined"
             value={formik.values.totalPublications}
             onChange={formik.handleChange}
+            error={
+              formik.touched.totalPublications &&
+              Boolean(formik.errors.totalPublications)
+            }
+            helperText={
+              formik.touched.totalPublications &&
+              formik.errors.totalPublications
+            }
           />
           <TextField
-            id="standard-basic"
             sx={{ width: "100%", marginBottom: "15px" }}
             label="Impact Factor Publications (after synopsis approval)"
             name="impactFactorPublications"
@@ -286,6 +355,14 @@ export default function EditProfile() {
             variant="outlined"
             value={formik.values.impactFactorPublications}
             onChange={formik.handleChange}
+            error={
+              formik.touched.impactFactorPublications &&
+              Boolean(formik.errors.impactFactorPublications)
+            }
+            helperText={
+              formik.touched.impactFactorPublications &&
+              formik.errors.impactFactorPublications
+            }
           />
         </>
       )}
@@ -307,6 +384,21 @@ export default function EditProfile() {
       <Button type="submit" variant="contained" size="large" color="secondary">
         Update Profile
       </Button>
+
+      <BackdropModal
+        showModal={showUpdateModal}
+        setShowModal={setShowUpdateModal}
+        title={"Update!"}
+      >
+        The Profile has been Updated.
+      </BackdropModal>
+      <BackdropModal
+        showModal={showErrorModal}
+        setShowModal={setShowErrorModal}
+        title={"Error!"}
+      >
+        Something went wrong.
+      </BackdropModal>
     </Box>
   );
 }

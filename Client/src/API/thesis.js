@@ -100,7 +100,7 @@ const getSubmittedThesis = async () => {
 const getThesisSchedules = async () => {
   let token = getToken();
   try {
-    const { data } = await API_THESIS.get("thesis/synopsis-schedule", {
+    const { data } = await API_THESIS.get("thesis/thesis-schedule", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -113,7 +113,7 @@ const getThesisSchedules = async () => {
 const getThesisEvaluations = async () => {
   let token = getToken();
   try {
-    const { data } = await API_THESIS.get("thesis/synopsis-evaluation", {
+    const { data } = await API_THESIS.get("thesis/thesis-evaluation", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

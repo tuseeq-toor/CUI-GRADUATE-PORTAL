@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from "react";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import { Button, Box } from "@mui/material";
+import Button from "@mui/material/Button";
 import axios from "axios";
 import BackdropModal from "../UI/BackdropModal";
 
-export default function SendNotificationAll() {
+export default function SendNotificationPhD() {
   const [notification, setnotification] = useState("");
+  const [selected, setselected] = useState("");
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  console.log(selected);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -15,7 +22,7 @@ export default function SendNotificationAll() {
     // alert("Submitted");
     try {
       const res = await axios.post(
-        "http://localhost:3000/Notification/send-All",
+        `http://localhost:3000/Notification/send-to-/${selected._id}`,
         {
           notification,
         },
@@ -37,6 +44,24 @@ export default function SendNotificationAll() {
     }
   };
 
+  useEffect(() => {
+    getData();
+  }, []);
+  const [Students, setStudent] = useState([]);
+  const getData = async () => {
+    let token = getToken();
+    const res = await axios.get(
+      "http://localhost:3000/Notification/studentPHD",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const data = await res.data;
+    setStudent([...data]);
+  };
+
   const getToken = () => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
@@ -45,9 +70,32 @@ export default function SendNotificationAll() {
       return token;
     }
   };
-
   return (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+      <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
+        <FormControl fullWidth color="secondary">
+          <InputLabel id="demo-simple-select-label">
+            Registration No.
+          </InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            name="selected"
+            value={selected}
+            label="Registration No"
+            onChange={(e) => setselected(e.target.value)}
+          >
+            {Students.map((student) => {
+              return (
+                <MenuItem value={student}>
+                  {student.student_id.registrationNo}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
+      </Box>
+
       <TextField
         fullWidth
         sx={{ mb: 2, mt: 1 }}
@@ -60,6 +108,7 @@ export default function SendNotificationAll() {
         value={notification}
         onChange={(e) => setnotification(e.target.value)}
       />
+
       <Button type="submit" variant="contained" size="large" color="secondary">
         Send Notification
       </Button>

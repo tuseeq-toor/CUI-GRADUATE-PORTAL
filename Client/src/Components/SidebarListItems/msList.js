@@ -179,9 +179,9 @@ export const msListitems = [
     ],
   },
   {
-    text: "Update Thesis Status",
+    text: "Update Thesis/Sunopsis Status",
     icon: <PersonAddIcon />,
-    path: "/Dashboard/UpdateThesisStatus",
+    path: "/Dashboard/UpdateStatus",
   },
 
   /* {

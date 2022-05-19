@@ -8,7 +8,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
-import synopsisService from "../../API/synopsis";
+import thesisService from "../../API/thesis";
 import {
   Autocomplete,
   FormLabel,
@@ -27,40 +27,50 @@ export default function EvaluateThesisMS() {
 
   const [schedules, setSchedules] = useState([]);
 
-  const [hasEvaluatedSynopsis, setHasEvaluatedSynopsis] = useState(null);
+  const [hasEvaluatedThesis, setHasEvaluatedThesis] = useState(null);
   const [evaluations, setEvaluations] = useState([]);
-  const [selectedSynopsis, setSelectedSynopsis] = useState([]);
+  const [selectedThesis, setSelectedThesis] = useState([]);
   const [selectedSchedule, setSelectedSchedule] = useState({});
-  const [submittedSynopsis, setSubmittedSynopsis] = useState({});
+  const [submittedThesis, setSubmittedThesis] = useState({});
   const [data, setData] = useState({});
 
   useEffect(() => {
     async function fetchData() {
-      const schd = await synopsisService.getSynopsisSchedules();
-      const alreadyevaluatedSynopsis =
-        await synopsisService.getSynopsisEvaluations();
-      const alreadysubmittedSynopsis =
-        await synopsisService.getSubmittedSynopsis();
-      setEvaluations(alreadyevaluatedSynopsis);
-      setSchedules(schd);
-      setSubmittedSynopsis(alreadysubmittedSynopsis);
+      const schd = await thesisService.getThesisSchedules();
+      const alreadyevaluatedThesis = await thesisService.getThesisEvaluations();
+      const alreadysubmittedThesis = await thesisService.getSubmittedThesis();
+
+      let filteredMsSchedules = schd.map((msSchedule) => {
+        if (
+          msSchedule.program_id.programShortName.toLowerCase().includes("ms")
+        ) {
+          return msSchedule;
+        }
+      });
+      setSchedules(filteredMsSchedules);
+      setEvaluations(alreadyevaluatedThesis);
+      setSubmittedThesis(alreadysubmittedThesis);
 
       setLoading(true);
     }
     fetchData();
   }, []);
 
+  console.log(schedules);
+  console.log(evaluations);
+  console.log(submittedThesis);
+
   const handleRegistrationNo = (reg) => {
-    setHasEvaluatedSynopsis(false);
+    setHasEvaluatedThesis(false);
 
     schedules.forEach((oneSchedule) => {
       if (reg === oneSchedule?.student_id?.registrationNo) {
-        evaluations.forEach((evaluatedSynopsis) => {
-          if (evaluatedSynopsis.schedule_id) {
-            if (evaluatedSynopsis.schedule_id._id === oneSchedule._id) {
-              if (evaluatedSynopsis.evaluator_id._id === user.user._id) {
+        evaluations.forEach((evaluatedThesis) => {
+          if (evaluatedThesis.schedule_id) {
+            if (evaluatedThesis.schedule_id._id === oneSchedule._id) {
+              if (evaluatedThesis.evaluator_id._id === user.user._id) {
                 console.log(true);
-                setHasEvaluatedSynopsis(true);
+                setHasEvaluatedThesis(true);
               }
             }
           }
@@ -71,13 +81,12 @@ export default function EvaluateThesisMS() {
         console.log("Selected Schedule", selectedSchedule);
         setData({ ...data, schedule_id: oneSchedule._id });
 
-        submittedSynopsis.forEach((oneSynopsis) => {
+        submittedThesis.forEach((oneThesis) => {
           if (
-            selectedSchedule.student_id?._id ===
-            submittedSynopsis.student_id?._id
+            selectedSchedule.student_id?._id === submittedThesis.student_id?._id
           ) {
-            console.log("Selected Synopsis", oneSynopsis);
-            setSelectedSynopsis(oneSynopsis);
+            console.log("Selected Thesis", oneThesis);
+            setSelectedThesis(oneThesis);
           }
         });
       }
@@ -91,11 +100,11 @@ export default function EvaluateThesisMS() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const res = await synopsisService.addEvaluation(data);
+    const res = await thesisService.addEvaluation(data);
 
-    // synopsisService.updateEvaluation({
+    // thesisService.updateEvaluation({
     //   ...data,
-    //   synopsisEvaluation_id: res.data.synopsisEvaluation._id,
+    //   thesisEvaluation_id: res.data.thesisEvaluation._id,
     //   evaluationStatus: res.data.evaluationStatus._id,
     // });
     // alert(JSON.stringify(data));
@@ -130,7 +139,7 @@ export default function EvaluateThesisMS() {
             )}
           />
         </Box>
-        {hasEvaluatedSynopsis ? (
+        {hasEvaluatedThesis ? (
           <p>You have already evaluated this student</p>
         ) : (
           <>
@@ -254,7 +263,7 @@ export default function EvaluateThesisMS() {
                             width: "20%",
                           }}
                         >
-                          Synopsis Status
+                          Thesis Status
                         </td>
                         <td>N/A</td>
                       </tr>
@@ -269,7 +278,7 @@ export default function EvaluateThesisMS() {
                         >
                           Thesis Title
                         </td>
-                        <td>{selectedSchedule?.student_id?.synopsisTitle}</td>
+                        <td>{selectedSchedule?.student_id?.thesisTitle}</td>
                       </tr>
                       <tr
                         style={{
@@ -287,7 +296,7 @@ export default function EvaluateThesisMS() {
                         >
                           Area of Specialization
                         </td>
-                        <td>{selectedSynopsis?.specializationTrack}</td>
+                        <td>{selectedThesis?.specializationTrack}</td>
                       </tr>
                       <tr style={{ backgroundColor: "White" }}>
                         <td
@@ -349,7 +358,7 @@ export default function EvaluateThesisMS() {
                         >
                           Supervisor
                         </td>
-                        <td>{selectedSynopsis?.supervisor_id?.fullName}</td>
+                        <td>{selectedThesis?.supervisor_id?.fullName}</td>
                       </tr>
                       <tr style={{ backgroundColor: "White" }}>
                         <td
@@ -362,7 +371,7 @@ export default function EvaluateThesisMS() {
                         >
                           Co-Supervisor
                         </td>
-                        <td>{selectedSynopsis?.coSupervisor_id?.fullName}</td>
+                        <td>{selectedThesis?.coSupervisor_id?.fullName}</td>
                       </tr>
                       <tr
                         style={{
@@ -378,15 +387,15 @@ export default function EvaluateThesisMS() {
                             width: "20%",
                           }}
                         >
-                          Synopsis File
+                          Thesis File
                         </td>
                         <td>
                           <a
                             target="_blank"
-                            href={`${process.env.REACT_APP_URL}/${selectedSynopsis?.synopsisFileName}`}
+                            href={`${process.env.REACT_APP_URL}/${selectedThesis?.thesisFileName}`}
                             rel="noopener noreferrer"
                           >
-                            {selectedSynopsis?.synopsisFileName}
+                            {selectedThesis?.thesisFileName}
                           </a>
                         </td>
                       </tr>

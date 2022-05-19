@@ -26,7 +26,7 @@ router.get("/thesis-schedule", auth.verifyUser, (req, res) => {
 });
 
 router.post(
-  "/add-ThesisSchedule",
+  "/add-thesisSchedule",
   auth.verifyUser,
 
   (req, res) => {
