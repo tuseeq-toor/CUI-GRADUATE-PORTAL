@@ -18,12 +18,15 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import BackdropModal from "../UI/BackdropModal";
 
 export default function EvaluateSynopsisPhD() {
   const { currentRole } = useSelector((state) => state.userRoles);
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [autocompleteValue, setAutocompleteValue] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showEvaluateModal, setShowEvaluateModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const [schedules, setSchedules] = useState([]);
 
@@ -100,14 +103,19 @@ export default function EvaluateSynopsisPhD() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const res = await synopsisService.addEvaluation(data);
+    try {
+      const res = await synopsisService.addEvaluation(data);
 
-    // synopsisService.updateEvaluation({
-    //   ...data,
-    //   synopsisEvaluation_id: res.data.synopsisEvaluation._id,
-    //   evaluationStatus: res.data.evaluationStatus._id,
-    // });
-    // alert(JSON.stringify(data));
+      console.log(res);
+
+      if (res.status === 200) {
+        setShowEvaluateModal(true);
+      }
+    } catch (error) {
+      if (error.response.status === 500) {
+        setShowErrorModal(true);
+      }
+    }
   };
 
   const defaultProps = {
@@ -538,6 +546,21 @@ export default function EvaluateSynopsisPhD() {
                 >
                   Submit
                 </Button>
+
+                <BackdropModal
+                  showModal={showEvaluateModal}
+                  setShowModal={setShowEvaluateModal}
+                  title={"Evaluate!"}
+                >
+                  Synopsis has been Evaluated.
+                </BackdropModal>
+                <BackdropModal
+                  showModal={showErrorModal}
+                  setShowModal={setShowErrorModal}
+                  title={"Error!"}
+                >
+                  Something went wrong.
+                </BackdropModal>
               </div>
             </div>
           </>
