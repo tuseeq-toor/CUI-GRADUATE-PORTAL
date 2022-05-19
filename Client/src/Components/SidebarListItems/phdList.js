@@ -160,7 +160,7 @@ export const phdListitems = [
       {
         text: "Create a Schedule",
         icon: <LayersIcon />,
-        path: "/Dashboard/create-schedule-ms",
+        path: "/Dashboard/CreateThesisSchedule",
       },
       {
         text: "Evaluate Thesis PhD",

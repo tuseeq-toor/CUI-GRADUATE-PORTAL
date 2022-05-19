@@ -65,6 +65,8 @@ export default function EvaluateSynopsisMS() {
   }, []);
 
   console.log(schedules);
+  console.log(evaluations);
+  console.log(submittedSynopsis);
 
   const handleRegistrationNo = (reg) => {
     setHasEvaluatedSynopsis(false);
@@ -246,7 +248,7 @@ export default function EvaluateSynopsisMS() {
                         >
                           Course work completion
                         </td>
-                        <td>SPRING 2019</td>
+                        <td>N/A</td>
                       </tr>
                       <tr style={{ backgroundColor: "White" }}>
                         <td
@@ -277,7 +279,7 @@ export default function EvaluateSynopsisMS() {
                         >
                           Synopsis Status
                         </td>
-                        <td>N/A</td>
+                        <td>{submittedSynopsis?.synopsisStatus}</td>
                       </tr>
                       <tr style={{ backgroundColor: "White" }}>
                         <td
@@ -288,7 +290,7 @@ export default function EvaluateSynopsisMS() {
                             width: "20%",
                           }}
                         >
-                          Thesis Title
+                          Synopsis Title
                         </td>
                         <td>{selectedSchedule?.student_id?.synopsisTitle}</td>
                       </tr>
@@ -341,7 +343,7 @@ export default function EvaluateSynopsisMS() {
                         </td>
                         <td>N/A</td>
                       </tr>
-                      <tr style={{ backgroundColor: "White" }}>
+                      {/* <tr style={{ backgroundColor: "White" }}>
                         <td
                           valign="top"
                           style={{
@@ -353,7 +355,7 @@ export default function EvaluateSynopsisMS() {
                           Status
                         </td>
                         <td>&nbsp;</td>
-                      </tr>
+                      </tr> */}
                       <tr
                         style={{
                           color: "#333333",

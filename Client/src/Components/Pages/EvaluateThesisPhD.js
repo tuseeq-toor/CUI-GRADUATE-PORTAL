@@ -242,7 +242,7 @@ export default function EvaluateThesisMS() {
                         >
                           Course work completion
                         </td>
-                        <td>SPRING 2019</td>
+                        <td>N/A</td>
                       </tr>
                       <tr style={{ backgroundColor: "White" }}>
                         <td

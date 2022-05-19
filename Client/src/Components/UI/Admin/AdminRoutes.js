@@ -53,7 +53,7 @@ import AddFaculty from "../../Pages/AddFaculty";
 import { useSelector } from "react-redux";
 import ManageMsDeadline from "../../Pages/ManageMsDeadline";
 import CreateSynopsisSchedule from "../../Pages/CreateSynopsisSchedule";
-import CreateSchedule from "../../Pages/CreateThesisScheduleMS";
+import CreateThesisSchedule from "../../Pages/CreateThesisSchedule";
 import AddSupervisoryCommitteeStudent from "../../Pages/AddSupervisoryCommitteeStudent";
 import HomeMsCor from "../../Pages/HomeMsCor";
 import HomePhdCor from "../../Pages/HomePhdCor";
@@ -145,8 +145,8 @@ const AdminRoutes = (props) => {
               element={<ManageThesisSchedule />}
             />
             <Route
-              path="/Dashboard/create-schedule-ms"
-              element={<CreateSchedule />}
+              path="/Dashboard/CreateThesisSchedule"
+              element={<CreateThesisSchedule />}
             />
             <Route
               path="/Dashboard/GenerateThesisReport"

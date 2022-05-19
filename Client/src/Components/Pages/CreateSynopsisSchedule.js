@@ -14,7 +14,7 @@ import Grid from "@mui/material/Grid";
 import synopsisService from "../../API/synopsis";
 import programsService from "../../API/programs";
 
-export default function CreateThesisSchedule() {
+export default function CreateSynopsisSchedule() {
   const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
   const [programs, setPrograms] = useState([]);
 

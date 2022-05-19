@@ -43,7 +43,7 @@ const ReportPDF = () => {
     const labels = [
       ...new Set(
         await array.map((a) => {
-          return a.schedule_id.student_id.registrationNo;
+          return a?.schedule_id?.student_id?.registrationNo;
         })
       ),
     ];
@@ -64,7 +64,8 @@ const ReportPDF = () => {
 
   const handleRegistrationNo = (reg) => {
     let evals = evaluations.filter(
-      (evaluation) => evaluation.schedule_id.student_id.registrationNo === reg
+      (evaluation) =>
+        evaluation?.schedule_id?.student_id?.registrationNo === reg
     );
     let subSyn = submittedSynopsis.filter(
       (submittedSynopsis) => submittedSynopsis.student_id.registrationNo === reg

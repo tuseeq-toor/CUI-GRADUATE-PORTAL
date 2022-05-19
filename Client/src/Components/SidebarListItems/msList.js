@@ -146,9 +146,9 @@ export const msListitems = [
         path: "/Dashboard/ManageThesisSchedule",
       },
       {
-        text: "Create a Schedule",
+        text: "Create Schedule",
         icon: <LayersIcon />,
-        path: "/Dashboard/create-schedule-ms",
+        path: "/Dashboard/CreateThesisSchedule",
       },
       {
         text: "Evaluate Thesis MS",

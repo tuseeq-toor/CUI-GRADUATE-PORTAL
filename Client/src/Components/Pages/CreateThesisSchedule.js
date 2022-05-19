@@ -13,8 +13,9 @@ import { Button } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import synopsisService from "../../API/synopsis";
 import programsService from "../../API/programs";
+import thesisService from "../../API/thesis";
 
-export default function CreateThesisSchedule() {
+export default function CreateSynopsisSchedule() {
   const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
   const [programs, setPrograms] = useState([]);
 
@@ -35,7 +36,7 @@ export default function CreateThesisSchedule() {
   };
   useEffect(() => {
     async function fetchData() {
-      const stds = await synopsisService.getSubmittedSynopsis();
+      const stds = await thesisService.getSubmittedThesis();
       // const stds = await studentService.getStudents();
       const prog = await programsService.getPrograms();
       setSubmittedSynopsis(stds);
@@ -48,7 +49,7 @@ export default function CreateThesisSchedule() {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(data);
-    synopsisService.createSchedule(data);
+    thesisService.createSchedule(data);
   };
 
   return (
@@ -60,11 +61,36 @@ export default function CreateThesisSchedule() {
           marginBottom: "2%",
         }}
       >
-        <h1>Thesis Schedule</h1>
+        <h1>Synopsis Schedule</h1>
       </div>
       {/* Form starts here */}
       <Box component="form" noValidate sx={{ flexGrow: 1 }}>
         <Grid container spacing={6}>
+          {/* <Grid item xs={6}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Session</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="session_id"
+                value={data.session_id}
+                label="Session"
+                // onChange={handleChange}
+              >
+                 {submittedSynopsis.map((oneSubmission) => (
+                  <MenuItem
+                    selected="selected"
+                    value={oneSubmission.student_id.synopsisSession_id._id}
+                  >
+                    {oneSubmission.student_id.synopsisSession_id.title}
+                  </MenuItem>
+                ))} 
+                <MenuItem value={10}>SP22</MenuItem>
+                <MenuItem value={20}>FA22</MenuItem>
+                <MenuItem value={30}>FA23</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid> */}
           <Grid item xs={4}>
             <LocalizationProvider
               color="secondary"
@@ -115,7 +141,7 @@ export default function CreateThesisSchedule() {
                 onChange={handleChange}
               >
                 {programs.map((program) => (
-                  <MenuItem key={program._id} value={program._id}>
+                  <MenuItem selected="selected" value={program._id}>
                     {program.programShortName}
                   </MenuItem>
                 ))}

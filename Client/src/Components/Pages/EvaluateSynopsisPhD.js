@@ -242,7 +242,7 @@ export default function EvaluateSynopsisPhD() {
                         >
                           Course work completion
                         </td>
-                        <td>SPRING 2019</td>
+                        <td>N/A</td>
                       </tr>
                       <tr style={{ backgroundColor: "White" }}>
                         <td
@@ -284,7 +284,7 @@ export default function EvaluateSynopsisPhD() {
                             width: "20%",
                           }}
                         >
-                          Thesis Title
+                          Synopsis Title
                         </td>
                         <td>{selectedSchedule?.student_id?.synopsisTitle}</td>
                       </tr>
