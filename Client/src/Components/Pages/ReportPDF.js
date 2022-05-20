@@ -6,7 +6,7 @@ import pdfReportsService from "../../API/pdfReports";
 import synopsisService from "../../API/synopsis";
 import "../../Components/UI/ActiveTab.css";
 
-const data = {
+/* const data = {
   candidateName: "Waqas Zafar",
   registrationNumber: "FA18-BCS-107",
   supervisor: "Dr. Nadeem Javaid",
@@ -29,7 +29,7 @@ const data = {
       isRequiredAgain: "Yes",
     },
   ],
-};
+}; */
 
 const ReportPDF = () => {
   const [autocompleteValue, setAutocompleteValue] = useState(null);
@@ -49,6 +49,7 @@ const ReportPDF = () => {
     ];
     setEvaluationLabels(labels);
   };
+
   useEffect(() => {
     async function fetchData() {
       const res = await synopsisService.getSynopsisEvaluations();
@@ -70,6 +71,8 @@ const ReportPDF = () => {
     let subSyn = submittedSynopsis.filter(
       (submittedSynopsis) => submittedSynopsis.student_id.registrationNo === reg
     );
+    console.log(subSyn);
+
     setFilteredEvaluations(evals);
     setFilteredSynopsis(subSyn);
     console.log(filteredSynopsis);
@@ -224,7 +227,7 @@ const ReportPDF = () => {
           >
             Dated:
           </h3>
-          <p>{data.dated}</p>
+          <p>{"23 March 2022"}</p>
         </div>
         {/* Third Row */}
         <div

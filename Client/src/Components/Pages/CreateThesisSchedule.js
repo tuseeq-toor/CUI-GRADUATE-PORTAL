@@ -11,12 +11,17 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { Button } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import synopsisService from "../../API/synopsis";
 import programsService from "../../API/programs";
 import thesisService from "../../API/thesis";
+import { useSelector } from "react-redux";
+import BackdropModal from "../UI/BackdropModal";
 
 export default function CreateSynopsisSchedule() {
-  const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
+  const { currentRole } = useSelector((state) => state.userRoles);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
+  const [submittedThesis, setSubmittedThesis] = useState([]);
   const [programs, setPrograms] = useState([]);
 
   const [data, setData] = React.useState({
@@ -37,20 +42,57 @@ export default function CreateSynopsisSchedule() {
   useEffect(() => {
     async function fetchData() {
       const stds = await thesisService.getSubmittedThesis();
-      // const stds = await studentService.getStudents();
+      console.log(stds);
+
+      if (currentRole.toLowerCase().includes("ms")) {
+        let msStudents = stds.filter((std) =>
+          std.student_id.program_id.programShortName
+            .toLowerCase()
+            .includes("ms")
+        );
+        setSubmittedThesis(msStudents);
+      } else {
+        let phdStudents = stds.filter((std) =>
+          std.student_id.program_id.programShortName
+            .toLowerCase()
+            .includes("phd")
+        );
+        setSubmittedThesis(phdStudents);
+      }
       const prog = await programsService.getPrograms();
-      setSubmittedSynopsis(stds);
       setPrograms(prog);
     }
 
     fetchData();
   }, []);
 
-  const handleSubmit = (event) => {
+  console.log(submittedThesis);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(data);
-    thesisService.createSchedule(data);
+
+    try {
+      console.log(data);
+      const res = await thesisService.createSchedule(data);
+
+      if (res.status === 200) {
+        setShowSubmitModal(true);
+      }
+    } catch (error) {
+      if (error.response.status === 500) {
+        setShowErrorModal(true);
+      }
+    }
   };
+
+  // const getToken = () => {
+  //   const user = JSON.parse(localStorage.getItem("user"));
+  //   if (user) {
+  //     var { token } = user;
+  //     console.log(token);
+  //     return token;
+  //   }
+  // };
 
   return (
     <>
@@ -61,7 +103,7 @@ export default function CreateSynopsisSchedule() {
           marginBottom: "2%",
         }}
       >
-        <h1>Synopsis Schedule</h1>
+        <h1>Thesis Schedule</h1>
       </div>
       {/* Form starts here */}
       <Box component="form" noValidate sx={{ flexGrow: 1 }}>
@@ -77,7 +119,7 @@ export default function CreateSynopsisSchedule() {
                 label="Session"
                 // onChange={handleChange}
               >
-                 {submittedSynopsis.map((oneSubmission) => (
+                 {submittedThesis.map((oneSubmission) => (
                   <MenuItem
                     selected="selected"
                     value={oneSubmission.student_id.synopsisSession_id._id}
@@ -119,7 +161,7 @@ export default function CreateSynopsisSchedule() {
                 name="student_id"
                 onChange={handleChange}
               >
-                {submittedSynopsis.map((oneSubmission) => (
+                {submittedThesis.map((oneSubmission) => (
                   <MenuItem
                     selected="selected"
                     value={oneSubmission?.student_id?._id}
@@ -159,9 +201,24 @@ export default function CreateSynopsisSchedule() {
           style={{ marginTop: "2%", width: "20%" }}
           onClick={handleSubmit}
         >
-          Submit
+          Schedule
         </Button>
       </div>
+
+      <BackdropModal
+        showModal={showSubmitModal}
+        setShowModal={setShowSubmitModal}
+        title={"Schedule!"}
+      >
+        Thesis has been scheduled.
+      </BackdropModal>
+      <BackdropModal
+        showModal={showErrorModal}
+        setShowModal={setShowErrorModal}
+        title={"Error!"}
+      >
+        Something went wrong.
+      </BackdropModal>
     </>
   );
 }

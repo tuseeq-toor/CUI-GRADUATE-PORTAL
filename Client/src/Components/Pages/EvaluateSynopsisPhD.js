@@ -37,6 +37,19 @@ export default function EvaluateSynopsisPhD() {
   const [submittedSynopsis, setSubmittedSynopsis] = useState({});
   const [data, setData] = useState({});
 
+  const [scheduleLabels, setScheduleLabels] = useState([]);
+
+  const uniqueScheduleLabels = async (array) => {
+    const labels = [
+      ...new Set(
+        await array.map((item) => {
+          return item?.student_id?.registrationNo;
+        })
+      ),
+    ];
+    setScheduleLabels(labels);
+  };
+
   useEffect(() => {
     async function fetchData() {
       const schd = await synopsisService.getSynopsisSchedules();
@@ -45,15 +58,12 @@ export default function EvaluateSynopsisPhD() {
       const alreadysubmittedSynopsis =
         await synopsisService.getSubmittedSynopsis();
 
-      let filteredPhdSchedules = schd.map((phdSchedule) => {
-        if (
-          phdSchedule.program_id.programShortName.toLowerCase().includes("phd")
-        ) {
-          return phdSchedule;
-        }
-      });
+      let filteredPhdSchedules = schd.filter((phdSchedule) =>
+        phdSchedule.program_id.programShortName.toLowerCase().includes("phd")
+      );
 
       setSchedules(filteredPhdSchedules);
+      uniqueScheduleLabels(filteredPhdSchedules);
       setEvaluations(alreadyevaluatedSynopsis);
       setSubmittedSynopsis(alreadysubmittedSynopsis);
 
@@ -119,8 +129,8 @@ export default function EvaluateSynopsisPhD() {
   };
 
   const defaultProps = {
-    options: schedules,
-    getOptionLabel: (schedule) => schedule?.student_id?.registrationNo || "",
+    options: scheduleLabels,
+    getOptionLabel: (schedule) => schedule || "",
   };
 
   return (
@@ -132,7 +142,7 @@ export default function EvaluateSynopsisPhD() {
             id="controlled-demo"
             value={autocompleteValue}
             onChange={(value, newValue) => {
-              let registrationNo = newValue?.student_id?.registrationNo;
+              let registrationNo = newValue;
               setAutocompleteValue(newValue);
 
               handleRegistrationNo(registrationNo);

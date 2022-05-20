@@ -139,7 +139,6 @@ const AdminRoutes = (props) => {
               path="/Dashboard/SendSynopsisReport"
               element={<SendSynopsisReport />}
             />
-
             <Route
               path="/Dashboard/ManageThesisSchedule"
               element={<ManageThesisSchedule />}

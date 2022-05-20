@@ -146,7 +146,13 @@ router.get("/thesis-evaluation", auth.verifyUser, (req, res) => {
 
 router.get("/submitted-thesis", auth.verifyUser, (req, res) => {
   ThesisSubmission.find({})
-    .populate("student_id supervisor_id coSupervisor_id")
+    .populate({
+      path: "student_id",
+      populate: {
+        path: "program_id",
+      },
+    })
+    .populate("supervisor_id coSupervisor_id")
     .then((thesisSubmission) => {
       console.log("submitted", thesisSubmission);
       res.setHeader("Content-Type", "application/json");

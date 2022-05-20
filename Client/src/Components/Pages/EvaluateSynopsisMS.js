@@ -36,6 +36,18 @@ export default function EvaluateSynopsisMS() {
   const [selectedSchedule, setSelectedSchedule] = useState({});
   const [submittedSynopsis, setSubmittedSynopsis] = useState({});
   const [data, setData] = useState({});
+  const [scheduleLabels, setScheduleLabels] = useState([]);
+
+  const uniqueScheduleLabels = async (array) => {
+    const labels = [
+      ...new Set(
+        await array.map((item) => {
+          return item?.student_id?.registrationNo;
+        })
+      ),
+    ];
+    setScheduleLabels(labels);
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -45,16 +57,13 @@ export default function EvaluateSynopsisMS() {
       const alreadysubmittedSynopsis =
         await synopsisService.getSubmittedSynopsis();
 
-      let filteredMsSchedules = schd.map((msSchedule) => {
-        if (
-          msSchedule.program_id.programShortName.toLowerCase().includes("ms")
-        ) {
-          return msSchedule;
-        }
-      });
+      let filteredMsSchedules = schd.filter((msSchedule) =>
+        msSchedule.program_id.programShortName.toLowerCase().includes("ms")
+      );
 
       // console.log(filteredMsSchedules);
       setSchedules(filteredMsSchedules);
+      uniqueScheduleLabels(filteredMsSchedules);
 
       setEvaluations(alreadyevaluatedSynopsis);
       setSubmittedSynopsis(alreadysubmittedSynopsis);
@@ -125,8 +134,8 @@ export default function EvaluateSynopsisMS() {
   };
 
   const defaultProps = {
-    options: schedules,
-    getOptionLabel: (schedule) => schedule?.student_id?.registrationNo || "",
+    options: scheduleLabels,
+    getOptionLabel: (schedule) => schedule || "",
   };
 
   return (
@@ -138,7 +147,7 @@ export default function EvaluateSynopsisMS() {
             id="controlled-demo"
             value={autocompleteValue}
             onChange={(value, newValue) => {
-              let registrationNo = newValue?.student_id?.registrationNo;
+              let registrationNo = newValue;
               setAutocompleteValue(newValue);
 
               handleRegistrationNo(registrationNo);

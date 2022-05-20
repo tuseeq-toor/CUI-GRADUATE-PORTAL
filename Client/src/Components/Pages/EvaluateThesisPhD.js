@@ -37,20 +37,30 @@ export default function EvaluateThesisMS() {
   const [submittedThesis, setSubmittedThesis] = useState({});
   const [data, setData] = useState({});
 
+  const [scheduleLabels, setScheduleLabels] = useState([]);
+
+  const uniqueScheduleLabels = async (array) => {
+    const labels = [
+      ...new Set(
+        await array.map((item) => {
+          return item?.student_id?.registrationNo;
+        })
+      ),
+    ];
+    setScheduleLabels(labels);
+  };
+
   useEffect(() => {
     async function fetchData() {
       const schd = await thesisService.getThesisSchedules();
       const alreadyevaluatedThesis = await thesisService.getThesisEvaluations();
       const alreadysubmittedThesis = await thesisService.getSubmittedThesis();
 
-      let filteredMsSchedules = schd.map((phdSchedule) => {
-        if (
-          phdSchedule.program_id.programShortName.toLowerCase().includes("phd")
-        ) {
-          return phdSchedule;
-        }
-      });
-      setSchedules(filteredMsSchedules);
+      let filteredPhdSchedules = schd.filter((phdSchedule) =>
+        phdSchedule.program_id.programShortName.toLowerCase().includes("phd")
+      );
+      setSchedules(filteredPhdSchedules);
+      uniqueScheduleLabels(filteredPhdSchedules);
       setEvaluations(alreadyevaluatedThesis);
       setSubmittedThesis(alreadysubmittedThesis);
 
@@ -119,8 +129,8 @@ export default function EvaluateThesisMS() {
   };
 
   const defaultProps = {
-    options: schedules,
-    getOptionLabel: (schedule) => schedule?.student_id?.registrationNo || "",
+    options: scheduleLabels,
+    getOptionLabel: (schedule) => schedule || "",
   };
 
   return (
@@ -132,7 +142,7 @@ export default function EvaluateThesisMS() {
             id="controlled-demo"
             value={autocompleteValue}
             onChange={(value, newValue) => {
-              let registrationNo = newValue?.student_id?.registrationNo;
+              let registrationNo = newValue;
               setAutocompleteValue(newValue);
 
               handleRegistrationNo(registrationNo);
