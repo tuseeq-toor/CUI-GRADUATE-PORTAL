@@ -1,37 +1,14 @@
 import { Autocomplete, Box, Button, TextField } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { useReactToPrint } from "react-to-print";
 import comsatsLogo from "../../../src/cui.png";
 import pdfReportsService from "../../API/pdfReports";
 import synopsisService from "../../API/synopsis";
 import "../../Components/UI/ActiveTab.css";
 
-/* const data = {
-  candidateName: "Waqas Zafar",
-  registrationNumber: "FA18-BCS-107",
-  supervisor: "Dr. Nadeem Javaid",
-  dated: "Mar 18, 2022",
-  synopsisTitle:
-    "Efficient Electricity Theft Detection in Smart Grids using Data Driven Models",
-  recommendations: [
-    {
-      comment:
-        'The problem statement focuses on class imbalance, dimension reduction. These are generic issues. Rather the candidate should focus on the limitations of the techniques in literature. The manuscipt is written in a bt informal way. For example in the sentence "Therefore, ETD is an important thing and needs immediate attention to avoid ever-increasing electricity theft rate. Keeping this" avoid using the words like "thing" etc. Comparisons should be done with the relevant baseline techniques rather than any arbitrary techniques. Discussion on handling the identical issues should be is a way such that they are aligned with the objectives of the proposed research.',
-      evaluatorName: "Dr. Assad Abbas",
-      evaluationStatus: "Minor Changings",
-      isRequiredAgain: "No",
-    },
-    {
-      comment:
-        'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using "Content here, content here", making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for "lorem ipsum" will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).',
-      evaluatorName: "Dr. Basit Raza",
-      evaluationStatus: "Major Changings",
-      isRequiredAgain: "Yes",
-    },
-  ],
-}; */
-
 const ReportPDF = () => {
+  const { currentRole } = useSelector((state) => state.userRoles);
   const [autocompleteValue, setAutocompleteValue] = useState(null);
   const [evaluations, setEvaluations] = useState([]);
   const [evaluationLabels, setEvaluationLabels] = useState([]);
@@ -54,9 +31,41 @@ const ReportPDF = () => {
     async function fetchData() {
       const res = await synopsisService.getSynopsisEvaluations();
       const syn = await synopsisService.getSubmittedSynopsis();
-      setEvaluations(res);
-      setSubmittedSynopsis(syn);
-      uniqueEvaluatedLabels(res);
+      console.log(res);
+      console.log(syn);
+
+      let filteredsubmittedEvaluation = [];
+      let filteredSynopsisEvaluation = [];
+      if (currentRole.toLowerCase().includes("ms")) {
+        filteredSynopsisEvaluation = res.filter((item) =>
+          item.schedule_id.student_id.program_id.programShortName
+            .toLowerCase()
+            .includes("ms")
+        );
+        filteredsubmittedEvaluation = syn.filter((item) =>
+          item.student_id.program_id.programShortName
+            .toLowerCase()
+            .includes("ms")
+        );
+      } else if (currentRole.toLowerCase().includes("phd")) {
+        filteredSynopsisEvaluation = res.filter((item) =>
+          item.schedule_id?.student_id?.program_id?.programShortName
+            .toLowerCase()
+            .includes("phd")
+        );
+        filteredsubmittedEvaluation = syn.filter((item) =>
+          item.student_id.program_id.programShortName
+            .toLowerCase()
+            .includes("phd")
+        );
+      } else {
+        filteredSynopsisEvaluation = res;
+        filteredsubmittedEvaluation = syn;
+      }
+
+      setEvaluations(filteredSynopsisEvaluation);
+      setSubmittedSynopsis(filteredsubmittedEvaluation);
+      uniqueEvaluatedLabels(filteredSynopsisEvaluation);
     }
 
     fetchData();
@@ -87,6 +96,7 @@ const ReportPDF = () => {
     options: evaluationLabels,
     getOptionLabel: (evaluation) => evaluation || "",
   };
+
   const handleSubmit = async () => {
     const res = await pdfReportsService.generateReport({
       evaluations: filteredEvaluations,

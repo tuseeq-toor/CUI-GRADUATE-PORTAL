@@ -11,27 +11,57 @@ const API_PdfReports = axios.create({
   baseURL: process.env.REACT_APP_URL,
 });
 
-const generateReport = async (data) => {
+const generateSynopsisReport = async (data) => {
   let token = getToken();
   try {
-    const res = await API_PdfReports.post("pdfReports/generate-report", data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await API_PdfReports.post(
+      "pdfReports/generate-synopsis-report",
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return res;
   } catch (error) {
     return error.response;
   }
 };
-const downlaodReport = async (registrationNo) => {
+const downlaodSynopsisReport = async (registrationNo) => {
   console.log("registraitionNO", registrationNo);
   window.open(
-    `${process.env.REACT_APP_URL}/pdfReports/generate-report/${registrationNo}`
+    `${process.env.REACT_APP_URL}/pdfReports/generate-synopsis-report/${registrationNo}`
+  );
+};
+
+const generateThesisReport = async (data) => {
+  let token = getToken();
+  try {
+    const res = await API_PdfReports.post(
+      "pdfReports/generate-thesis-report",
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
+const downlaodThesisReport = async (registrationNo) => {
+  console.log("registraitionNO", registrationNo);
+  window.open(
+    `${process.env.REACT_APP_URL}/pdfReports/generate-thesis-report/${registrationNo}`
   );
 };
 const pdfReportsService = {
-  generateReport,
-  downlaodReport,
+  generateSynopsisReport,
+  downlaodSynopsisReport,
+  generateThesisReport,
+  downlaodThesisReport,
 };
 export default pdfReportsService;

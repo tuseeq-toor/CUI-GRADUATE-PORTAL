@@ -145,7 +145,14 @@ router.get("/synopsis-evaluation", auth.verifyUser, (req, res) => {
     .populate("evaluator_id evaluationStatus")
     .populate({
       path: "schedule_id",
-      populate: [{ path: "student_id", model: "Student" }],
+      populate: [
+        {
+          path: "student_id",
+          populate: {
+            path: "program_id",
+          },
+        },
+      ],
     })
 
     .then((synopsisEvaluation) => {

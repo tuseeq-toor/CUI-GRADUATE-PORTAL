@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 // Read HTML Template
 
-router.post("/generate-report", (req, res, next) => {
+router.post("/generate-synopsis-report", (req, res, next) => {
   console.log(req.body);
   var html = fs.readFileSync(
     path.join(__dirname, "../pdfTemplates/synopsisReport.html"),
@@ -46,7 +46,57 @@ router.post("/generate-report", (req, res, next) => {
     });
 });
 
-router.get("/generate-report/:registrationNo", (req, res) => {
+router.get("/generate-synopsis-report/:registrationNo", (req, res) => {
+  console.log("registraitionNO", req.params.registrationNo);
+
+  const file = path.join(
+    __dirname,
+    `../public/pdfReports/${req.params.registrationNo}.pdf`
+  );
+  res.download(file);
+});
+
+/////////////Thesis Report/////////////
+
+router.post("/generate-thesis-report", (req, res, next) => {
+  console.log(req.body);
+  var html = fs.readFileSync(
+    path.join(__dirname, "../pdfTemplates/thesisReport.html"),
+    "utf8"
+  );
+  const bitmap = fs.readFileSync(
+    path.join(__dirname, "../pdfTemplates/cui.png")
+  );
+  const logo = bitmap.toString("base64");
+
+  var options = {
+    format: "A4",
+    orientation: "portrait",
+    border: "10mm",
+  };
+
+  var document = {
+    html: html,
+    data: {
+      logo: logo,
+      evaluations: req.body.evaluations,
+      thesis: req.body.thesis,
+    },
+    path: `../Server/public/pdfReports/${req.body.thesis[0].student_id.registrationNo}.pdf`,
+  };
+
+  pdf
+    .create(document, options)
+    .then((response) => {
+      console.log(response);
+      res.status(200).json({ message: "Thesis Report Generated" });
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+});
+
+router.get("/generate-thesis-report/:registrationNo", (req, res) => {
   console.log("registraitionNO", req.params.registrationNo);
 
   const file = path.join(
