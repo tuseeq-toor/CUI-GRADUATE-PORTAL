@@ -23,6 +23,7 @@ export default function UpdateThesisStatus() {
   const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
   const [submittedThesis, setSubmittedThesis] = useState([]);
   const [submittedReport, setSubmittedReport] = useState([]);
+  const [selectedReport, setselectedReport] = useState([]);
   const [programs, setPrograms] = useState([]);
   const [statusType, setStatusType] = useState("Synopsis");
 
@@ -33,7 +34,8 @@ export default function UpdateThesisStatus() {
 
   const handleChange = (event) => {
     console.log(event.target.value);
-    setData({ ...data, [event.target.name]: event.target.value });
+    setData({ ...data, [event.target.name]: event.target.value._id });
+    setselectedReport(event.target.value);
     console.log(data);
   };
 
@@ -54,9 +56,10 @@ export default function UpdateThesisStatus() {
     fetchData();
   }, []);
 
-  console.log(submittedSynopsis);
-  console.log(submittedThesis);
+  // console.log(submittedSynopsis);
+  // console.log(submittedThesis);
   console.log(submittedReport);
+  console.log(selectedReport);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -67,6 +70,8 @@ export default function UpdateThesisStatus() {
       thesisService.updateThesisStatus(data);
     }
   };
+
+  console.log(data);
 
   return (
     <>
@@ -119,8 +124,21 @@ export default function UpdateThesisStatus() {
                 justifyContent: "center",
               }}
             >
-              <div>Current Status:</div>
-              <div>Completed </div>
+              <div>
+                <h3>Current Status: &nbsp;</h3>
+              </div>
+              <div>
+                <p>
+                  {selectedReport === [] ? (
+                    <>
+                      {selectedReport?.synopsisStatus ||
+                        selectedReport?.thesisStatus}
+                    </>
+                  ) : (
+                    <>no student selected</>
+                  )}
+                </p>
+              </div>
             </Box>
           </Grid>
 
@@ -198,14 +216,11 @@ export default function UpdateThesisStatus() {
                 color="secondary"
                 label="Registration No."
                 name="student_id"
-                value={submittedReport[0]?.student_id?.registrationNo}
+                value={selectedReport?.student_id?.registrationNo || ""}
                 onChange={handleChange}
               >
                 {submittedReport.map((oneSynopsis) => (
-                  <MenuItem
-                    selected="selected"
-                    value={oneSynopsis?.student_id?._id}
-                  >
+                  <MenuItem selected="selected" value={oneSynopsis}>
                     {oneSynopsis?.student_id?.registrationNo}
                   </MenuItem>
                 ))}
