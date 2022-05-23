@@ -14,11 +14,14 @@ import * as yup from "yup";
 
 import studentService from "../../API/students";
 import synopsisService from "../../API/synopsis";
+import BackdropModal from "../UI/BackdropModal";
 
 export default function SynopsisSubmission() {
   const [supervisors, setSupervisors] = useState([]);
   const [error, setError] = useState();
   const [isError, setIsError] = useState(false);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const getSupervisors = async () => {
     let data = await studentService.getSupervisors();
@@ -31,13 +34,12 @@ export default function SynopsisSubmission() {
   }, []);
 
   const validationSchema = yup.object({
-    synopsisTitle: yup.string(),
-    supervisor: yup.string(),
-    coSupervisor: yup.string(),
-    synopsisTrack: yup.string(),
-    synopsisDocument: yup.string(),
-
-    synopsisPresentation: yup.string(),
+    synopsisTitle: yup.string().required(),
+    supervisor: yup.string().required(),
+    coSupervisor: yup.string().required(),
+    synopsisTrack: yup.string().required(),
+    // synopsisDocument: yup.array(),
+    // synopsisPresentation: yup.string(),
   });
 
   const formik = useFormik({
@@ -62,11 +64,10 @@ export default function SynopsisSubmission() {
       // console.log(values);
       let res = await synopsisService.submitSynopsis(formData);
       if (res?.status === 500) {
-        setError(res.data.message);
-        setIsError(true);
+        setShowErrorModal(true);
         console.log(res);
       } else {
-        setIsError(false);
+        setShowSubmitModal(true);
       }
       console.log(res);
       // studentService.uploadFile(formData);
@@ -76,13 +77,11 @@ export default function SynopsisSubmission() {
   return (
     <Box
       component="form"
-      encType="multipart/form-data"
       onSubmit={formik.handleSubmit}
       noValidate
       sx={{ mt: 1 }}
     >
       <TextField
-        id="standard-basic"
         sx={{
           width: "100%",
           marginBottom: "15px",
@@ -93,17 +92,23 @@ export default function SynopsisSubmission() {
         variant="outlined"
         value={formik.values.synopsisTitle}
         onChange={formik.handleChange}
+        error={
+          formik.touched.synopsisTitle && Boolean(formik.errors.synopsisTitle)
+        }
+        helperText={formik.touched.synopsisTitle && formik.errors.synopsisTitle}
       />
       <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
         <FormControl fullWidth color="secondary">
-          <InputLabel id="demo-simple-select-label">Supervisor</InputLabel>
+          <InputLabel>Supervisor</InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
             name="supervisor"
             label="Supervisor"
             value={formik.values.supervisor}
             onChange={formik.handleChange}
+            error={
+              formik.touched.supervisor && Boolean(formik.errors.supervisor)
+            }
+            helperText={formik.touched.supervisor && formik.errors.supervisor}
           >
             {supervisors?.map((item) => {
               return (
@@ -117,13 +122,17 @@ export default function SynopsisSubmission() {
       </Box>
       <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
         <FormControl fullWidth color="secondary">
-          <InputLabel id="demo-simple-select-label">Co-Supervisor</InputLabel>
+          <InputLabel>Co-Supervisor</InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
             name="coSupervisor"
             value={formik.values.coSupervisor}
             onChange={formik.handleChange}
+            error={
+              formik.touched.coSupervisor && Boolean(formik.errors.coSupervisor)
+            }
+            helperText={
+              formik.touched.coSupervisor && formik.errors.coSupervisor
+            }
             label="Co-Supervisor"
           >
             {supervisors?.map((item) => {
@@ -137,7 +146,6 @@ export default function SynopsisSubmission() {
         </FormControl>
       </Box>
       <TextField
-        id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}
         name="synopsisTrack"
         label="Synopsis Track"
@@ -145,11 +153,14 @@ export default function SynopsisSubmission() {
         variant="outlined"
         value={formik.values.synopsisTrack}
         onChange={formik.handleChange}
+        error={
+          formik.touched.synopsisTrack && Boolean(formik.errors.synopsisTrack)
+        }
+        helperText={formik.touched.synopsisTrack && formik.errors.synopsisTrack}
       />
-      <div className="col-md-12">
-        <div className="mt-4">Synopsis Document:</div>
+      <div>
+        <div>Synopsis Document:</div>
         <input
-          className=" form-control-sm  col-md-10 col-sm-8"
           type="file"
           name="synopsisDocument"
           min={1}
@@ -157,9 +168,8 @@ export default function SynopsisSubmission() {
             formik.setFieldValue("synopsisDocument", event.currentTarget.files);
           }}
         />
-        <div className="col-md-2 col-sm-4 mt-4">Synopsis Presentation :</div>
+        <div>Synopsis Presentation :</div>
         <input
-          className=" form-control-sm  col-md-10 col-sm-8"
           type="file"
           min={1}
           name="synopsisPresentation"
@@ -178,6 +188,21 @@ export default function SynopsisSubmission() {
       >
         Submit
       </Button>
+
+      <BackdropModal
+        showModal={showSubmitModal}
+        setShowModal={setShowSubmitModal}
+        title={"Submit!"}
+      >
+        Synopsis has been submitted.
+      </BackdropModal>
+      <BackdropModal
+        showModal={showErrorModal}
+        setShowModal={setShowErrorModal}
+        title={"Error!"}
+      >
+        Something went wrong.
+      </BackdropModal>
     </Box>
   );
 }

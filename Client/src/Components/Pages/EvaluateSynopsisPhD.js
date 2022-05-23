@@ -18,12 +18,15 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import BackdropModal from "../UI/BackdropModal";
 
 export default function EvaluateSynopsisPhD() {
   const { currentRole } = useSelector((state) => state.userRoles);
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [autocompleteValue, setAutocompleteValue] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showEvaluateModal, setShowEvaluateModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const [schedules, setSchedules] = useState([]);
 
@@ -34,6 +37,19 @@ export default function EvaluateSynopsisPhD() {
   const [submittedSynopsis, setSubmittedSynopsis] = useState({});
   const [data, setData] = useState({});
 
+  const [scheduleLabels, setScheduleLabels] = useState([]);
+
+  const uniqueScheduleLabels = async (array) => {
+    const labels = [
+      ...new Set(
+        await array.map((item) => {
+          return item?.student_id?.registrationNo;
+        })
+      ),
+    ];
+    setScheduleLabels(labels);
+  };
+
   useEffect(() => {
     async function fetchData() {
       const schd = await synopsisService.getSynopsisSchedules();
@@ -42,15 +58,12 @@ export default function EvaluateSynopsisPhD() {
       const alreadysubmittedSynopsis =
         await synopsisService.getSubmittedSynopsis();
 
-      let filteredPhdSchedules = schd.map((phdSchedule) => {
-        if (
-          phdSchedule.program_id.programShortName.toLowerCase().includes("phd")
-        ) {
-          return phdSchedule;
-        }
-      });
+      let filteredPhdSchedules = schd.filter((phdSchedule) =>
+        phdSchedule.program_id.programShortName.toLowerCase().includes("phd")
+      );
 
       setSchedules(filteredPhdSchedules);
+      uniqueScheduleLabels(filteredPhdSchedules);
       setEvaluations(alreadyevaluatedSynopsis);
       setSubmittedSynopsis(alreadysubmittedSynopsis);
 
@@ -100,19 +113,24 @@ export default function EvaluateSynopsisPhD() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const res = await synopsisService.addEvaluation(data);
+    try {
+      const res = await synopsisService.addEvaluation(data);
 
-    // synopsisService.updateEvaluation({
-    //   ...data,
-    //   synopsisEvaluation_id: res.data.synopsisEvaluation._id,
-    //   evaluationStatus: res.data.evaluationStatus._id,
-    // });
-    // alert(JSON.stringify(data));
+      console.log(res);
+
+      if (res.status === 200) {
+        setShowEvaluateModal(true);
+      }
+    } catch (error) {
+      if (error.response.status === 500) {
+        setShowErrorModal(true);
+      }
+    }
   };
 
   const defaultProps = {
-    options: schedules,
-    getOptionLabel: (schedule) => schedule?.student_id?.registrationNo || "",
+    options: scheduleLabels,
+    getOptionLabel: (schedule) => schedule || "",
   };
 
   return (
@@ -124,7 +142,7 @@ export default function EvaluateSynopsisPhD() {
             id="controlled-demo"
             value={autocompleteValue}
             onChange={(value, newValue) => {
-              let registrationNo = newValue?.student_id?.registrationNo;
+              let registrationNo = newValue;
               setAutocompleteValue(newValue);
 
               handleRegistrationNo(registrationNo);
@@ -234,7 +252,7 @@ export default function EvaluateSynopsisPhD() {
                         >
                           Course work completion
                         </td>
-                        <td>SPRING 2019</td>
+                        <td>N/A</td>
                       </tr>
                       <tr style={{ backgroundColor: "White" }}>
                         <td
@@ -276,7 +294,7 @@ export default function EvaluateSynopsisPhD() {
                             width: "20%",
                           }}
                         >
-                          Thesis Title
+                          Synopsis Title
                         </td>
                         <td>{selectedSchedule?.student_id?.synopsisTitle}</td>
                       </tr>
@@ -538,6 +556,21 @@ export default function EvaluateSynopsisPhD() {
                 >
                   Submit
                 </Button>
+
+                <BackdropModal
+                  showModal={showEvaluateModal}
+                  setShowModal={setShowEvaluateModal}
+                  title={"Evaluate!"}
+                >
+                  Synopsis has been Evaluated.
+                </BackdropModal>
+                <BackdropModal
+                  showModal={showErrorModal}
+                  setShowModal={setShowErrorModal}
+                  title={"Error!"}
+                >
+                  Something went wrong.
+                </BackdropModal>
               </div>
             </div>
           </>

@@ -145,7 +145,14 @@ router.get("/synopsis-evaluation", auth.verifyUser, (req, res) => {
     .populate("evaluator_id evaluationStatus")
     .populate({
       path: "schedule_id",
-      populate: [{ path: "student_id", model: "Student" }],
+      populate: [
+        {
+          path: "student_id",
+          populate: {
+            path: "program_id",
+          },
+        },
+      ],
     })
 
     .then((synopsisEvaluation) => {
@@ -244,7 +251,13 @@ router.post(
 
 router.get("/submitted-synopsis", auth.verifyUser, (req, res) => {
   SynopsisSubmission.find({})
-    .populate("student_id supervisor_id coSupervisor_id")
+    .populate({
+      path: "student_id",
+      populate: {
+        path: "program_id",
+      },
+    })
+    .populate("supervisor_id coSupervisor_id")
     .then((synopsisSubmission) => {
       console.log("submitted", synopsisSubmission);
       res.setHeader("Content-Type", "application/json");

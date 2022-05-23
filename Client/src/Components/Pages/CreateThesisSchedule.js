@@ -11,11 +11,17 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { Button } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import synopsisService from "../../API/synopsis";
 import programsService from "../../API/programs";
+import thesisService from "../../API/thesis";
+import { useSelector } from "react-redux";
+import BackdropModal from "../UI/BackdropModal";
 
-export default function CreateThesisSchedule() {
-  const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
+export default function CreateSynopsisSchedule() {
+  const { currentRole } = useSelector((state) => state.userRoles);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
+  const [submittedThesis, setSubmittedThesis] = useState([]);
   const [programs, setPrograms] = useState([]);
 
   const [data, setData] = React.useState({
@@ -35,21 +41,58 @@ export default function CreateThesisSchedule() {
   };
   useEffect(() => {
     async function fetchData() {
-      const stds = await synopsisService.getSubmittedSynopsis();
-      // const stds = await studentService.getStudents();
+      const stds = await thesisService.getSubmittedThesis();
+      console.log(stds);
+
+      if (currentRole.toLowerCase().includes("ms")) {
+        let msStudents = stds.filter((std) =>
+          std.student_id.program_id.programShortName
+            .toLowerCase()
+            .includes("ms")
+        );
+        setSubmittedThesis(msStudents);
+      } else {
+        let phdStudents = stds.filter((std) =>
+          std.student_id.program_id.programShortName
+            .toLowerCase()
+            .includes("phd")
+        );
+        setSubmittedThesis(phdStudents);
+      }
       const prog = await programsService.getPrograms();
-      setSubmittedSynopsis(stds);
       setPrograms(prog);
     }
 
     fetchData();
   }, []);
 
-  const handleSubmit = (event) => {
+  console.log(submittedThesis);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(data);
-    synopsisService.createSchedule(data);
+
+    try {
+      console.log(data);
+      const res = await thesisService.createSchedule(data);
+
+      if (res.status === 200) {
+        setShowSubmitModal(true);
+      }
+    } catch (error) {
+      if (error.response.status === 500) {
+        setShowErrorModal(true);
+      }
+    }
   };
+
+  // const getToken = () => {
+  //   const user = JSON.parse(localStorage.getItem("user"));
+  //   if (user) {
+  //     var { token } = user;
+  //     console.log(token);
+  //     return token;
+  //   }
+  // };
 
   return (
     <>
@@ -65,6 +108,31 @@ export default function CreateThesisSchedule() {
       {/* Form starts here */}
       <Box component="form" noValidate sx={{ flexGrow: 1 }}>
         <Grid container spacing={6}>
+          {/* <Grid item xs={6}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Session</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="session_id"
+                value={data.session_id}
+                label="Session"
+                // onChange={handleChange}
+              >
+                 {submittedThesis.map((oneSubmission) => (
+                  <MenuItem
+                    selected="selected"
+                    value={oneSubmission.student_id.synopsisSession_id._id}
+                  >
+                    {oneSubmission.student_id.synopsisSession_id.title}
+                  </MenuItem>
+                ))} 
+                <MenuItem value={10}>SP22</MenuItem>
+                <MenuItem value={20}>FA22</MenuItem>
+                <MenuItem value={30}>FA23</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid> */}
           <Grid item xs={4}>
             <LocalizationProvider
               color="secondary"
@@ -93,7 +161,7 @@ export default function CreateThesisSchedule() {
                 name="student_id"
                 onChange={handleChange}
               >
-                {submittedSynopsis.map((oneSubmission) => (
+                {submittedThesis.map((oneSubmission) => (
                   <MenuItem
                     selected="selected"
                     value={oneSubmission?.student_id?._id}
@@ -115,7 +183,7 @@ export default function CreateThesisSchedule() {
                 onChange={handleChange}
               >
                 {programs.map((program) => (
-                  <MenuItem key={program._id} value={program._id}>
+                  <MenuItem selected="selected" value={program._id}>
                     {program.programShortName}
                   </MenuItem>
                 ))}
@@ -133,9 +201,24 @@ export default function CreateThesisSchedule() {
           style={{ marginTop: "2%", width: "20%" }}
           onClick={handleSubmit}
         >
-          Submit
+          Schedule
         </Button>
       </div>
+
+      <BackdropModal
+        showModal={showSubmitModal}
+        setShowModal={setShowSubmitModal}
+        title={"Schedule!"}
+      >
+        Thesis has been scheduled.
+      </BackdropModal>
+      <BackdropModal
+        showModal={showErrorModal}
+        setShowModal={setShowErrorModal}
+        title={"Error!"}
+      >
+        Something went wrong.
+      </BackdropModal>
     </>
   );
 }

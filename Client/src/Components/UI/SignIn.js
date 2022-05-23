@@ -1,11 +1,11 @@
-import * as React from "react";
+import { useState } from "react";
 
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-/* import Link from "@mui/material/Link"; */
+
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 
@@ -25,6 +25,7 @@ const theme = createTheme();
 export default function SignIn() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [error, setError] = useState(false);
 
   const validationSchema = yup.object({
     email: yup.string("Enter your email"),
@@ -44,7 +45,7 @@ export default function SignIn() {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       console.log(values);
-
+      setError(false);
       dispatch(
         Login({ userEmail: values.email, userPassword: values.password })
       )
@@ -55,6 +56,7 @@ export default function SignIn() {
         })
         .catch((err) => {
           console.log(err);
+          setError(true);
         });
     },
   });
@@ -83,6 +85,18 @@ export default function SignIn() {
             Sign in
           </Typography>
           <Box onSubmit={formik.handleSubmit} component="form" sx={{ mt: 1 }}>
+            {error && (
+              <Box sx={{ mb: 1, mt: 2 }}>
+                <Typography
+                  align="center"
+                  sx={{ color: "red" }}
+                  component="h4"
+                  variant="h6"
+                >
+                  Email or Password Incorrect!
+                </Typography>
+              </Box>
+            )}
             <FormControl>
               <TextField
                 margin="normal"

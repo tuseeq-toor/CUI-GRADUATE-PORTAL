@@ -26,7 +26,7 @@ router.get("/thesis-schedule", auth.verifyUser, (req, res) => {
 });
 
 router.post(
-  "/add-ThesisSchedule",
+  "/add-thesisSchedule",
   auth.verifyUser,
 
   (req, res) => {
@@ -105,7 +105,14 @@ router.get("/thesis-evaluation", auth.verifyUser, (req, res) => {
     .populate("evaluator_id evaluationStatus")
     .populate({
       path: "schedule_id",
-      populate: [{ path: "student_id", model: "Student" }],
+      populate: [
+        {
+          path: "student_id",
+          populate: {
+            path: "program_id",
+          },
+        },
+      ],
     })
 
     .then((thesisEvaluation) => {
@@ -146,7 +153,13 @@ router.get("/thesis-evaluation", auth.verifyUser, (req, res) => {
 
 router.get("/submitted-thesis", auth.verifyUser, (req, res) => {
   ThesisSubmission.find({})
-    .populate("student_id supervisor_id coSupervisor_id")
+    .populate({
+      path: "student_id",
+      populate: {
+        path: "program_id",
+      },
+    })
+    .populate("supervisor_id coSupervisor_id")
     .then((thesisSubmission) => {
       console.log("submitted", thesisSubmission);
       res.setHeader("Content-Type", "application/json");

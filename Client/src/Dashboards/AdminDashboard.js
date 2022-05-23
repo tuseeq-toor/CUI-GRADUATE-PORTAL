@@ -37,7 +37,7 @@ import ManageSession from "../Components/Pages/ManageSession";
 import ManageStudent from "../Components/Pages/ManageStudent";
 
 import ProgramWiseReports from "../Components/Pages/ProgramWiseReports";
-import SendNotification from "../Components/Pages/SendNotification";
+import SendNotification from "../Components/Pages/SendNotificationPhD";
 import SendNotificationAll from "../Components/Pages/SendNotificationAll";
 import SendNotificationMS from "../Components/Pages/SendNotificationMS";
 import EvaluateSynopsisMS from "../Components/Pages/EvaluateSynopsisMS";

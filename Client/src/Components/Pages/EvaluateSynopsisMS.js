@@ -18,12 +18,15 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import BackdropModal from "../UI/BackdropModal";
 
 export default function EvaluateSynopsisMS() {
   const { currentRole } = useSelector((state) => state.userRoles);
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [autocompleteValue, setAutocompleteValue] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showEvaluateModal, setShowEvaluateModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const [schedules, setSchedules] = useState([]);
 
@@ -33,6 +36,18 @@ export default function EvaluateSynopsisMS() {
   const [selectedSchedule, setSelectedSchedule] = useState({});
   const [submittedSynopsis, setSubmittedSynopsis] = useState({});
   const [data, setData] = useState({});
+  const [scheduleLabels, setScheduleLabels] = useState([]);
+
+  const uniqueScheduleLabels = async (array) => {
+    const labels = [
+      ...new Set(
+        await array.map((item) => {
+          return item?.student_id?.registrationNo;
+        })
+      ),
+    ];
+    setScheduleLabels(labels);
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -42,16 +57,13 @@ export default function EvaluateSynopsisMS() {
       const alreadysubmittedSynopsis =
         await synopsisService.getSubmittedSynopsis();
 
-      let filteredMsSchedules = schd.map((msSchedule) => {
-        if (
-          msSchedule.program_id.programShortName.toLowerCase().includes("ms")
-        ) {
-          return msSchedule;
-        }
-      });
+      let filteredMsSchedules = schd.filter((msSchedule) =>
+        msSchedule.program_id.programShortName.toLowerCase().includes("ms")
+      );
 
       // console.log(filteredMsSchedules);
       setSchedules(filteredMsSchedules);
+      uniqueScheduleLabels(filteredMsSchedules);
 
       setEvaluations(alreadyevaluatedSynopsis);
       setSubmittedSynopsis(alreadysubmittedSynopsis);
@@ -62,6 +74,8 @@ export default function EvaluateSynopsisMS() {
   }, []);
 
   console.log(schedules);
+  console.log(evaluations);
+  console.log(submittedSynopsis);
 
   const handleRegistrationNo = (reg) => {
     setHasEvaluatedSynopsis(false);
@@ -104,19 +118,24 @@ export default function EvaluateSynopsisMS() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const res = await synopsisService.addEvaluation(data);
+    try {
+      const res = await synopsisService.addEvaluation(data);
 
-    // synopsisService.updateEvaluation({
-    //   ...data,
-    //   synopsisEvaluation_id: res.data.synopsisEvaluation._id,
-    //   evaluationStatus: res.data.evaluationStatus._id,
-    // });
-    // alert(JSON.stringify(data));
+      console.log(res);
+
+      if (res.status === 200) {
+        setShowEvaluateModal(true);
+      }
+    } catch (error) {
+      if (error.response.status === 500) {
+        setShowErrorModal(true);
+      }
+    }
   };
 
   const defaultProps = {
-    options: schedules,
-    getOptionLabel: (schedule) => schedule?.student_id?.registrationNo || "",
+    options: scheduleLabels,
+    getOptionLabel: (schedule) => schedule || "",
   };
 
   return (
@@ -128,7 +147,7 @@ export default function EvaluateSynopsisMS() {
             id="controlled-demo"
             value={autocompleteValue}
             onChange={(value, newValue) => {
-              let registrationNo = newValue?.student_id?.registrationNo;
+              let registrationNo = newValue;
               setAutocompleteValue(newValue);
 
               handleRegistrationNo(registrationNo);
@@ -238,7 +257,7 @@ export default function EvaluateSynopsisMS() {
                         >
                           Course work completion
                         </td>
-                        <td>SPRING 2019</td>
+                        <td>N/A</td>
                       </tr>
                       <tr style={{ backgroundColor: "White" }}>
                         <td
@@ -269,7 +288,7 @@ export default function EvaluateSynopsisMS() {
                         >
                           Synopsis Status
                         </td>
-                        <td>N/A</td>
+                        <td>{submittedSynopsis?.synopsisStatus}</td>
                       </tr>
                       <tr style={{ backgroundColor: "White" }}>
                         <td
@@ -280,7 +299,7 @@ export default function EvaluateSynopsisMS() {
                             width: "20%",
                           }}
                         >
-                          Thesis Title
+                          Synopsis Title
                         </td>
                         <td>{selectedSchedule?.student_id?.synopsisTitle}</td>
                       </tr>
@@ -333,7 +352,7 @@ export default function EvaluateSynopsisMS() {
                         </td>
                         <td>N/A</td>
                       </tr>
-                      <tr style={{ backgroundColor: "White" }}>
+                      {/* <tr style={{ backgroundColor: "White" }}>
                         <td
                           valign="top"
                           style={{
@@ -345,7 +364,7 @@ export default function EvaluateSynopsisMS() {
                           Status
                         </td>
                         <td>&nbsp;</td>
-                      </tr>
+                      </tr> */}
                       <tr
                         style={{
                           color: "#333333",
@@ -560,6 +579,21 @@ export default function EvaluateSynopsisMS() {
                 >
                   Submit
                 </Button>
+
+                <BackdropModal
+                  showModal={showEvaluateModal}
+                  setShowModal={setShowEvaluateModal}
+                  title={"Evaluate!"}
+                >
+                  Synopsis has been Evaluated.
+                </BackdropModal>
+                <BackdropModal
+                  showModal={showErrorModal}
+                  setShowModal={setShowErrorModal}
+                  title={"Error!"}
+                >
+                  Something went wrong.
+                </BackdropModal>
               </div>
             </div>
           </>

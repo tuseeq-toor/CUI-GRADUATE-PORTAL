@@ -13,8 +13,14 @@ import { Button } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import synopsisService from "../../API/synopsis";
 import programsService from "../../API/programs";
+import BackdropModal from "../UI/BackdropModal";
+import { useSelector } from "react-redux";
 
-export default function CreateThesisSchedule() {
+export default function CreateSynopsisSchedule() {
+  const { currentRole } = useSelector((state) => state.userRoles);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
   const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
   const [programs, setPrograms] = useState([]);
 
@@ -36,19 +42,45 @@ export default function CreateThesisSchedule() {
   useEffect(() => {
     async function fetchData() {
       const stds = await synopsisService.getSubmittedSynopsis();
-      // const stds = await studentService.getStudents();
+      console.log(stds);
+
+      if (currentRole.toLowerCase().includes("ms")) {
+        let msStudents = stds.filter((std) =>
+          std.student_id.program_id.programShortName
+            .toLowerCase()
+            .includes("ms")
+        );
+        setSubmittedSynopsis(msStudents);
+      } else {
+        let phdStudents = stds.filter((std) =>
+          std.student_id.program_id.programShortName
+            .toLowerCase()
+            .includes("phd")
+        );
+        setSubmittedSynopsis(phdStudents);
+      }
       const prog = await programsService.getPrograms();
-      setSubmittedSynopsis(stds);
       setPrograms(prog);
     }
 
     fetchData();
   }, []);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(data);
-    synopsisService.createSchedule(data);
+
+    try {
+      console.log(data);
+      const res = await synopsisService.createSchedule(data);
+
+      if (res.status === 200) {
+        setShowSubmitModal(true);
+      }
+    } catch (error) {
+      if (error.response.status === 500) {
+        setShowErrorModal(true);
+      }
+    }
   };
 
   return (
@@ -161,6 +193,21 @@ export default function CreateThesisSchedule() {
           Submit
         </Button>
       </div>
+
+      <BackdropModal
+        showModal={showSubmitModal}
+        setShowModal={setShowSubmitModal}
+        title={"Schedule!"}
+      >
+        Thesis has been scheduled.
+      </BackdropModal>
+      <BackdropModal
+        showModal={showErrorModal}
+        setShowModal={setShowErrorModal}
+        title={"Error!"}
+      >
+        Something went wrong.
+      </BackdropModal>
     </>
   );
 }

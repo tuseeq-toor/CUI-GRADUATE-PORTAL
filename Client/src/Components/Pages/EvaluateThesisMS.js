@@ -8,7 +8,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
-import synopsisService from "../../API/synopsis";
+import thesisService from "../../API/thesis";
 import {
   Autocomplete,
   FormLabel,
@@ -18,49 +18,72 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import BackdropModal from "../UI/BackdropModal";
 
 export default function EvaluateThesisMS() {
   const { currentRole } = useSelector((state) => state.userRoles);
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [autocompleteValue, setAutocompleteValue] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showEvaluateModal, setShowEvaluateModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const [schedules, setSchedules] = useState([]);
 
-  const [hasEvaluatedSynopsis, setHasEvaluatedSynopsis] = useState(null);
+  const [hasEvaluatedThesis, setHasEvaluatedThesis] = useState(null);
   const [evaluations, setEvaluations] = useState([]);
-  const [selectedSynopsis, setSelectedSynopsis] = useState([]);
+  const [selectedThesis, setSelectedThesis] = useState([]);
   const [selectedSchedule, setSelectedSchedule] = useState({});
-  const [submittedSynopsis, setSubmittedSynopsis] = useState({});
+  const [submittedThesis, setSubmittedThesis] = useState({});
   const [data, setData] = useState({});
+
+  const [scheduleLabels, setScheduleLabels] = useState([]);
+
+  const uniqueScheduleLabels = async (array) => {
+    const labels = [
+      ...new Set(
+        await array.map((item) => {
+          return item?.student_id?.registrationNo;
+        })
+      ),
+    ];
+    setScheduleLabels(labels);
+  };
 
   useEffect(() => {
     async function fetchData() {
-      const schd = await synopsisService.getSynopsisSchedules();
-      const alreadyevaluatedSynopsis =
-        await synopsisService.getSynopsisEvaluations();
-      const alreadysubmittedSynopsis =
-        await synopsisService.getSubmittedSynopsis();
-      setEvaluations(alreadyevaluatedSynopsis);
-      setSchedules(schd);
-      setSubmittedSynopsis(alreadysubmittedSynopsis);
+      const schd = await thesisService.getThesisSchedules();
+      const alreadyevaluatedThesis = await thesisService.getThesisEvaluations();
+      const alreadysubmittedThesis = await thesisService.getSubmittedThesis();
+
+      let filteredMsSchedules = schd.filter((msSchedule) =>
+        msSchedule.program_id.programShortName.toLowerCase().includes("ms")
+      );
+      setSchedules(filteredMsSchedules);
+      uniqueScheduleLabels(filteredMsSchedules);
+      setEvaluations(alreadyevaluatedThesis);
+      setSubmittedThesis(alreadysubmittedThesis);
 
       setLoading(true);
     }
     fetchData();
   }, []);
 
+  console.log(schedules);
+  console.log(evaluations);
+  console.log(submittedThesis);
+
   const handleRegistrationNo = (reg) => {
-    setHasEvaluatedSynopsis(false);
+    setHasEvaluatedThesis(false);
 
     schedules.forEach((oneSchedule) => {
       if (reg === oneSchedule?.student_id?.registrationNo) {
-        evaluations.forEach((evaluatedSynopsis) => {
-          if (evaluatedSynopsis.schedule_id) {
-            if (evaluatedSynopsis.schedule_id._id === oneSchedule._id) {
-              if (evaluatedSynopsis.evaluator_id._id === user.user._id) {
+        evaluations.forEach((evaluatedThesis) => {
+          if (evaluatedThesis.schedule_id) {
+            if (evaluatedThesis.schedule_id._id === oneSchedule._id) {
+              if (evaluatedThesis.evaluator_id._id === user.user._id) {
                 console.log(true);
-                setHasEvaluatedSynopsis(true);
+                setHasEvaluatedThesis(true);
               }
             }
           }
@@ -71,13 +94,12 @@ export default function EvaluateThesisMS() {
         console.log("Selected Schedule", selectedSchedule);
         setData({ ...data, schedule_id: oneSchedule._id });
 
-        submittedSynopsis.forEach((oneSynopsis) => {
+        submittedThesis.forEach((oneThesis) => {
           if (
-            selectedSchedule.student_id?._id ===
-            submittedSynopsis.student_id?._id
+            selectedSchedule.student_id?._id === submittedThesis.student_id?._id
           ) {
-            console.log("Selected Synopsis", oneSynopsis);
-            setSelectedSynopsis(oneSynopsis);
+            console.log("Selected Thesis", oneThesis);
+            setSelectedThesis(oneThesis);
           }
         });
       }
@@ -91,21 +113,25 @@ export default function EvaluateThesisMS() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const res = await synopsisService.addEvaluation(data);
+    try {
+      const res = await thesisService.addEvaluation(data);
 
-    // synopsisService.updateEvaluation({
-    //   ...data,
-    //   synopsisEvaluation_id: res.data.synopsisEvaluation._id,
-    //   evaluationStatus: res.data.evaluationStatus._id,
-    // });
-    // alert(JSON.stringify(data));
+      console.log(res);
+
+      if (res.status === 200) {
+        setShowEvaluateModal(true);
+      }
+    } catch (error) {
+      if (error.response.status === 500) {
+        setShowErrorModal(true);
+      }
+    }
   };
 
   const defaultProps = {
-    options: schedules,
-    getOptionLabel: (schedule) => schedule?.student_id?.registrationNo || "",
+    options: scheduleLabels,
+    getOptionLabel: (schedule) => schedule || "",
   };
-
   return (
     loading && (
       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
@@ -115,7 +141,7 @@ export default function EvaluateThesisMS() {
             id="controlled-demo"
             value={autocompleteValue}
             onChange={(value, newValue) => {
-              let registrationNo = newValue?.student_id?.registrationNo;
+              let registrationNo = newValue;
               setAutocompleteValue(newValue);
 
               handleRegistrationNo(registrationNo);
@@ -130,7 +156,7 @@ export default function EvaluateThesisMS() {
             )}
           />
         </Box>
-        {hasEvaluatedSynopsis ? (
+        {hasEvaluatedThesis ? (
           <p>You have already evaluated this student</p>
         ) : (
           <>
@@ -225,7 +251,7 @@ export default function EvaluateThesisMS() {
                         >
                           Course work completion
                         </td>
-                        <td>SPRING 2019</td>
+                        <td>N/A</td>
                       </tr>
                       <tr style={{ backgroundColor: "White" }}>
                         <td
@@ -254,7 +280,7 @@ export default function EvaluateThesisMS() {
                             width: "20%",
                           }}
                         >
-                          Synopsis Status
+                          Thesis Status
                         </td>
                         <td>N/A</td>
                       </tr>
@@ -269,7 +295,7 @@ export default function EvaluateThesisMS() {
                         >
                           Thesis Title
                         </td>
-                        <td>{selectedSchedule?.student_id?.synopsisTitle}</td>
+                        <td>{selectedSchedule?.student_id?.thesisTitle}</td>
                       </tr>
                       <tr
                         style={{
@@ -287,7 +313,7 @@ export default function EvaluateThesisMS() {
                         >
                           Area of Specialization
                         </td>
-                        <td>{selectedSynopsis?.specializationTrack}</td>
+                        <td>{selectedThesis?.specializationTrack}</td>
                       </tr>
                       <tr style={{ backgroundColor: "White" }}>
                         <td
@@ -349,7 +375,7 @@ export default function EvaluateThesisMS() {
                         >
                           Supervisor
                         </td>
-                        <td>{selectedSynopsis?.supervisor_id?.fullName}</td>
+                        <td>{selectedThesis?.supervisor_id?.fullName}</td>
                       </tr>
                       <tr style={{ backgroundColor: "White" }}>
                         <td
@@ -362,7 +388,7 @@ export default function EvaluateThesisMS() {
                         >
                           Co-Supervisor
                         </td>
-                        <td>{selectedSynopsis?.coSupervisor_id?.fullName}</td>
+                        <td>{selectedThesis?.coSupervisor_id?.fullName}</td>
                       </tr>
                       <tr
                         style={{
@@ -378,15 +404,15 @@ export default function EvaluateThesisMS() {
                             width: "20%",
                           }}
                         >
-                          Synopsis File
+                          Thesis File
                         </td>
                         <td>
                           <a
                             target="_blank"
-                            href={`${process.env.REACT_APP_URL}/${selectedSynopsis?.synopsisFileName}`}
+                            href={`${process.env.REACT_APP_URL}/${selectedThesis?.thesisFileName}`}
                             rel="noopener noreferrer"
                           >
-                            {selectedSynopsis?.synopsisFileName}
+                            {selectedThesis?.thesisFileName}
                           </a>
                         </td>
                       </tr>
@@ -529,6 +555,21 @@ export default function EvaluateThesisMS() {
                 >
                   Submit
                 </Button>
+
+                <BackdropModal
+                  showModal={showEvaluateModal}
+                  setShowModal={setShowEvaluateModal}
+                  title={"Evaluate!"}
+                >
+                  Synopsis has been Evaluated.
+                </BackdropModal>
+                <BackdropModal
+                  showModal={showErrorModal}
+                  setShowModal={setShowErrorModal}
+                  title={"Error!"}
+                >
+                  Something went wrong.
+                </BackdropModal>
               </div>
             </div>
           </>

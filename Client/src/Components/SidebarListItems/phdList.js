@@ -160,7 +160,7 @@ export const phdListitems = [
       {
         text: "Create a Schedule",
         icon: <LayersIcon />,
-        path: "/Dashboard/create-schedule-ms",
+        path: "/Dashboard/CreateThesisSchedule",
       },
       {
         text: "Evaluate Thesis PhD",
@@ -191,9 +191,9 @@ export const phdListitems = [
     ],
   },
   {
-    text: "Update Thesis Status",
+    text: "Update Thesis/Synopsis Status",
     icon: <PersonAddIcon />,
-    path: "/Dashboard/UpdateThesisStatus",
+    path: "/Dashboard/UpdateStatus",
   },
 
   /* {
