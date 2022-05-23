@@ -118,17 +118,34 @@ export default function EvaluateSynopsisMS() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      const res = await synopsisService.addEvaluation(data);
+    if (currentRole !== "GO") {
+      try {
+        const res = await synopsisService.addEvaluation(data);
 
-      console.log(res);
+        console.log(res);
 
-      if (res.status === 200) {
-        setShowEvaluateModal(true);
+        if (res.status === 200) {
+          setShowEvaluateModal(true);
+        }
+      } catch (error) {
+        if (error.response.status === 500) {
+          setShowErrorModal(true);
+        }
       }
-    } catch (error) {
-      if (error.response.status === 500) {
-        setShowErrorModal(true);
+    }
+    if (currentRole === "GO") {
+      try {
+        const res = await synopsisService.updateGoEvaluation(data);
+
+        console.log(res);
+
+        if (res.status === 200) {
+          setShowEvaluateModal(true);
+        }
+      } catch (error) {
+        if (error.response.status === 500) {
+          setShowErrorModal(true);
+        }
       }
     }
   };
@@ -469,7 +486,7 @@ export default function EvaluateSynopsisMS() {
                             </FormLabel>
                             <RadioGroup
                               row
-                              name="goRequiredAgain"
+                              name="goIsRequiredAgain"
                               onChange={handleChange}
                             >
                               <FormControlLabel

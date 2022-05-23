@@ -73,10 +73,10 @@ const addEvaluation = async (data) => {
   }
 };
 
-const updateEvaluation = async (data) => {
+const updateGoEvaluation = async (data) => {
   let token = getToken();
   try {
-    const res = await API_SYNOPSIS.patch("synopsis/update-evaluation", data, {
+    const res = await API_SYNOPSIS.patch("synopsis/add-evaluation-go", data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -151,7 +151,7 @@ const synopsisService = {
   getSubmittedSynopsis,
   getSynopsisSchedules,
   addEvaluation,
-  updateEvaluation,
+  updateGoEvaluation,
   getSynopsisEvaluations,
   updateSynopsisStatus,
 };

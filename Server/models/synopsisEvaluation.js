@@ -11,7 +11,8 @@ const synopsisEvaluationSchema = new Schema({
   isActive: { type: Boolean /* required: true */ },
   IP_address: { type: String /* required: true */ },
   goEvaluation: {
-    goRequiredAgain: { type: Boolean /* required: true */ },
+    isEvaluated: { type: Boolean /* required: true */ },
+    goIsRequiredAgain: { type: String /* required: true */ },
     goComment: { type: String /* required: true */ },
     finalRecommendation: { type: String },
   },
