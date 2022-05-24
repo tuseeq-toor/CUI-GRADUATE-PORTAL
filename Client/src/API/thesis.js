@@ -70,6 +70,20 @@ const updateEvaluation = async (data) => {
     return error.response;
   }
 };
+
+const updateGoEvaluation = async (data) => {
+  let token = getToken();
+  try {
+    const res = await API_THESIS.patch("thesis/add-evaluation-go", data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
 const updateThesisStatus = async (data) => {
   let token = getToken();
   try {
@@ -130,6 +144,7 @@ const thesisService = {
   getSubmittedThesis,
   getThesisSchedules,
   addEvaluation,
+  updateGoEvaluation,
   updateEvaluation,
   getThesisEvaluations,
   updateThesisStatus,

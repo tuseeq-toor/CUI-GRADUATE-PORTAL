@@ -70,6 +70,33 @@ router.post(
       });
   }
 );
+
+router.patch(
+  "/add-evaluation-go",
+  auth.verifyUser,
+
+  (req, res) => {
+    let body = req.body;
+
+    ThesisEvaluation.updateMany(
+      { schedule_id: body.schedule_id },
+      {
+        "goEvaluation.isEvaluated": true,
+        "goEvaluation.goComment": body.goComment,
+        "goEvaluation.goIsRequiredAgain": body.goIsRequiredAgain,
+        "goEvaluation.finalRecommendation": body.finalRecommendation,
+      }
+    )
+      .then((thesisEvaluation) => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(200).json({ thesisEvaluation });
+      })
+      .catch((err) => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(500).json({ success: false, message: err.message });
+      });
+  }
+);
 // router.patch(
 //   "/update-evaluation",
 //   auth.verifyUser,
