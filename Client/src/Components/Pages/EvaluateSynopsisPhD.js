@@ -113,17 +113,34 @@ export default function EvaluateSynopsisPhD() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      const res = await synopsisService.addEvaluation(data);
+    if (currentRole !== "GO") {
+      try {
+        const res = await synopsisService.addEvaluation(data);
 
-      console.log(res);
+        console.log(res);
 
-      if (res.status === 200) {
-        setShowEvaluateModal(true);
+        if (res.status === 200) {
+          setShowEvaluateModal(true);
+        }
+      } catch (error) {
+        if (error.response.status === 500) {
+          setShowErrorModal(true);
+        }
       }
-    } catch (error) {
-      if (error.response.status === 500) {
-        setShowErrorModal(true);
+    }
+    if (currentRole === "GO") {
+      try {
+        const res = await synopsisService.updateGoEvaluation(data);
+
+        console.log(res);
+
+        if (res.status === 200) {
+          setShowEvaluateModal(true);
+        }
+      } catch (error) {
+        if (error.response.status === 500) {
+          setShowErrorModal(true);
+        }
       }
     }
   };
@@ -442,13 +459,19 @@ export default function EvaluateSynopsisPhD() {
                             <InputLabel>Final Recommendation</InputLabel>
                             <Select
                               variant="outlined"
-                              //value={Program}
+                              name="finalRecommendation"
                               label="Final Recommendation"
-                              //onChange={handleChange}
+                              onChange={handleChange}
                             >
-                              <MenuItem value="minor">Minor Changings</MenuItem>
-                              <MenuItem value="major">Major Changings</MenuItem>
-                              <MenuItem value="not">Not Allowed</MenuItem>
+                              <MenuItem value="Minor Changings">
+                                Minor Changings
+                              </MenuItem>
+                              <MenuItem value="Major Changings">
+                                Major Changings
+                              </MenuItem>
+                              <MenuItem value="Not Allowed">
+                                Not Allowed
+                              </MenuItem>
                             </Select>
                           </FormControl>
                           <FormControl sx={{ mt: 4 }}>
@@ -457,17 +480,16 @@ export default function EvaluateSynopsisPhD() {
                             </FormLabel>
                             <RadioGroup
                               row
-                              name="presentationRequired"
-                              /* value={studentType}
-                              onChange={(e) => setStudentType(e.target.value)} */
+                              name="goIsRequiredAgain"
+                              onChange={handleChange}
                             >
                               <FormControlLabel
-                                value="yes"
+                                value="Yes"
                                 control={<Radio color="secondary" />}
                                 label="Yes"
                               />
                               <FormControlLabel
-                                value="no"
+                                value="No"
                                 control={<Radio color="secondary" />}
                                 label="No"
                               />
@@ -475,6 +497,17 @@ export default function EvaluateSynopsisPhD() {
                           </FormControl>
                         </>
                       </Box>
+                      <TextField
+                        fullWidth
+                        sx={{ my: 2 }}
+                        multiline
+                        rows={6}
+                        label="GO's Decision and Recommendations"
+                        color="secondary"
+                        name="goComment"
+                        variant="outlined"
+                        onChange={handleChange}
+                      />
                     </>
                   ) : (
                     <tbody>
@@ -533,20 +566,21 @@ export default function EvaluateSynopsisPhD() {
                           </tr>
                         </RadioGroup>
                       </FormControl>
+                      <TextField
+                        fullWidth
+                        sx={{ my: 2 }}
+                        multiline
+                        rows={6}
+                        label="Decision and Recommendations"
+                        color="secondary"
+                        name="comments"
+                        variant="outlined"
+                        onChange={handleChange}
+                      />
                     </tbody>
                   )}
                 </table>
-                <TextField
-                  fullWidth
-                  sx={{ my: 2 }}
-                  multiline
-                  rows={6}
-                  label="Decision and Recommendations"
-                  color="secondary"
-                  name="comments"
-                  variant="outlined"
-                  onChange={handleChange}
-                />
+
                 <Button
                   type="submit"
                   variant="contained"

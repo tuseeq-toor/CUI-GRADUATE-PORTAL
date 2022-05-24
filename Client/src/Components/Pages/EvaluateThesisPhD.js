@@ -113,17 +113,34 @@ export default function EvaluateThesisMS() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      const res = await thesisService.addEvaluation(data);
+    if (currentRole !== "GO") {
+      try {
+        const res = await thesisService.addEvaluation(data);
 
-      console.log(res);
+        console.log(res);
 
-      if (res.status === 200) {
-        setShowEvaluateModal(true);
+        if (res.status === 200) {
+          setShowEvaluateModal(true);
+        }
+      } catch (error) {
+        if (error.response.status === 500) {
+          setShowErrorModal(true);
+        }
       }
-    } catch (error) {
-      if (error.response.status === 500) {
-        setShowErrorModal(true);
+    }
+    if (currentRole === "GO") {
+      try {
+        const res = await thesisService.updateGoEvaluation(data);
+
+        console.log(res);
+
+        if (res.status === 200) {
+          setShowEvaluateModal(true);
+        }
+      } catch (error) {
+        if (error.response.status === 500) {
+          setShowErrorModal(true);
+        }
       }
     }
   };
