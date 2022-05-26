@@ -92,13 +92,14 @@
         {{/each}}
         <h3 style="display: inline-block; border-bottom:2px solid black;" >
          Comments:
-
         </h3>
+
         {{#each evaluations}}
         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 0;">
             <tr>
                 <td style="margin-bottom: -2rem;" >
                     <h3>Reviewer:</h3>
+                    
                 </td>
 
             </tr>
@@ -108,26 +109,53 @@
             </tr>
         </table>
 
-
-        {{/each}}
-
         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 0;">
             <tr>
-                <td>
-                    <h3 style="display: inline-block; border-bottom:2px solid black; margin-top: 2rem;">GO Decision and Recommendations:</h3>
+                <td width="100%">
+                    <h3  style="display: inline-block; border-bottom:2px solid black; margin-top: 2rem; padding: 6px;">GO Decision and Recommendations:</h3>
                 </td>
 
             </tr>
 
             <tr>
-                <td>Reasonable work done as far as synopsis scope is concerned. The student is
-                    recommended to do the above minor changes and must re-submit a revised manuscript
-                    with Rebuttal until 28th June 2021.
-                    The overall decision is ACCEPTED.</td>
+                <td>
+                    <p style="margin: 0; padding: 6px;">
+                        {{this.goEvaluation.goComment}}
+                    </p>
+                </td>
             </tr>
         </table>
 
+        <table style="margin-top: 1rem;" width="100%" border="0" cellspacing="0" cellpadding="0" >
+            <tr>
+                <td width="23%">
+                    <h4 style="margin: 0; padding: 6px;">
+                        Required Again:
+                    </h4>
+                </td>
+                <td width="77%">
+                    <p style="margin: 0; padding: 6px;">
+                        {{this.goEvaluation.goIsRequiredAgain}}
+                    </p>
+                </td>              
+        </table>
 
+        <table style="margin-top: 4px;" width="100%" border="0" cellspacing="0" cellpadding="0" >
+        </tr>
+        <tr>
+        <td width="32%">
+            <h4 style="margin: 0; padding: 6px;">
+                Final Recommendations:
+            </h4>
+        </td>
+        <td width="68%">
+            <p style="margin: 0; padding: 6px;">
+                {{this.goEvaluation.finalRecommendation}}
+            </p>
+        </td>
+    </tr> 
+        </table>
+        {{/each}}
         </div>
     </body>
 

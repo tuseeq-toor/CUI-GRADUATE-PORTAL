@@ -32,6 +32,7 @@ export default function ManageProgressReport() {
     const res = await progressReportService.getReports();
 
     console.log("reshere", res);
+
     const data = res?.data?.map((res) => ({
       Student: res.student_id?.username,
       Session: res.session_id?.title,

@@ -97,6 +97,9 @@ const ViewSynopsisReport = () => {
     getOptionLabel: (evaluation) => evaluation || "",
   };
 
+  console.log(filteredEvaluations);
+  console.log(filteredSynopsis);
+
   const handleSubmit = async () => {
     await pdfReportsService.generateSynopsisReport({
       evaluations: filteredEvaluations,
