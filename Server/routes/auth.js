@@ -7,6 +7,7 @@ const helpers = require("../helpers/helpers");
 const Faculty = require("../models/faculty");
 const auth = require("../auth/authenticate");
 const signupMail = require("../helpers/mailing");
+const Session = require("../models/session");
 
 router.post("/signup", async (req, res, next) => {
   const user = req.body;
@@ -23,10 +24,12 @@ router.post("/signup", async (req, res, next) => {
         message: "Student with the same reg number already exists",
       });
     } else {
+      const studentSession = user.registrationNo.split("-")[0].toUpperCase();
+      const newSession = await Session.findOne({ title: studentSession });
       Student.create({
         ...user,
 
-        // synopsisSession_id: needs.session._id,
+        session_id: newSession._id,
       })
         /* supervisor_id: needs.supervisor._id,
         coSupervisor_id: needs.coSupervisor._id, */
@@ -77,7 +80,7 @@ router.post("/signup", async (req, res, next) => {
         message: "Faculty with the same email already exists",
       });
     } else {
-      Faculty.create(user)
+      Faculty.create({ ...user, fullName: user.fullName })
         .then((faculty) => {
           User.register(
             new User({

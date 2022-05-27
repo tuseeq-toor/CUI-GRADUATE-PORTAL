@@ -38,9 +38,12 @@ const AvatarMenu = () => {
   };
 
   const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  const logOut = () => {
     localStorage.removeItem("user");
     navigate("/");
-    setAnchorElUser(null);
   };
   return (
     <>
@@ -92,7 +95,7 @@ const AvatarMenu = () => {
               <Divider />
             </>
           )}
-          <MenuItem key="logout" onClick={handleCloseUserMenu}>
+          <MenuItem key="logout" onClick={logOut}>
             <Typography textAlign="center">Logout</Typography>
           </MenuItem>
         </Menu>

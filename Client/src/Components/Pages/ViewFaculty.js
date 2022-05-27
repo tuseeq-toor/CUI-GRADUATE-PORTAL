@@ -71,7 +71,6 @@ export default function ViewFaculty() {
         console.log(response.data.facultylist);
         var newarr = response.data.facultylist.map((obj) => ({
           ...obj,
-          fullName: obj.firstName + " " + obj.lastName,
           id: obj._id,
         }));
         console.log(newarr);
@@ -98,7 +97,6 @@ export default function ViewFaculty() {
         console.log(response.data.facultylist);
         var newarr = response.data.facultylist.map((obj) => ({
           ...obj,
-          fullName: obj.firstName + " " + obj.lastName,
           id: obj._id,
         }));
         console.log(newarr);

@@ -80,7 +80,7 @@ router.patch(
     try {
       const faculty = await Faculty.findOneAndUpdate(
         { _id: req.params.id },
-        req.body
+        { ...req.body, fullName: `${req.body.firstName} ${req.body.lastName}` }
       );
       const user = await User.findOneAndUpdate(
         { faculty_id: req.params.id },

@@ -4,12 +4,13 @@ const facultySchema = new Schema(
   {
     firstName: { type: String },
     lastName: { type: String },
-    fullName: {
+    fullName: { type: String },
+    /* fullName: {
       type: String,
       set: function () {
         return `${this.firstName} ${this.lastName}`;
       },
-    },
+    }, */
     father_HusbandName: { type: String },
     nationality: { type: String },
     country: { type: String },

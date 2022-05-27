@@ -28,7 +28,7 @@ const studentSchema = new Schema({
   isActive: { type: Boolean, default: true },
   coursesPassed: { type: String },
   profilePicture: { type: String },
-  synopsisSession_id: { type: ObjectId, ref: "Session" },
+  session_id: { type: ObjectId, ref: "Session" },
   totalPublications: { type: Number /*required: true */ },
   impactFactorPublications: { type: Number /*required: true */ },
 });
