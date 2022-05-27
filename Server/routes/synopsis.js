@@ -67,7 +67,7 @@ router.get("/synopsis-schedule", auth.verifyUser, (req, res) => {
 });
 
 router.post(
-  "/add-SynopsisSchedule",
+  "/add-synopsisSchedule",
   auth.verifyUser,
 
   (req, res) => {
@@ -85,7 +85,7 @@ router.post(
 );
 
 router.patch(
-  "/update-SynopsisSchedule/:id",
+  "/update-synopsisSchedule/:id",
   auth.verifyUser,
 
   (req, res) => {
@@ -102,7 +102,7 @@ router.patch(
 );
 
 router.delete(
-  "/delete-SynopsisSchedule/:id",
+  "/delete-synopsisSchedule/:id",
   auth.verifyUser,
 
   (req, res) => {

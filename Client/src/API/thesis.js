@@ -47,7 +47,7 @@ const updateSchedule = async (id, data) => {
   let token = getToken();
   try {
     const res = await API_THESIS.patch(
-      `synopsis/update-SynopsisSchedule/${id}`,
+      `thesis/update-thesisSchedule/${id}`,
       data,
       {
         headers: {
@@ -64,14 +64,11 @@ const updateSchedule = async (id, data) => {
 const deleteSchedule = async (id) => {
   let token = getToken();
   try {
-    const res = await API_THESIS.delete(
-      `synopsis/delete-SynopsisSchedule/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const res = await API_THESIS.delete(`thesis/delete-thesisSchedule/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return res;
   } catch (error) {
     return error.response;
@@ -178,8 +175,8 @@ const thesisService = {
   createSchedule,
   updateSchedule,
   deleteSchedule,
-  getSubmittedThesis,
   getThesisSchedules,
+  getSubmittedThesis,
   addEvaluation,
   updateGoEvaluation,
   updateEvaluation,
