@@ -13,6 +13,7 @@ const EvaluationStatus = require("../models/evaluationStatus");
 router.get("/thesis-schedule", auth.verifyUser, (req, res) => {
   ThesisSchedule.find({})
     .populate("student_id")
+    .populate("scheduledBye")
     .populate("program_id")
     .then((thesisSchedule) => {
       console.log(thesisSchedule);
@@ -42,6 +43,41 @@ router.post(
       });
   }
 );
+
+router.patch(
+  "/update-thesisSchedule/:id",
+  auth.verifyUser,
+
+  (req, res) => {
+    ThesisSchedule.findByIdAndUpdate(req.params.id, req.body)
+      .then(() => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(200).json({ success: true, message: "Thesis Updated" });
+      })
+      .catch((err) => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(500).json({ success: false, message: err.message });
+      });
+  }
+);
+
+router.delete(
+  "/delete-thesisSchedule/:id",
+  auth.verifyUser,
+
+  (req, res) => {
+    ThesisSchedule.findByIdAndDelete(req.params.id)
+      .then(() => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(200).json({ success: true, message: "Thesis Deleted!" });
+      })
+      .catch((err) => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(500).json({ success: false, message: err.message });
+      });
+  }
+);
+
 router.post(
   "/add-evaluation",
   auth.verifyUser,

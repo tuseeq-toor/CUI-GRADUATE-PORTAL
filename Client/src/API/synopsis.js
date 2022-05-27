@@ -59,6 +59,41 @@ const createSchedule = async (data) => {
   }
 };
 
+const updateSchedule = async (id, data) => {
+  let token = getToken();
+  try {
+    const res = await API_SYNOPSIS.patch(
+      `synopsis/update-SynopsisSchedule/${id}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+const deleteSchedule = async (id) => {
+  let token = getToken();
+  try {
+    const res = await API_SYNOPSIS.delete(
+      `synopsis/delete-SynopsisSchedule/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
+
 const addEvaluation = async (data) => {
   let token = getToken();
   try {
@@ -148,6 +183,8 @@ const synopsisService = {
   submitThesis,
   submitSynopsis,
   createSchedule,
+  updateSchedule,
+  deleteSchedule,
   getSubmittedSynopsis,
   getSynopsisSchedules,
   addEvaluation,

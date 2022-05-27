@@ -53,6 +53,7 @@ var uploadThesis = multer({
 router.get("/synopsis-schedule", auth.verifyUser, (req, res) => {
   SynopsisSchedule.find({})
     .populate("student_id")
+    .populate("scheduledBy")
     .populate("program_id")
     .then((synopsisSchedule) => {
       console.log(synopsisSchedule);
@@ -82,6 +83,41 @@ router.post(
       });
   }
 );
+
+router.patch(
+  "/update-SynopsisSchedule/:id",
+  auth.verifyUser,
+
+  (req, res) => {
+    SynopsisSchedule.findByIdAndUpdate(req.params.id, req.body)
+      .then(() => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(200).json({ success: true, message: "Schedule Updated" });
+      })
+      .catch((err) => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(500).json({ success: false, message: err.message });
+      });
+  }
+);
+
+router.delete(
+  "/delete-SynopsisSchedule/:id",
+  auth.verifyUser,
+
+  (req, res) => {
+    SynopsisSchedule.findByIdAndDelete(req.params.id)
+      .then(() => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(200).json({ success: true, message: "Schedule Deleted!" });
+      })
+      .catch((err) => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(500).json({ success: false, message: err.message });
+      });
+  }
+);
+
 router.post(
   "/add-evaluation",
   auth.verifyUser,
