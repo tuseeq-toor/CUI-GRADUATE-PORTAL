@@ -24,3 +24,19 @@ module.exports = signupMail = (email) => {
     }
   });
 };
+module.exports = resetPasswordMail = (email, token) => {
+  var mailOptions = {
+    from: "tuseeqtoor9@gmail.com",
+    to: email,
+    subject: "Reset Password",
+    html: `<p>You requested for reset password, kindly use this <a href="${process.env.REACT_APP_URL}/reset-password/${token}">link</a> to reset your password</p>`,
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+};
