@@ -28,21 +28,15 @@ export default function ChangePassword() {
     onSubmit: async (values) => {
       console.log(values);
       setShowError(false);
-      if (
-        values.newPassword.trim().length !== 0 &&
-        values.confirmPassword.trim().length !== 0
-      ) {
-        if (values.newPassword === values.confirmPassword) {
-          const res = await authService.changePassword({
-            oldPassword: values.oldPassword,
-            confirmPassword: values.confirmPassword,
-          });
-          console.log(res);
-          if (res.status === 200) {
-            setShowAddModal(true);
-          }
-        } else {
-          setShowError(true);
+
+      if (values.newPassword === values.confirmPassword) {
+        const res = await authService.changePassword({
+          oldPassword: values.oldPassword,
+          newPassword: values.confirmPassword,
+        });
+        console.log(res);
+        if (res.status === 200) {
+          setShowAddModal(true);
         }
       } else {
         setShowError(true);
@@ -55,7 +49,7 @@ export default function ChangePassword() {
       component="form"
       onSubmit={formik.handleSubmit}
       noValidate
-      sx={{ mt: 1 }}
+      sx={{ mt: 1, ml: 10, mr: 10 }}
     >
       <TextField
         sx={{ width: "100%", marginBottom: "15px" }}
@@ -98,7 +92,7 @@ export default function ChangePassword() {
         }
       />
 
-      {showError && <div style={{ color: "red" }}>Passwords donot match</div>}
+      {showError && <div style={{ color: "red" }}>Passwords do not match</div>}
 
       <Button type="submit" variant="contained" size="large" color="secondary">
         Update Password

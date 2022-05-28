@@ -22,7 +22,7 @@ router.get("/", auth.verifyUser, (req, res) => {
 });
 
 router.post("/add-session", auth.verifyUser, auth.checkAdmin, (req, res) => {
-  Session.create(req.body)
+  Session.create({ ...req.body, title: req.body.title.toUpperCase() })
     .then((session) => {
       res.setHeader("Content-Type", "application/json");
       res.status(200).json(session);
@@ -63,7 +63,10 @@ router.patch(
   auth.checkAdmin,
   async (req, res, next) => {
     try {
-      const programe = await Session.findByIdAndUpdate(req.params.id, req.body);
+      const programe = await Session.findByIdAndUpdate(req.params.id, {
+        ...req.body,
+        title: req.body.title.toUpperCase(),
+      });
       res.json({ msg: "Session Updated" });
     } catch (err) {
       console.log(err);

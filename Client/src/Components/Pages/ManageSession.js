@@ -234,7 +234,7 @@ export default function ManageSession() {
 
           <FormControl variant="standard" sx={{ width: 220, mt: 1.5 }}>
             <InputLabel color="secondary" id="cars">
-              Enable Program?:
+              Enable Session?
             </InputLabel>
             <Select
               variant="standard"
@@ -246,7 +246,7 @@ export default function ManageSession() {
               onChange={(event) => {
                 setstatus(event.target.value);
               }}
-              label="Enable Program?:"
+              label="Enable Session?"
             >
               <MenuItem value="enable">enable</MenuItem>
               <MenuItem value="disable">disable</MenuItem>

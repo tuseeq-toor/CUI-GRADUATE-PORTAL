@@ -103,7 +103,7 @@ router.get(
   (req, res) => {
     Student.find({})
       .populate("program_id")
-      .populate("synopsisSession_id")
+      .populate("session_id")
       .populate("supervisor_id")
       .populate("coSupervisor_id")
       .exec()
