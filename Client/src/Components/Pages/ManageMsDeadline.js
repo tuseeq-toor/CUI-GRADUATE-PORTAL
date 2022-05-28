@@ -17,19 +17,17 @@ import {
   RadioGroup,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import studentService from "../../API/students";
 import synopsisService from "../../API/synopsis";
 import programsService from "../../API/programs";
 
 export default function ManageMsDeadline() {
-  const [students, setStudents] = useState([]);
   const [programs, setPrograms] = useState([]);
 
-  const [data, setData] = React.useState({
-    student_id: "",
-    // session_id: "",
+  const [data, setData] = useState({
+    type: "Synopsis",
+    currentDeadline: null,
+    newDeadline: null,
     program_id: "",
-    defenseDate: new Date(),
   });
 
   const handleChange = (event) => {
@@ -42,9 +40,8 @@ export default function ManageMsDeadline() {
   };
   useEffect(() => {
     async function fetchData() {
-      const stds = await studentService.getStudents();
       const prog = await programsService.getPrograms();
-      setStudents(stds);
+
       setPrograms(prog);
     }
 
@@ -54,7 +51,7 @@ export default function ManageMsDeadline() {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(data);
-    synopsisService.createSchedule(data);
+    synopsisService.createDeadline(data);
   };
 
   return (
@@ -72,27 +69,28 @@ export default function ManageMsDeadline() {
       <Box component="form" noValidate sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
-            <FormControl fullWidth>
-              <TextField
-                id="standard-basic"
-                sx={{ width: "100%", marginBottom: "15px" }}
-                label="Current Deadline"
-                // value={"04/16/2022 12:04 pm"}
-                disabled
-                defaultValue={"04/16/2022 12:04 pm"}
+            <LocalizationProvider
+              color="secondary"
+              dateAdapter={AdapterDateFns}
+            >
+              <DateTimePicker
                 color="secondary"
-                variant="outlined"
+                name="currentDeadline"
+                label="Current Deadine"
+                value={data.defenseDate}
+                onChange={() => {}}
+                renderInput={(params) => <TextField {...params} />}
               />
-            </FormControl>
+            </LocalizationProvider>
           </Grid>
           <Grid item xs={6} style={{ width: "100%" }}>
             <FormControl sx={{ mb: 1 }}>
               <FormLabel color="secondary">Type</FormLabel>
               <RadioGroup
                 row
-                name="studentType"
-                /* value={formik.values.studentType}
-                onChange={formik.handleChange} */
+                name="type"
+                value={data.type}
+                onChange={handleChange}
               >
                 <FormControlLabel
                   value="Synopsis"
@@ -109,32 +107,32 @@ export default function ManageMsDeadline() {
           </Grid>
           <Grid item xs={6}>
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Program</InputLabel>
+              <InputLabel color="secondary">Program</InputLabel>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
+                color="secondary"
+                label="Program"
                 name="program_id"
                 value={data.program_id}
-                label="Program"
                 onChange={handleChange}
               >
                 {programs.map((program) => (
-                  <MenuItem selected="selected" value={program._id}>
+                  <MenuItem key={program._id} value={program._id}>
                     {program.programShortName}
                   </MenuItem>
                 ))}
-                {/* <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem> */}
               </Select>
             </FormControl>
           </Grid>
           <Grid item xs={6}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <LocalizationProvider
+              color="secondary"
+              dateAdapter={AdapterDateFns}
+            >
               <DateTimePicker
-                name="defenseDate"
+                color="secondary"
+                name="newDeadline"
                 label="New Submission Deadine"
-                value={data.defenseDate}
+                value={data.newDeadline}
                 onChange={handleChangeDate}
                 renderInput={(params) => <TextField {...params} />}
               />
@@ -143,7 +141,6 @@ export default function ManageMsDeadline() {
         </Grid>
       </Box>
 
-      {/* Pinitial-body start */}
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Button
           variant="contained"

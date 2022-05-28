@@ -5,6 +5,7 @@ const auth = require("../auth/authenticate");
 const multer = require("multer");
 const Student = require("../models/student");
 const SynopsisSubmission = require("../models/synopsisSubmission");
+const Deadline = require("../models/deadline");
 const path = require("path");
 const thesisSubmission = require("../models/thesisSubmission");
 
@@ -404,4 +405,65 @@ router.put("/update-synopsis-status", (req, res) => {
       res.status(500).json({ success: false, message: err.message });
     });
 });
+
+router.post("/add-deadline", auth.verifyUser, auth.checkAdmin, (req, res) => {
+  Deadline.create(req.body)
+    .then((deadline) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json(deadline);
+    })
+    .catch((err) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(500).json({ success: false, message: err.message });
+    });
+});
+
+router.get(
+  "/get-deadlines",
+  auth.verifyUser,
+  auth.checkAdmin,
+  async (req, res, next) => {
+    try {
+      const deadlines = await Deadline.find({})
+        .populate("program_id")
+        .populate("createdBy")
+        .exec();
+      res.json(deadlines);
+    } catch (error) {
+      console.log(err);
+      return res.status(500).json({ msg: err.message });
+    }
+  }
+);
+
+router.delete(
+  "/delete-deadline/:id",
+  auth.verifyUser,
+  auth.checkAdmin,
+  async (req, res, next) => {
+    try {
+      await Deadline.findByIdAndDelete(req.params.id);
+      res.json({ msg: "Deadline Deleted" });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ msg: err.message });
+    }
+  }
+);
+
+router.patch(
+  "/update-deadline/:id",
+  auth.verifyUser,
+  auth.checkAdmin,
+  async (req, res, next) => {
+    try {
+      await Deadline.findByIdAndUpdate(req.params.id, req.body);
+      res.json({ msg: "Deadline Updated" });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ msg: err.message });
+    }
+  }
+);
+
 module.exports = router;

@@ -170,6 +170,62 @@ const getThesisEvaluations = async () => {
   }
 };
 
+const createDeadline = async (data) => {
+  let token = getToken();
+  try {
+    const res = await API_THESIS.post("thesis/add-deadline", data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+const getDeadlines = async () => {
+  let token = getToken();
+  try {
+    const { data } = await API_THESIS.get("thesis/get-deadlines", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const updateDeadline = async (id, data) => {
+  let token = getToken();
+  try {
+    const res = await API_THESIS.patch(`thesis/update-deadline/${id}`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+const deleteDeadline = async (id) => {
+  let token = getToken();
+  try {
+    const res = await API_THESIS.delete(`thesis/delete-deadline/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
+
 const thesisService = {
   // submitThesis,
   createSchedule,
@@ -182,6 +238,10 @@ const thesisService = {
   updateEvaluation,
   getThesisEvaluations,
   updateThesisStatus,
+  createDeadline,
+  getDeadlines,
+  updateDeadline,
+  deleteDeadline,
 };
 
 export default thesisService;
