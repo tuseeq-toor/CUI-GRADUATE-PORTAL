@@ -199,7 +199,10 @@ router.post("/forgot-password", (req, res) => {
       await Token.create({ token: token, email: user.email });
       resetPasswordMail(user.email, token);
       res.setHeader("Content-Type", "application/json");
-      res.status(200).json({ success: true, message: "Password Updated" });
+      res.status(200).json({
+        success: true,
+        message: "Password reset link sent to your email",
+      });
     })
     .catch((err) => {
       res.setHeader("Content-Type", "application/json");
@@ -207,17 +210,36 @@ router.post("/forgot-password", (req, res) => {
     });
 });
 
-router.post("/reset-password/:token",async (req, res) => {
+router.post("/reset-password/:token", async (req, res) => {
   Token.findOne({ token: req.params.token })
-    .then((token) => {
-      const user=await User.findOne({ email: token.email })
-      await user.setPassword(req.body.password)
-      res.setHeader("Content-Type", "application/json");
-      res.status(200).json({ success: true, message: "Password Updated" });
+    .then(async (token) => {
+      User.findOne({ email: token.email }, (err, user) => {
+        user.setPassword(req.body.password, (err, users) => {
+          User.updateOne(
+            { _id: users._id },
+            { hash: users.hash, salt: users.salt },
+            (err, result) => {
+              if (err) {
+                res.setHeader("Content-Type", "application/json");
+                res
+                  .status(500)
+                  .json({ success: false, message: "Link has been expired" });
+              } else {
+                res.setHeader("Content-Type", "application/json");
+                res
+                  .status(200)
+                  .json({ success: true, message: "Password Updated" });
+              }
+            }
+          );
+        });
+      });
     })
     .catch((err) => {
       res.setHeader("Content-Type", "application/json");
-      res.status(500).json({ success: false, message: "Link has been expired" });
+      res
+        .status(500)
+        .json({ success: false, message: "Link has been expired" });
     });
 });
 
