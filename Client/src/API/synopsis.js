@@ -48,11 +48,46 @@ const submitThesis = async (data) => {
 const createSchedule = async (data) => {
   let token = getToken();
   try {
-    const res = await API_SYNOPSIS.post("synopsis/add-SynopsisSchedule", data, {
+    const res = await API_SYNOPSIS.post("synopsis/add-synopsisSchedule", data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+const updateSchedule = async (id, data) => {
+  let token = getToken();
+  try {
+    const res = await API_SYNOPSIS.patch(
+      `synopsis/update-synopsisSchedule/${id}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+const deleteSchedule = async (id) => {
+  let token = getToken();
+  try {
+    const res = await API_SYNOPSIS.delete(
+      `synopsis/delete-synopsisSchedule/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return res;
   } catch (error) {
     return error.response;
@@ -144,16 +179,82 @@ const getSynopsisEvaluations = async () => {
   }
 };
 
+const createDeadline = async (data) => {
+  let token = getToken();
+  try {
+    const res = await API_SYNOPSIS.post("synopsis/add-deadline", data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+const getDeadlines = async () => {
+  let token = getToken();
+  try {
+    const { data } = await API_SYNOPSIS.get("synopsis/get-deadlines", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const updateDeadline = async (id, data) => {
+  let token = getToken();
+  try {
+    const res = await API_SYNOPSIS.patch(
+      `synopsis/update-deadline/${id}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
+
+const deleteDeadline = async (id) => {
+  let token = getToken();
+  try {
+    const res = await API_SYNOPSIS.delete(`synopsis/delete-deadline/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
+
 const synopsisService = {
   submitThesis,
   submitSynopsis,
   createSchedule,
+  updateSchedule,
+  deleteSchedule,
   getSubmittedSynopsis,
   getSynopsisSchedules,
   addEvaluation,
   updateGoEvaluation,
   getSynopsisEvaluations,
   updateSynopsisStatus,
+  createDeadline,
+  getDeadlines,
+  updateDeadline,
+  deleteDeadline,
 };
 
 export default synopsisService;

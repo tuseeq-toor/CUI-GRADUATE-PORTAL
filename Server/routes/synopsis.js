@@ -5,6 +5,7 @@ const auth = require("../auth/authenticate");
 const multer = require("multer");
 const Student = require("../models/student");
 const SynopsisSubmission = require("../models/synopsisSubmission");
+const Deadline = require("../models/deadline");
 const path = require("path");
 const thesisSubmission = require("../models/thesisSubmission");
 
@@ -53,6 +54,7 @@ var uploadThesis = multer({
 router.get("/synopsis-schedule", auth.verifyUser, (req, res) => {
   SynopsisSchedule.find({})
     .populate("student_id")
+    .populate("scheduledBy")
     .populate("program_id")
     .then((synopsisSchedule) => {
       console.log(synopsisSchedule);
@@ -66,7 +68,7 @@ router.get("/synopsis-schedule", auth.verifyUser, (req, res) => {
 });
 
 router.post(
-  "/add-SynopsisSchedule",
+  "/add-synopsisSchedule",
   auth.verifyUser,
 
   (req, res) => {
@@ -82,6 +84,41 @@ router.post(
       });
   }
 );
+
+router.patch(
+  "/update-synopsisSchedule/:id",
+  auth.verifyUser,
+
+  (req, res) => {
+    SynopsisSchedule.findByIdAndUpdate(req.params.id, req.body)
+      .then(() => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(200).json({ success: true, message: "Schedule Updated" });
+      })
+      .catch((err) => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(500).json({ success: false, message: err.message });
+      });
+  }
+);
+
+router.delete(
+  "/delete-synopsisSchedule/:id",
+  auth.verifyUser,
+
+  (req, res) => {
+    SynopsisSchedule.findByIdAndDelete(req.params.id)
+      .then(() => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(200).json({ success: true, message: "Schedule Deleted!" });
+      })
+      .catch((err) => {
+        res.setHeader("Content-Type", "application/json");
+        res.status(500).json({ success: false, message: err.message });
+      });
+  }
+);
+
 router.post(
   "/add-evaluation",
   auth.verifyUser,
@@ -368,4 +405,65 @@ router.put("/update-synopsis-status", (req, res) => {
       res.status(500).json({ success: false, message: err.message });
     });
 });
+
+router.post("/add-deadline", auth.verifyUser, auth.checkAdmin, (req, res) => {
+  Deadline.create(req.body)
+    .then((deadline) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json(deadline);
+    })
+    .catch((err) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(500).json({ success: false, message: err.message });
+    });
+});
+
+router.get(
+  "/get-deadlines",
+  auth.verifyUser,
+  auth.checkAdmin,
+  async (req, res, next) => {
+    try {
+      const deadlines = await Deadline.find({})
+        .populate("program_id")
+        .populate("createdBy")
+        .exec();
+      res.json(deadlines);
+    } catch (error) {
+      console.log(err);
+      return res.status(500).json({ msg: err.message });
+    }
+  }
+);
+
+router.delete(
+  "/delete-deadline/:id",
+  auth.verifyUser,
+  auth.checkAdmin,
+  async (req, res, next) => {
+    try {
+      await Deadline.findByIdAndDelete(req.params.id);
+      res.json({ msg: "Deadline Deleted" });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ msg: err.message });
+    }
+  }
+);
+
+router.patch(
+  "/update-deadline/:id",
+  auth.verifyUser,
+  auth.checkAdmin,
+  async (req, res, next) => {
+    try {
+      await Deadline.findByIdAndUpdate(req.params.id, req.body);
+      res.json({ msg: "Deadline Updated" });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ msg: err.message });
+    }
+  }
+);
+
 module.exports = router;
