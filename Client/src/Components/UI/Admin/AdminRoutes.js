@@ -51,7 +51,7 @@ import EvaluateThesisMS from "../../Pages/EvaluateThesisMS";
 import EvaluateThesisPhD from "../../Pages/EvaluateThesisPhD";
 import AddFaculty from "../../Pages/AddFaculty";
 import { useSelector } from "react-redux";
-import ManageMsDeadline from "../../Pages/ManageMsDeadline";
+import ManageDeadline from "../../Pages/ManageDeadline";
 import CreateSynopsisSchedule from "../../Pages/CreateSynopsisSchedule";
 import CreateThesisSchedule from "../../Pages/CreateThesisSchedule";
 import AddSupervisoryCommitteeStudent from "../../Pages/AddSupervisoryCommitteeStudent";
@@ -62,7 +62,6 @@ import HomeStudentPhd from "../../Pages/HomeStudentPhd";
 import HomeGo from "../../Pages/HomeGo";
 import HomeGac from "../../Pages/HomeGac";
 import HomeSupervisor from "../../Pages/HomeSupervisor";
-import ManagePhdDeadline from "../../Pages/ManagePhdDeadline";
 import UpdateThesisStatus from "../../Pages/UpdateThesisStatus";
 import StatusCodes from "../StatusCodes";
 import SendNotificationPhD from "../../Pages/SendNotificationPhD";
@@ -112,13 +111,10 @@ const AdminRoutes = (props) => {
             />
             <Route path="/Dashboard/AddStudent" element={<AddStudent />} />
             <Route
-              path="/Dashboard/ManageMsDeadline"
-              element={<ManageMsDeadline />}
+              path="/Dashboard/ManageDeadline"
+              element={<ManageDeadline />}
             />
-            <Route
-              path="/Dashboard/ManagePhdDeadline"
-              element={<ManagePhdDeadline />}
-            />
+
             <Route
               path="/Dashboard/ManageSynopsisSchedule"
               element={<ManageSynopsisSchedule />}

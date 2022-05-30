@@ -93,7 +93,7 @@ export const msListitems = [
   {
     text: "Manage Submission Deadline",
     icon: <AddModeratorIcon />,
-    path: "/Dashboard/ManageMsDeadline",
+    path: "/Dashboard/ManageDeadline",
   },
 
   {
