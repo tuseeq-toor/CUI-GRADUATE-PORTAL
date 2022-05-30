@@ -1,13 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
+const Token = require("../models/token");
 const Student = require("../models/student");
 var passport = require("passport");
 const helpers = require("../helpers/helpers");
 const Faculty = require("../models/faculty");
 const auth = require("../auth/authenticate");
 const signupMail = require("../helpers/mailing");
+const resetPasswordMail = require("../helpers/mailing");
 const Session = require("../models/session");
+const randToken = require("rand-token");
 
 router.post("/signup", async (req, res, next) => {
   const user = req.body;
@@ -177,23 +180,66 @@ router.get("/logout", (req, res, next) => {
 
 //change password
 router.post("/change-password", auth.verifyUser, (req, res) => {
-  // const user = User.findOne({_id:req.user._id})
   req.user
     .changePassword(req.body.oldPassword, req.body.newPassword)
     .then((user) => {
-      Student.findOne({ _id: user.student_id })
-        .then((student) => {
-          res.setHeader("Content-Type", "application/json");
-          res.status(200).json({ success: true, message: "Password Updated" });
-        })
-        .catch((err) => {
-          res.setHeader("Content-Type", "application/json");
-          res.status(500).json({ success: false, message: err.message });
-        });
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json({ success: true, message: "Password Updated" });
     })
     .catch((err) => {
       res.setHeader("Content-Type", "application/json");
       res.status(500).json({ success: false, message: err.message });
+    });
+});
+
+router.post("/forgot-password", (req, res) => {
+  User.findOne({ email: req.body.email })
+    .then(async (user) => {
+      const token = randToken.generate(16);
+      await Token.create({ token: token, email: user.email });
+      resetPasswordMail(user.email, token);
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json({
+        success: true,
+        message: "Password reset link sent to your email",
+      });
+    })
+    .catch((err) => {
+      res.setHeader("Content-Type", "application/json");
+      res.status(500).json({ success: false, message: "User Not Found" });
+    });
+});
+
+router.post("/reset-password/:token", async (req, res) => {
+  Token.findOne({ token: req.params.token })
+    .then(async (token) => {
+      User.findOne({ email: token.email }, (err, user) => {
+        user.setPassword(req.body.password, (err, users) => {
+          User.updateOne(
+            { _id: users._id },
+            { hash: users.hash, salt: users.salt },
+            (err, result) => {
+              if (err) {
+                res.setHeader("Content-Type", "application/json");
+                res
+                  .status(500)
+                  .json({ success: false, message: "Link has been expired" });
+              } else {
+                res.setHeader("Content-Type", "application/json");
+                res
+                  .status(200)
+                  .json({ success: true, message: "Password Updated" });
+              }
+            }
+          );
+        });
+      });
+    })
+    .catch((err) => {
+      res.setHeader("Content-Type", "application/json");
+      res
+        .status(500)
+        .json({ success: false, message: "Link has been expired" });
     });
 });
 
