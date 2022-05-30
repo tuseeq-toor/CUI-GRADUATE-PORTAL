@@ -1,10 +1,11 @@
 const nodemailer = require("nodemailer");
+require("dotenv").config();
 
 var transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: "tuseeqtoor9@gmail.com",
-    pass: "",
+    pass: "forgoti@g!",
   },
 });
 
@@ -29,7 +30,7 @@ module.exports = resetPasswordMail = (email, token) => {
     from: "tuseeqtoor9@gmail.com",
     to: email,
     subject: "Reset Password",
-    html: `<p>You requested for reset password, kindly use this <a href="${process.env.REACT_APP_URL}/reset-password/${token}">link</a> to reset your password</p>`,
+    html: `<p>You requested for reset password, kindly use this <a href="${process.env.REACT_APP_URL}/ResetP  assword/${token}">link</a> to reset your password</p>`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {

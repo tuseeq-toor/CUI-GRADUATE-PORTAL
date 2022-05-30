@@ -19,6 +19,7 @@ import { Login } from "../../Store/authSlice";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { FormControl } from "@mui/material";
+import axios from "axios";
 
 const theme = createTheme();
 
@@ -26,6 +27,7 @@ export default function SignIn() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const validationSchema = yup.object({
     email: yup.string("Enter your email"),
@@ -40,30 +42,37 @@ export default function SignIn() {
   const formik = useFormik({
     initialValues: {
       email: "",
-      password: "",
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       console.log(values);
-      setError(false);
-      dispatch(
-        Login({ userEmail: values.email, userPassword: values.password })
-      )
-        // .unwrap()
-        .then((res) => {
-          console.log(res);
-          navigate("/Dashboard");
-        })
-        .catch((err) => {
-          console.log(err);
-          setError(true);
-        });
+      const res = await axios.post(
+        `http://localhost:3000/auth/forgot-password`,
+        values
+      );
+      if (res.status === 200) {
+        setSuccess(true);
+      } else {
+        setError(true);
+      }
     },
   });
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const res = await axios.post(`http://localhost:3000/auth/forgot-password`, {
+      email: formik.values.email,
+    });
+    if (res.status === 200) {
+      setSuccess(true);
+    } else {
+      setError(true);
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+      <Container sx={{ width: "xs" }} component="main" maxWidth="xs">
         <CssBaseline />
         <Box
           sx={{
@@ -82,9 +91,9 @@ export default function SignIn() {
             src="../assets/images/cui.png"
           />
           <Typography component="h1" variant="h5">
-            Sign in
+            Forgot Password
           </Typography>
-          <Box onSubmit={formik.handleSubmit} component="form" sx={{ mt: 1 }}>
+          <Box onSubmit={handleSubmit} component="form" sx={{ mt: 1 }}>
             {error && (
               <Box sx={{ mb: 1, mt: 2 }}>
                 <Typography
@@ -93,59 +102,43 @@ export default function SignIn() {
                   component="h4"
                   variant="h6"
                 >
-                  Email or Password Incorrect!
+                  User does not exist!
                 </Typography>
               </Box>
             )}
-            <FormControl>
+            {success && (
+              <Box sx={{ mb: 1, mt: 2 }}>
+                <Typography
+                  align="center"
+                  sx={{ color: "green" }}
+                  component="h4"
+                  variant="h6"
+                >
+                  Password reset link sent to your Email.
+                </Typography>
+              </Box>
+            )}
+            <FormControl sx={{ width: "400px" }}>
               <TextField
                 margin="normal"
                 fullWidth
                 id="email"
                 name="email"
-                label="Email"
+                label="Enter your email address"
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 error={formik.touched.email && Boolean(formik.errors.email)}
                 helperText={formik.touched.email && formik.errors.email}
               />
-              <TextField
-                margin="normal"
-                fullWidth
-                id="password"
-                name="password"
-                label="Password"
-                type="password"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                error={
-                  formik.touched.password && Boolean(formik.errors.password)
-                }
-                helperText={formik.touched.password && formik.errors.password}
-                autoComplete="current-password"
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
+
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Sign In
+                Send E-mail
               </Button>
-              <Grid container>
-                <Grid item xs>
-                  <Link to="/ForgotPassword" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid sx={{ ml: 2 }} item>
-                  <Link to="/SignUp">{"Don't have an account? Sign Up"}</Link>
-                </Grid>
-              </Grid>
             </FormControl>
           </Box>
         </Box>

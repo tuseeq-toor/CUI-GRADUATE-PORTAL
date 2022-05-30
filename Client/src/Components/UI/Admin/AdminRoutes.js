@@ -65,6 +65,8 @@ import HomeSupervisor from "../../Pages/HomeSupervisor";
 import UpdateThesisStatus from "../../Pages/UpdateThesisStatus";
 import StatusCodes from "../StatusCodes";
 import SendNotificationPhD from "../../Pages/SendNotificationPhD";
+import ForgotPassword from "../ForgotPassword";
+import ResetPassword from "../ResetPassword";
 const AdminRoutes = (props) => {
   const { isLoggedIn } = useSelector((state) => state.auth);
   console.log(isLoggedIn);
@@ -72,6 +74,8 @@ const AdminRoutes = (props) => {
     <Routes>
       <Route path="/" element={<SignIn />} />
       <Route path="/SignUp" element={<SignUp />} />
+      <Route path="/ForgotPassword" element={<ForgotPassword />} />
+      <Route path="/ResetPassword/:token" element={<ResetPassword />} />
       {isLoggedIn ? (
         <>
           <Route path="/Dashboard" element={<AdminDashboard />}>

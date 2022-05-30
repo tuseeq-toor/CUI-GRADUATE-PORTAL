@@ -13,25 +13,29 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Login } from "../../Store/authSlice";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { FormControl } from "@mui/material";
+import axios from "axios";
 
 const theme = createTheme();
 
-export default function SignIn() {
+export default function ResetPassword() {
+  const { token } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const validationSchema = yup.object({
-    email: yup.string("Enter your email"),
-    /* .email("Enter a valid email")
-      .required("Email is required"), */
-    password: yup
+    newPassword: yup
+      .string("Enter your password")
+      .min(3, "Password should be of minimum 8 characters length")
+      .required("Password is required"),
+    confirmPassword: yup
       .string("Enter your password")
       .min(3, "Password should be of minimum 8 characters length")
       .required("Password is required"),
@@ -39,27 +43,32 @@ export default function SignIn() {
 
   const formik = useFormik({
     initialValues: {
-      email: "",
-      password: "",
+      newPassword: "",
+      confirmPassword: "",
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
-      console.log(values);
-      setError(false);
-      dispatch(
-        Login({ userEmail: values.email, userPassword: values.password })
-      )
-        // .unwrap()
-        .then((res) => {
-          console.log(res);
-          navigate("/Dashboard");
-        })
-        .catch((err) => {
-          console.log(err);
-          setError(true);
-        });
-    },
+    onSubmit: (values) => {},
   });
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (formik.values.newPassword === formik.values.confirmPassword) {
+      const res = await axios.post(
+        `http://localhost:3000/auth/reset-password/${token}`,
+        {
+          email: formik.values.email,
+        }
+      );
+      if (res.status === 200) {
+        setSuccess(true);
+      } else {
+        setError(true);
+      }
+    } else {
+      setError(true);
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -82,9 +91,9 @@ export default function SignIn() {
             src="../assets/images/cui.png"
           />
           <Typography component="h1" variant="h5">
-            Sign in
+            Confirm Password
           </Typography>
-          <Box onSubmit={formik.handleSubmit} component="form" sx={{ mt: 1 }}>
+          <Box onSubmit={handleSubmit} component="form" sx={{ mt: 1 }}>
             {error && (
               <Box sx={{ mb: 1, mt: 2 }}>
                 <Typography
@@ -93,36 +102,57 @@ export default function SignIn() {
                   component="h4"
                   variant="h6"
                 >
-                  Email or Password Incorrect!
+                  Password donot Match!
                 </Typography>
               </Box>
             )}
-            <FormControl>
+            {success && (
+              <Box sx={{ mb: 1, mt: 2 }}>
+                <Typography
+                  align="center"
+                  sx={{ color: "green" }}
+                  component="h4"
+                  variant="h6"
+                >
+                  Password Reset Successfull!
+                </Typography>
+              </Box>
+            )}
+            <FormControl sx={{ width: "400px" }}>
               <TextField
                 margin="normal"
                 fullWidth
-                id="email"
-                name="email"
-                label="Email"
-                value={formik.values.email}
+                id="password"
+                name="newPassword"
+                label="New Password"
+                type="password"
+                value={formik.values.newPassword}
                 onChange={formik.handleChange}
-                error={formik.touched.email && Boolean(formik.errors.email)}
-                helperText={formik.touched.email && formik.errors.email}
+                error={
+                  formik.touched.newPassword &&
+                  Boolean(formik.errors.newPassword)
+                }
+                helperText={
+                  formik.touched.newPassword && formik.errors.newPassword
+                }
               />
               <TextField
                 margin="normal"
                 fullWidth
                 id="password"
-                name="password"
-                label="Password"
+                name="confirmPassword"
+                label="Confirm Password"
                 type="password"
-                value={formik.values.password}
+                value={formik.values.confirmPassword}
                 onChange={formik.handleChange}
                 error={
-                  formik.touched.password && Boolean(formik.errors.password)
+                  formik.touched.confirmPassword &&
+                  Boolean(formik.errors.confirmPassword)
                 }
-                helperText={formik.touched.password && formik.errors.password}
-                autoComplete="current-password"
+                helperText={
+                  formik.touched.confirmPassword &&
+                  formik.errors.confirmPassword
+                }
               />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
@@ -134,18 +164,8 @@ export default function SignIn() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Sign In
+                Reset password
               </Button>
-              <Grid container>
-                <Grid item xs>
-                  <Link to="/ForgotPassword" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid sx={{ ml: 2 }} item>
-                  <Link to="/SignUp">{"Don't have an account? Sign Up"}</Link>
-                </Grid>
-              </Grid>
             </FormControl>
           </Box>
         </Box>

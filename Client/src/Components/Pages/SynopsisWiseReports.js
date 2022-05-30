@@ -207,11 +207,7 @@ export default function SuperivorReport() {
                       marginBottom: "1rem",
                     }}
                   />
-                  {console.log(
-                    process.env.REACT_APP_URL +
-                      "/" +
-                      report?.student_id?.profilePicture
-                  )}
+
                   <div
                     style={{
                       margin: "0",

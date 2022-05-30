@@ -216,7 +216,7 @@ router.post("/reset-password/:token", async (req, res) => {
       User.findOne({ email: token.email }, (err, user) => {
         user.setPassword(req.body.password, (err, users) => {
           User.updateOne(
-            { _id: users._id },
+            { _id: users?._id },
             { hash: users.hash, salt: users.salt },
             (err, result) => {
               if (err) {

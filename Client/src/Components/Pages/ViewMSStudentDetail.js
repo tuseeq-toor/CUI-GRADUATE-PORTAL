@@ -50,22 +50,22 @@ export default function ViewMSStudentDetails() {
     });
   };
 
-  useEffect(() => {
-    async function fetchProgressData(selectedStudentId) {
-      if (selectedStudentId) {
-        const progressData = await progressReportService.getSingleReport(
-          selectedStudentId
-        );
-        console.log(progressData);
-        // setProgressReport(progressData);
-        setProgressReport({
-          sessionTitle: progressData.data.session_id.title,
-          comment: progressData.data.comment,
-          status: progressData.data.status,
-        });
-      }
+  async function fetchProgressData(selectedStudentId) {
+    if (selectedStudentId) {
+      const progressData = await progressReportService.getSingleReport(
+        selectedStudentId
+      );
+      console.log(progressData);
+      // setProgressReport(progressData);
+      setProgressReport({
+        sessionTitle: progressData?.data?.session_id?.title,
+        comment: progressData?.data?.comment,
+        status: progressData?.data?.status,
+      });
     }
+  }
 
+  useEffect(() => {
     fetchProgressData(selectedStudentId);
     // console.log(students);
   }, [selectedStudentId]);
@@ -87,7 +87,6 @@ export default function ViewMSStudentDetails() {
             value={autocompleteValue}
             onChange={(value, newValue) => {
               let registrationNo = newValue?.registrationNo;
-
               setAutocompleteValue(newValue);
 
               handleRegistrationNo(registrationNo);
@@ -120,6 +119,20 @@ export default function ViewMSStudentDetails() {
               }}
             >
               <div>
+                <img
+                  src={
+                    process.env.REACT_APP_URL +
+                      "/" +
+                      selectedStudent?.profilePicture || profile
+                  }
+                  alt="Student Profile"
+                  style={{
+                    height: "80px",
+                    width: "80px",
+                    borderRadius: "100%",
+                    marginBottom: "1rem",
+                  }}
+                />
                 <div
                   style={{
                     margin: "1rem 0 0 0",
@@ -299,18 +312,6 @@ export default function ViewMSStudentDetails() {
                 >
                   Progress Reports:
                 </h3>
-                <div
-                  style={{
-                    margin: "0.5rem 1rem 0",
-                    display: "flex",
-                    alignItems: "center",
-
-                    textAlign: "justify",
-                  }}
-                >
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                  Pariatur adipisci ratione ipsum modi autem. Molestias.
-                </div>
               </div>
               <div className="">
                 <table
