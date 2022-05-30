@@ -1,51 +1,37 @@
 import { Button } from "@mui/material";
-import React from "react";
-import {
-  viewAnnouncementeData,
-  viewAnnouncementHeader,
-} from "../DummyData/DummyData";
+import React, { useEffect, useState } from "react";
+import announcementService from "../../API/announcements";
+import { viewAnnouncementHeader } from "../DummyData/DummyData";
 import DataTable from "../UI/TableUI";
 
 export default function ViewAnnouncement() {
+  const [viewAnnouncementeData, setViewAnnouncementeData] = useState([]);
+
+  const getData = async () => {
+    const res = await announcementService.getAnnouncements();
+    const data = res.data.map((announcement) => {
+      const d = new Date(announcement.creationDate);
+      return {
+        id: announcement._id,
+        announcement: announcement.announcement,
+        date: d.toLocaleString(),
+      };
+    });
+
+    setViewAnnouncementeData(data);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   const viewAnnouncementHeader = [
     {
-      field: "id",
-      headerName: "ID",
-      width: 80,
-    },
-    {
-      field: "Session",
+      field: "announcement",
       headerName: "Announcement",
       width: 400,
     },
-    { field: "Description", headerName: "Date", width: 400 },
-    {
-      renderCell: (props) => (
-        <Button
-          /* onClick={() => {
-            axios
-              .delete(`${process.env.REACT_APP_URL}/admin/faculty/` + props.row.id, {
-                headers: {
-                  Authorization: `Bearer ${gettoken}`,
-                },
-              })
-              .then((response) => {
-                console.log(response.data.msg);
-
-                getData();
-                alert("Faculty deleted");
-              })
-              .catch((err) => console.log(err));
-          }} */
-          variant="contained"
-          color="secondary"
-          size="small"
-          style={{ marginLeft: 0 }}
-        >
-          Delete
-        </Button>
-      ),
-    },
+    { field: "date", headerName: "Date", width: 400 },
   ];
   return (
     <>
