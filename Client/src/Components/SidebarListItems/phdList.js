@@ -105,7 +105,7 @@ export const phdListitems = [
   {
     text: "Manage Submission Deadline",
     icon: <AddModeratorIcon />,
-    path: "/Dashboard/ManagePhdDeadline",
+    path: "/Dashboard/ManageDeadline",
   },
 
   {

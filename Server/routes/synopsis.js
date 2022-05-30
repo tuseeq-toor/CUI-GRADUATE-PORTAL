@@ -421,7 +421,7 @@ router.post("/add-deadline", auth.verifyUser, auth.checkAdmin, (req, res) => {
 router.get(
   "/get-deadlines",
   auth.verifyUser,
-  auth.checkAdmin,
+
   async (req, res, next) => {
     try {
       const deadlines = await Deadline.find({})
