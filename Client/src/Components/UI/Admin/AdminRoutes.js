@@ -67,6 +67,7 @@ import StatusCodes from "../StatusCodes";
 import SendNotificationPhD from "../../Pages/SendNotificationPhD";
 import ForgotPassword from "../ForgotPassword";
 import ResetPassword from "../ResetPassword";
+import SendAnnouncement from "../../Pages/SendAnnouncement";
 const AdminRoutes = (props) => {
   const { isLoggedIn } = useSelector((state) => state.auth);
   console.log(isLoggedIn);
@@ -216,6 +217,10 @@ const AdminRoutes = (props) => {
             <Route
               path="/Dashboard/SendNotificationtoAll"
               element={<SendNotificationAll />}
+            />
+            <Route
+              path="/Dashboard/SendAnnouncement"
+              element={<SendAnnouncement />}
             />
             <Route
               path="/Dashboard/ViewMSStudentDetails"

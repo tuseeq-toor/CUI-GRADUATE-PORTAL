@@ -204,7 +204,11 @@ export const adminListitems = [
       },
     ],
   },
-
+  {
+    text: "Send Announcement",
+    icon: <ListIcon />,
+    path: "/Dashboard/SendAnnouncement",
+  },
   {
     text: "Student Details",
     icon: <ListIcon />,

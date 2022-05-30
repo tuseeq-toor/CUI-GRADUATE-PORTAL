@@ -13,6 +13,7 @@ const pdfReportsRouter = require("./routes/pdfReports");
 const progressReportsRouter = require("./routes/progressReports");
 const authRouter = require("./routes/auth");
 const notification = require("./routes/notifications");
+const announcement = require("./routes/announcements");
 
 var passport = require("passport");
 const path = require("path");
@@ -72,6 +73,7 @@ app.use("/thesis", thesisRouter);
 app.use("/pdfReports", pdfReportsRouter);
 app.use("/progress-report", progressReportsRouter);
 app.use("/Notification", notification);
+app.use("/announcements", announcement);
 
 app.get("/", async (req, res, next) => {
   console.log("Hello");
