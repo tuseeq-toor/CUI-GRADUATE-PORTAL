@@ -197,7 +197,7 @@ export const msListitems = [
     ],
   }, */
 
-  /* {
+  {
     text: "Notification",
     icon: <ListIcon />,
     active: false,
@@ -214,7 +214,7 @@ export const msListitems = [
         path: "/Dashboard/SendNotification(MS)",
       },
     ],
-  }, */
+  },
 
   {
     text: "Student Details",

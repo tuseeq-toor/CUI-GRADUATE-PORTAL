@@ -15,8 +15,7 @@ const HomeMsCor = () => {
     <div style={{ textAlign: "center" }}>
       <h1>Welcome!</h1>
       <p> {`Your are logged in as MS Coordinator`}</p>
-      <h3> Notification </h3>
-      <ViewNotification />
+
       <h3> Announcement </h3>
       <ViewAnnouncement />
     </div>

@@ -13,7 +13,7 @@ const EvaluationStatus = require("../models/evaluationStatus");
 router.get("/thesis-schedule", auth.verifyUser, (req, res) => {
   ThesisSchedule.find({})
     .populate("student_id")
-    .populate("scheduledBye")
+    .populate("scheduledBy")
     .populate("program_id")
     .then((thesisSchedule) => {
       console.log(thesisSchedule);

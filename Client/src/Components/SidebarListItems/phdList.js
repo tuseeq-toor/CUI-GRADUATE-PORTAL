@@ -222,7 +222,7 @@ export const phdListitems = [
     ],
   }, */
 
-  /* {
+  {
     text: "Notification",
     icon: <ListIcon />,
     active: false,
@@ -238,14 +238,8 @@ export const phdListitems = [
         icon: <CampaignIcon />,
         path: "/Dashboard/SendNotification(PhD)",
       },
-
-      //   {
-      //   text: "Send Notification (MS)",
-      //   icon: <NotificationsActiveIcon />,
-      //   path: "/Dashboard/SendNotification(MS)",
-      // },
     ],
-  }, */
+  },
 
   {
     text: "Student Details",
