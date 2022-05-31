@@ -300,7 +300,7 @@ export default function EvaluateSynopsisPhD() {
                         >
                           Synopsis Status
                         </td>
-                        <td>N/A</td>
+                        <td>{selectedSynopsis.synopsisStatus}</td>
                       </tr>
                       <tr style={{ backgroundColor: "White" }}>
                         <td

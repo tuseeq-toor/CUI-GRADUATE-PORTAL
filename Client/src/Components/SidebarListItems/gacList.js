@@ -47,11 +47,11 @@ export const gacListitems = [
     icon: <ListIcon />,
     active: false,
     subMenu: [
-      {
+      /*  {
         text: "Pending Thesis",
         icon: <EditNotificationsIcon />,
         path: "/Dashboard/PendingThesis",
-      },
+      }, */
 
       {
         text: "Thesis MS",

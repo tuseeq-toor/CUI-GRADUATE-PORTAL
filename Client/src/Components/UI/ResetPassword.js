@@ -57,7 +57,7 @@ export default function ResetPassword() {
       const res = await axios.post(
         `http://localhost:3000/auth/reset-password/${token}`,
         {
-          email: formik.values.email,
+          password: formik.values.newPassword,
         }
       );
       if (res.status === 200) {
@@ -82,16 +82,18 @@ export default function ResetPassword() {
             alignItems: "center",
           }}
         >
-          <img
-            style={{
-              width: "250px",
-              margin: "0 0 20px 180px",
-            }}
-            alt="Remy Sharp"
-            src="../assets/images/cui.png"
-          />
+          <Link to={"/"}>
+            <img
+              style={{
+                width: "250px",
+                margin: "0 0 20px 180px",
+              }}
+              alt="Remy Sharp"
+              src="../assets/images/cui.png"
+            />
+          </Link>
           <Typography component="h1" variant="h5">
-            Confirm Password
+            Enter New Password
           </Typography>
           <Box onSubmit={handleSubmit} component="form" sx={{ mt: 1 }}>
             {error && (
@@ -154,10 +156,7 @@ export default function ResetPassword() {
                   formik.errors.confirmPassword
                 }
               />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
+
               <Button
                 type="submit"
                 fullWidth

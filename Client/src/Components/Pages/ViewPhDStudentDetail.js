@@ -307,10 +307,7 @@ export default function ViewPhDStudentDetails() {
 
                     textAlign: "justify",
                   }}
-                >
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                  Pariatur adipisci ratione ipsum modi autem. Molestias.
-                </div>
+                ></div>
               </div>
               <div className="">
                 <table

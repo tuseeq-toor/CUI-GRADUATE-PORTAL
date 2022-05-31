@@ -37,7 +37,7 @@ function checkFileType(file, cb) {
 }
 var uploadSynopsis = multer({
   storage: storage,
-  limits: { fileSize: 10000000 },
+  limits: { fileSize: 100000000 },
   fileFilter: (req, file, cb) => {
     checkFileType(file, cb);
   },
@@ -45,7 +45,7 @@ var uploadSynopsis = multer({
 
 var uploadThesis = multer({
   storage: storage,
-  limits: { fileSize: 10000000 },
+  limits: { fileSize: 100000000 },
   fileFilter: (req, file, cb) => {
     checkFileType(file, cb);
   },
@@ -290,7 +290,7 @@ router.post(
           supervisor_id: s_id.faculty_id,
           coSupervisor_id: cs_id.faculty_id,
           synopsisTitle,
-          synopsisStatus: "unscheduled",
+          synopsisStatus: "Unscheduled",
           SpecilizationTrack: synopsisTrack,
           isActive: false,
           synopsisFileName: `public/uploads/${req.files["synopsisDocument"][0].filename}`,
@@ -370,7 +370,7 @@ router.post(
             supervisor_id: s_id.faculty_id,
             coSupervisor_id: cs_id.faculty_id,
             thesisTitle,
-            thesisStatus: "unscheduled",
+            thesisStatus: "Unscheduled",
             SpecilizationTrack: thesisTrack,
             isActive: false,
             thesisFileName: `public/uploads/${req.files["thesisDocument"][0].filename}`,
@@ -393,7 +393,7 @@ router.post(
 router.put("/update-synopsis-status", (req, res) => {
   SynopsisSubmission.findOneAndUpdate(
     { student_id: req.body.student_id },
-    { thesisStatus: req.body.thesisStatus }
+    { synopsisStatus: req.body.status }
   )
     .then(() => {
       res.setHeader("Content-Type", "application/json");

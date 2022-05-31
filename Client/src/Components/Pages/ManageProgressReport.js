@@ -16,6 +16,8 @@ import { TextField } from "@mui/material";
 import progressReportService from "../../API/progressReports";
 import BackdropModal from "../UI/BackdropModal";
 import { useFormik } from "formik";
+import studentService from "../../API/students";
+import sessionsService from "../../API/sessions";
 
 export default function ManageProgressReport() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -25,10 +27,18 @@ export default function ManageProgressReport() {
   const [token, setToken] = useState("");
   const [reports, setReports] = useState([]);
   const [reportData, setReportData] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [sessions, setSessions] = useState([]);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   async function fetchData() {
+    const studs = await studentService.getStudents();
+    const sess = await sessionsService.getSessions();
+
+    setStudents(studs);
+    setSessions(sess);
     const res = await progressReportService.getReports();
 
     console.log("reshere", res);
@@ -160,25 +170,47 @@ export default function ManageProgressReport() {
     <>
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
-          <TextField
-            color="secondary"
-            label="Student"
-            name="student_id"
-            variant="standard"
-            sx={{ width: "100%", marginBottom: "15px" }}
-            value={formik.values.synopsisTitle}
-            onChange={formik.handleChange}
-          />
+          <FormControl color="secondary" fullWidth>
+            <InputLabel>Student</InputLabel>
+            <Select
+              sx={{ marginBottom: "15px" }}
+              label="Student"
+              name="student_id"
+              value={formik.values.student_id}
+              onChange={formik.handleChange}
+              error={
+                formik.touched.student_id && Boolean(formik.errors.student_id)
+              }
+              helperText={formik.touched.student_id && formik.errors.student_id}
+            >
+              {students.map((oneStudent) => (
+                <MenuItem value={oneStudent._id}>
+                  {oneStudent.registrationNo}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-          <TextField
-            color="secondary"
-            label="Session"
-            name="session_id"
-            variant="standard"
-            sx={{ width: "100%", marginBottom: "15px" }}
-            value={formik.values.synopsisTitle}
-            onChange={formik.handleChange}
-          />
+          <FormControl color="secondary" fullWidth>
+            <InputLabel>Session</InputLabel>
+            <Select
+              sx={{ marginBottom: "15px" }}
+              label="Session"
+              name="session_id"
+              value={formik.values.session_id}
+              onChange={formik.handleChange}
+              error={
+                formik.touched.session_id && Boolean(formik.errors.session_id)
+              }
+              helperText={formik.touched.session_id && formik.errors.session_id}
+            >
+              {sessions.map((oneSession) => (
+                <MenuItem selected="selected" value={oneSession._id}>
+                  {oneSession.title}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
           <TextField
             variant="standard"

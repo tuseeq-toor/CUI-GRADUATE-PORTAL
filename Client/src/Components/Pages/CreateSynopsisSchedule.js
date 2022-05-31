@@ -37,7 +37,8 @@ export default function CreateSynopsisSchedule() {
   };
 
   const handleChangeDate = (newValue) => {
-    setData({ ...data, date: newValue });
+    console.log(newValue);
+    setData({ ...data, defenseDate: newValue });
   };
   useEffect(() => {
     async function fetchData() {
@@ -128,15 +129,14 @@ export default function CreateSynopsisSchedule() {
               dateAdapter={AdapterDateFns}
             >
               <DateTimePicker
+                autoOk={true}
                 color="secondary"
                 fullWidth
                 name="defenseDate"
                 label="Defense Date"
-                value={data.defenseDate}
+                value={data.defenseDate || ""}
                 onChange={handleChangeDate}
-                renderInput={(params) => (
-                  <TextField color="secondary" fullWidth {...params} />
-                )}
+                renderInput={(params) => <TextField {...params} />}
               />
             </LocalizationProvider>
           </Grid>

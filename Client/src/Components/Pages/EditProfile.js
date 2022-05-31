@@ -69,41 +69,44 @@ export default function EditProfile() {
       profilePic: [],
     },
     validationSchema: validationSchema,
-    onSubmit: async (values) => {
-      let formData = new FormData();
-
-      formData.append("name", values.name);
-      formData.append("fatherName", values.fatherName);
-      formData.append("mobile", values.mobile);
-      formData.append("supervisor", values.supervisor);
-      formData.append("coSupervisor", values.coSupervisor);
-      // formData.append("synopsisTitle", values.synopsisTitle);
-      formData.append("program", values.program);
-      formData.append("thesisRegistration", values.thesisRegistration);
-      formData.append("thesisTrack", values.thesisTrack);
-      formData.append("profilePic", values.profilePic[0]);
-
-      if (userProgram.toLowerCase().includes("phd")) {
-        formData.append("totalPublications", values.totalPublications);
-        formData.append(
-          "impactFactorPublications",
-          values.impactFactorPublications
-        );
-      }
-
-      for (var value of formData.values()) {
-        console.log(value);
-      }
-      let res = await studentService.updateProfile(formData);
-      if (res?.status === 500) {
-        setShowErrorModal(true);
-        console.log(res);
-      } else {
-        setShowUpdateModal(true);
-      }
-      console.log(res);
-    },
+    onSubmit: async (values) => {},
   });
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    let formData = new FormData();
+
+    formData.append("name", formik.values.name);
+    formData.append("fatherName", formik.values.fatherName);
+    formData.append("mobile", formik.values.mobile);
+    formData.append("supervisor", formik.values.supervisor);
+    formData.append("coSupervisor", formik.values.coSupervisor);
+    // formData.append("synopsisTitle", formik.values.synopsisTitle);
+    formData.append("program", formik.values.program);
+    formData.append("thesisRegistration", formik.values.thesisRegistration);
+    formData.append("thesisTrack", formik.values.thesisTrack);
+    formData.append("profilePic", formik.values.profilePic[0]);
+
+    if (userProgram.toLowerCase().includes("phd")) {
+      formData.append("totalPublications", formik.values.totalPublications);
+      formData.append(
+        "impactFactorPublications",
+        formik.values.impactFactorPublications
+      );
+    }
+
+    /*   for (var value of formData.values()) {
+      console.log(value);
+    } */
+    let res = await studentService.updateProfile(formData);
+    if (res.afterUpdate) {
+      setShowUpdateModal(true);
+      console.log(res);
+    } else {
+      setShowErrorModal(true);
+      console.log(res);
+    }
+  };
 
   const getSupervisors = async () => {
     let data = await studentService.getSupervisors();
@@ -128,12 +131,7 @@ export default function EditProfile() {
   }, []);
 
   return (
-    <Box
-      component="form"
-      onSubmit={formik.handleSubmit}
-      noValidate
-      sx={{ mt: 1 }}
-    >
+    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
       <TextField
         id="standard-basic"
         sx={{ width: "100%", marginBottom: "15px" }}

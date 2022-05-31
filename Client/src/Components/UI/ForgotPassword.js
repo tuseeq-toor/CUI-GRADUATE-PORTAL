@@ -82,14 +82,16 @@ export default function SignIn() {
             alignItems: "center",
           }}
         >
-          <img
-            style={{
-              width: "250px",
-              margin: "0 0 20px 180px",
-            }}
-            alt="Remy Sharp"
-            src="../assets/images/cui.png"
-          />
+          <Link to={"/"}>
+            <img
+              style={{
+                width: "250px",
+                margin: "0 0 20px 180px",
+              }}
+              alt="Remy Sharp"
+              src="../assets/images/cui.png"
+            />
+          </Link>
           <Typography component="h1" variant="h5">
             Forgot Password
           </Typography>

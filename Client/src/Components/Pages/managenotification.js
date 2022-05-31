@@ -30,26 +30,23 @@ export default function ManageNotification() {
         },
       }
     );
+    var filteredNoti;
     if (currentRole.toLowerCase().includes("ms")) {
-      const msNoti = await res?.data?.filter((item) =>
+      filteredNoti = await res?.data?.filter((item) =>
         item.sentTo?.student_id?.program_id?.programShortName
           .toLowerCase()
           .includes("ms")
       );
-      console.log("mnoti", msNoti);
-
-      setNotiData(msNoti);
+      console.log("mnoti", filteredNoti);
     } else {
-      const phdNoti = await res?.data?.filter((item) =>
+      filteredNoti = await res?.data?.filter((item) =>
         item.sentTo?.student_id?.program_id?.programShortName
           .toLowerCase()
           .includes("phd")
       );
-      console.log("pnoti", phdNoti);
-
-      setNotiData(phdNoti);
+      console.log("pnoti", filteredNoti);
     }
-    const notifications = notiData.map((item) => {
+    const notifications = filteredNoti.map((item) => {
       return {
         id: item._id,
         notification: item.notification,

@@ -37,7 +37,7 @@ export default function CreateSynopsisSchedule() {
   };
 
   const handleChangeDate = (newValue) => {
-    setData({ ...data, date: newValue });
+    setData({ ...data, defenseDate: newValue });
   };
   useEffect(() => {
     async function fetchData() {

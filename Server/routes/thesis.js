@@ -237,7 +237,7 @@ router.get("/submitted-thesis", auth.verifyUser, (req, res) => {
 router.put("/update-thesis-status", (req, res) => {
   ThesisSubmission.findOneAndUpdate(
     { student_id: req.body.student_id },
-    { thesisStatus: req.body.thesisStatus }
+    { thesisStatus: req.body.status }
   )
     .then(() => {
       res.setHeader("Content-Type", "application/json");
