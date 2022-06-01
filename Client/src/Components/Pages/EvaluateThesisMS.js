@@ -299,7 +299,7 @@ export default function EvaluateThesisMS() {
                         >
                           Thesis Status
                         </td>
-                        <td>N/A</td>
+                        <td>{selectedThesis.thesisStatus}</td>
                       </tr>
                       <tr style={{ backgroundColor: "White" }}>
                         <td
@@ -312,7 +312,7 @@ export default function EvaluateThesisMS() {
                         >
                           Thesis Title
                         </td>
-                        <td>{selectedSchedule?.student_id?.thesisTitle}</td>
+                        <td>{selectedThesis.thesisTitle}</td>
                       </tr>
                       <tr
                         style={{

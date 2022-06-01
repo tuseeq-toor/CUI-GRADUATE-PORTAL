@@ -28,14 +28,13 @@ export default function UpdateThesisStatus() {
   const [statusType, setStatusType] = useState("Synopsis");
 
   const [data, setData] = React.useState({
-    thesisStatus: "",
+    status: "",
     student_id: "",
   });
 
   const handleChange = (event) => {
-    console.log(event.target.value);
-    setData({ ...data, [event.target.name]: event.target.value._id });
-    setselectedReport(event.target.value);
+    setData({ ...data, [event.target.name]: event.target.value });
+
     console.log(data);
   };
 
@@ -129,14 +128,9 @@ export default function UpdateThesisStatus() {
               </div>
               <div>
                 <p>
-                  {selectedReport === [] ? (
-                    <>
-                      {selectedReport?.synopsisStatus ||
-                        selectedReport?.thesisStatus}
-                    </>
-                  ) : (
-                    <>no student selected</>
-                  )}
+                  {selectedReport?.synopsisStatus ||
+                    selectedReport?.thesisStatus ||
+                    "N/A"}
                 </p>
               </div>
             </Box>
@@ -149,8 +143,8 @@ export default function UpdateThesisStatus() {
               </InputLabel>
               <Select
                 color="secondary"
-                name="thesisStatus"
-                value={data.session_id}
+                name="status"
+                value={data.status || " "}
                 label="Update Thesis/Synopsis Status"
                 onChange={handleChange}
               >
@@ -216,11 +210,21 @@ export default function UpdateThesisStatus() {
                 color="secondary"
                 label="Registration No."
                 name="student_id"
-                value={selectedReport?.student_id?.registrationNo || ""}
-                onChange={handleChange}
+                value={selectedReport?.student_id?._id || " "}
+                onChange={(event) => {
+                  console.log(submittedReport);
+                  const currentReport = submittedReport.filter(
+                    (report) => report?.student_id?._id === event.target.value
+                  );
+                  setselectedReport(currentReport[0]);
+                  handleChange(event);
+                }}
               >
                 {submittedReport.map((oneSynopsis) => (
-                  <MenuItem selected="selected" value={oneSynopsis}>
+                  <MenuItem
+                    selected="selected"
+                    value={oneSynopsis?.student_id?._id}
+                  >
                     {oneSynopsis?.student_id?.registrationNo}
                   </MenuItem>
                 ))}

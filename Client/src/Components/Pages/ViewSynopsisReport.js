@@ -399,7 +399,7 @@ const ViewSynopsisReport = () => {
         ))}
       </div>
       <div style={{ display: "grid", placeContent: "center" }}>
-        <Button
+        {/*  <Button
           type="button"
           variant="contained"
           color="secondary"
@@ -407,7 +407,7 @@ const ViewSynopsisReport = () => {
           onClick={handlePrint}
         >
           Print PDF
-        </Button>
+        </Button> */}
         <Button
           type="downlaod"
           variant="contained"

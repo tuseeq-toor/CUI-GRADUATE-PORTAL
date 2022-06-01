@@ -24,13 +24,14 @@ router.post("/generate-synopsis-report", (req, res, next) => {
     orientation: "portrait",
     border: "10mm",
   };
-
+  const goEval = req.body.evaluations.map((eval) => eval.goEvaluation);
   var document = {
     html: html,
     data: {
       logo: logo,
       evaluations: req.body.evaluations,
       synopsis: req.body.synopsis,
+      goEvaluation: goEval[0],
     },
     path: `../Server/public/pdfReports/${req.body.synopsis[0].student_id.registrationNo}.pdf`,
   };
@@ -74,6 +75,7 @@ router.post("/generate-thesis-report", (req, res, next) => {
     orientation: "portrait",
     border: "10mm",
   };
+  const goEval = req.body.evaluations.map((eval) => eval.goEvaluation);
 
   var document = {
     html: html,
@@ -81,6 +83,7 @@ router.post("/generate-thesis-report", (req, res, next) => {
       logo: logo,
       evaluations: req.body.evaluations,
       thesis: req.body.thesis,
+      goEvaluation: goEval[0],
     },
     path: `../Server/public/pdfReports/${req.body.thesis[0].student_id.registrationNo}.pdf`,
   };

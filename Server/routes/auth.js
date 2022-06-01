@@ -211,12 +211,25 @@ router.post("/forgot-password", (req, res) => {
 });
 
 router.post("/reset-password/:token", async (req, res) => {
+  console.log("Token", req.params.token);
   Token.findOne({ token: req.params.token })
     .then(async (token) => {
       User.findOne({ email: token.email }, (err, user) => {
+        if (err) {
+          res.setHeader("Content-Type", "application/json");
+          res
+            .status(500)
+            .json({ success: false, message: "Link has been expired" });
+        }
         user.setPassword(req.body.password, (err, users) => {
+          if (err) {
+            res.setHeader("Content-Type", "application/json");
+            res
+              .status(500)
+              .json({ success: false, message: "Link has been expired" });
+          }
           User.updateOne(
-            { _id: users?._id },
+            { _id: users._id },
             { hash: users.hash, salt: users.salt },
             (err, result) => {
               if (err) {

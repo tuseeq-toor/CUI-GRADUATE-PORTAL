@@ -12,7 +12,9 @@ export default function SendAnnouncement() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const res = await announcementService.sendAnnouncements(announcement);
+    const res = await announcementService.sendAnnouncements({
+      announcement: announcement,
+    });
 
     if (res.status === 201) {
       setShowAnnouncementModal(true);
