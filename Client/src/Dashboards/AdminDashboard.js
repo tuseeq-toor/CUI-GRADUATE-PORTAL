@@ -208,6 +208,7 @@ const DashboardContent = (props) => {
         <AppBar
           sx={{
             backgroundColor: "#572E74",
+            height: "7",
             /* my: [3],
             mx: [3],
             right: "10px", */
@@ -219,7 +220,7 @@ const DashboardContent = (props) => {
           <Toolbar
             sx={{
               pr: "24px", // keep right padding when drawer closed
-              /* height: "70px", */
+              // height: "80px",
             }}
           >
             <IconButton
@@ -256,6 +257,18 @@ const DashboardContent = (props) => {
         </AppBar>
         <Drawer variant="permanent" open={open}>
           {/* <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
+            overflow: "scroll",
+          }}
+          open={open}
+        > */}
+          {/* <Drawer
           sx={{
             width: drawerWidth,
             flexShrink: 0,
@@ -265,7 +278,7 @@ const DashboardContent = (props) => {
             },
           }}
           variant="permanent"
-          anchor="left"
+          open={open}
         > */}
           <Toolbar
             sx={{
@@ -290,32 +303,46 @@ const DashboardContent = (props) => {
             </Typography>
           </Toolbar>
           <Divider />
-          <List wrap sx={{ mx: [3], ...(!open && { mx: [1] }) }}>
-            <Sidebar />
-          </List>
+          <Box
+            component="div"
+            style={{
+              height: `calc(100vh - 81px)`,
+              overflowX: "hidden",
+              overflowY: "auto",
+            }}
+          >
+            <List wrap sx={{ mx: [3], ...(!open && { mx: [1] }) }}>
+              <Sidebar />
+            </List>
+          </Box>
         </Drawer>
         <Box
-          component="main"
+          component="div"
           sx={{
             backgroundColor: (theme) =>
               theme.palette.mode === "light"
                 ? theme.palette.grey[100]
                 : theme.palette.grey[900],
             flexGrow: 1,
-            /* height: "100vh", */
+            pt: 6,
+            pb: 6,
+            marginTop: "91px",
+            height: `calc(100vh - 91px)`,
             overflow: "auto",
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Container maxWidth="lg">
             <Paper
               sx={{
-                p: 2,
+                marginTop: "-80px",
+                p: 4,
                 display: "flex",
                 flexDirection: "column",
+                /* height: `calc(100vh - 110px)`,
+                overflow: "auto", */
               }}
             >
-              {/* {checkActiveTab(activeTab)} */}
               <Outlet />
             </Paper>
             {/* <Copyright sx={{ pt: 4 }} /> */}

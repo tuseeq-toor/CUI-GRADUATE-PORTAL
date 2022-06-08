@@ -161,7 +161,6 @@ export default function EvaluateSynopsisPhD() {
             onChange={(value, newValue) => {
               let registrationNo = newValue;
               setAutocompleteValue(newValue);
-
               handleRegistrationNo(registrationNo);
             }}
             renderInput={(params) => (
@@ -182,12 +181,21 @@ export default function EvaluateSynopsisPhD() {
               <div className="col-md-12 mt-3">
                 <div className="border">
                   <table
-                    className="small-12 medium-12 large-12 columns table table-sm"
                     cellSpacing={0}
                     cellPadding={4}
                     id="ContentPlaceHolder1_DetailsView1"
-                    style={{ color: "#333333", borderCollapse: "collapse" }}
+                    style={{
+                      width: "100%",
+                      color: "#333333",
+                      borderCollapse: "collapse",
+                    }}
                   >
+                    <colgroup>
+                      <col style={{ width: "15%" }} />
+                      <col style={{ width: "30%" }} />
+                      <col style={{ width: "20%" }} />
+                      <col style={{ width: "35%" }} />
+                    </colgroup>
                     <tbody>
                       <tr
                         style={{
@@ -200,133 +208,16 @@ export default function EvaluateSynopsisPhD() {
                           style={{
                             backgroundColor: "#E9ECF1",
                             fontWeight: "bold",
-                            width: "20%",
                           }}
                         >
                           Registration No
                         </td>
                         <td>{selectedSchedule?.student_id?.registrationNo}</td>
-                      </tr>
-                      <tr style={{ backgroundColor: "White" }}>
                         <td
                           valign="top"
                           style={{
                             backgroundColor: "#E9ECF1",
                             fontWeight: "bold",
-                            width: "20%",
-                          }}
-                        >
-                          Name
-                        </td>
-                        <td>{selectedSchedule?.student_id?.username}</td>
-                      </tr>
-                      <tr
-                        style={{
-                          color: "#333333",
-                          backgroundColor: "#F7F6F3",
-                        }}
-                      >
-                        <td
-                          valign="top"
-                          style={{
-                            backgroundColor: "#E9ECF1",
-                            fontWeight: "bold",
-                            width: "20%",
-                          }}
-                        >
-                          Email
-                        </td>
-                        <td>{selectedSchedule?.student_id?.email}</td>
-                      </tr>
-                      <tr style={{ backgroundColor: "White" }}>
-                        <td
-                          valign="top"
-                          style={{
-                            backgroundColor: "#E9ECF1",
-                            fontWeight: "bold",
-                            width: "20%",
-                          }}
-                        >
-                          Program
-                        </td>
-                        <td>
-                          {selectedSchedule?.program_id?.programShortName}
-                        </td>
-                      </tr>
-                      <tr
-                        style={{
-                          color: "#333333",
-                          backgroundColor: "#F7F6F3",
-                        }}
-                      >
-                        <td
-                          valign="top"
-                          style={{
-                            backgroundColor: "#E9ECF1",
-                            fontWeight: "bold",
-                            width: "20%",
-                          }}
-                        >
-                          Course work completion
-                        </td>
-                        <td>N/A</td>
-                      </tr>
-                      <tr style={{ backgroundColor: "White" }}>
-                        <td
-                          valign="top"
-                          style={{
-                            backgroundColor: "#E9ECF1",
-                            fontWeight: "bold",
-                            width: "20%",
-                          }}
-                        >
-                          Comprehensive Exam
-                        </td>
-                        <td>N/A</td>
-                      </tr>
-                      <tr
-                        style={{
-                          color: "#333333",
-                          backgroundColor: "#F7F6F3",
-                        }}
-                      >
-                        <td
-                          valign="top"
-                          style={{
-                            backgroundColor: "#E9ECF1",
-                            fontWeight: "bold",
-                            width: "20%",
-                          }}
-                        >
-                          Synopsis Status
-                        </td>
-                        <td>{selectedSynopsis.synopsisStatus}</td>
-                      </tr>
-                      <tr style={{ backgroundColor: "White" }}>
-                        <td
-                          valign="top"
-                          style={{
-                            backgroundColor: "#E9ECF1",
-                            fontWeight: "bold",
-                            width: "20%",
-                          }}
-                        >
-                          Synopsis Title
-                        </td>
-                        <td>{selectedSchedule?.student_id?.synopsisTitle}</td>
-                      </tr>
-                      <tr
-                        style={{
-                          color: "#333333",
-                          backgroundColor: "#F7F6F3",
-                        }}
-                      >
-                        <td
-                          valign="top"
-                          style={{
-                            backgroundColor: "#E9ECF1",
-                            fontWeight: "bold",
-                            width: "20%",
                           }}
                         >
                           Area of Specialization
@@ -339,7 +230,16 @@ export default function EvaluateSynopsisPhD() {
                           style={{
                             backgroundColor: "#E9ECF1",
                             fontWeight: "bold",
-                            width: "20%",
+                          }}
+                        >
+                          Name
+                        </td>
+                        <td>{selectedSchedule?.student_id?.username}</td>
+                        <td
+                          valign="top"
+                          style={{
+                            backgroundColor: "#E9ECF1",
+                            fontWeight: "bold",
                           }}
                         >
                           Foreign Submission
@@ -357,10 +257,69 @@ export default function EvaluateSynopsisPhD() {
                           style={{
                             backgroundColor: "#E9ECF1",
                             fontWeight: "bold",
-                            width: "20%",
+                          }}
+                        >
+                          Email
+                        </td>
+                        <td>{selectedSchedule?.student_id?.email}</td>
+                        <td
+                          valign="top"
+                          style={{
+                            backgroundColor: "#E9ECF1",
+                            fontWeight: "bold",
                           }}
                         >
                           GAT Subject
+                        </td>
+                      </tr>
+                      <tr style={{ backgroundColor: "White" }}>
+                        <td
+                          valign="top"
+                          style={{
+                            backgroundColor: "#E9ECF1",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Program
+                        </td>
+                        <td>
+                          {selectedSchedule?.program_id?.programShortName}
+                        </td>
+                        <td
+                          valign="top"
+                          style={{
+                            backgroundColor: "#E9ECF1",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Course work completion
+                        </td>
+                        <td>N/A</td>
+                      </tr>
+                      <tr
+                        style={{
+                          color: "#333333",
+                          backgroundColor: "#F7F6F3",
+                        }}
+                      >
+                        <td
+                          valign="top"
+                          style={{
+                            backgroundColor: "#E9ECF1",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Supervisor
+                        </td>
+                        <td>{selectedSynopsis?.supervisor_id?.fullName}</td>
+                        <td
+                          valign="top"
+                          style={{
+                            backgroundColor: "#E9ECF1",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Comprehensive Exam
                         </td>
                         <td>N/A</td>
                       </tr>
@@ -370,61 +329,60 @@ export default function EvaluateSynopsisPhD() {
                           style={{
                             backgroundColor: "#E9ECF1",
                             fontWeight: "bold",
-                            width: "20%",
-                          }}
-                        >
-                          Status
-                        </td>
-                        <td>&nbsp;</td>
-                      </tr>
-                      <tr
-                        style={{
-                          color: "#333333",
-                          backgroundColor: "#F7F6F3",
-                        }}
-                      >
-                        <td
-                          valign="top"
-                          style={{
-                            backgroundColor: "#E9ECF1",
-                            fontWeight: "bold",
-                            width: "20%",
-                          }}
-                        >
-                          Supervisor
-                        </td>
-                        <td>{selectedSynopsis?.supervisor_id?.fullName}</td>
-                      </tr>
-                      <tr style={{ backgroundColor: "White" }}>
-                        <td
-                          valign="top"
-                          style={{
-                            backgroundColor: "#E9ECF1",
-                            fontWeight: "bold",
-                            width: "20%",
                           }}
                         >
                           Co-Supervisor
                         </td>
                         <td>{selectedSynopsis?.coSupervisor_id?.fullName}</td>
-                      </tr>
-                      <tr
-                        style={{
-                          color: "#333333",
-                          backgroundColor: "#F7F6F3",
-                        }}
-                      >
                         <td
                           valign="top"
                           style={{
                             backgroundColor: "#E9ECF1",
                             fontWeight: "bold",
-                            width: "20%",
+                          }}
+                        >
+                          Synopsis Status
+                        </td>
+                        <td>{submittedSynopsis?.synopsisStatus}</td>
+                      </tr>
+                      {/* <tr
+                      style={{
+                        color: "#333333",
+                        backgroundColor: "#F7F6F3",
+                      }}
+                    >
+                      <td
+                        valign="top"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Synopsis Status
+                      </td>
+                      <td>{submittedSynopsis?.synopsisStatus}</td>
+                      <td
+                        valign="top"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Status
+                      </td>
+                      <td>&nbsp;</td>
+                    </tr> */}
+                      <tr>
+                        <td
+                          valign="top"
+                          style={{
+                            backgroundColor: "#E9ECF1",
+                            fontWeight: "bold",
                           }}
                         >
                           Synopsis File
                         </td>
-                        <td>
+                        <td colspan="3">
                           <a
                             target="_blank"
                             href={`${process.env.REACT_APP_URL}/${selectedSynopsis?.synopsisFileName}`}
@@ -434,14 +392,29 @@ export default function EvaluateSynopsisPhD() {
                           </a>
                         </td>
                       </tr>
+                      <tr style={{ backgroundColor: "White" }}>
+                        <td
+                          valign="top"
+                          style={{
+                            backgroundColor: "#E9ECF1",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Synopsis Title
+                        </td>
+                        <td colspan="3">
+                          {selectedSchedule?.student_id?.synopsisTitle}
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
               </div>
             </div>
+
             <div className="row">
               <div className="col-md-12 p-4">
-                <table style={{ width: "100%" }} className="table table-sm">
+                <table style={{ width: "100%", marginTop: "1rem" }}>
                   {currentRole === "GO" ? (
                     <>
                       <Box
@@ -511,14 +484,12 @@ export default function EvaluateSynopsisPhD() {
                     </>
                   ) : (
                     <tbody>
-                      <tr>
-                        <th colSpan={4}>
-                          <b>
-                            After in depth examination of the manuscript
-                            following are the recommendations of GAC member
-                          </b>
-                        </th>
-                      </tr>
+                      {/* <tr>
+                      <th>
+                        After in depth examination of the manuscript following
+                        are the recommendations of GAC member
+                      </th>
+                    </tr> */}
                       <FormControl>
                         <RadioGroup
                           aria-labelledby="demo-radio-buttons-group-label"
@@ -526,15 +497,6 @@ export default function EvaluateSynopsisPhD() {
                           name="radio-buttons-group"
                         >
                           <tr>
-                            <td>1</td>
-                            <td>
-                              The candidate is recommended to do <b>minor</b>{" "}
-                              changings.
-                            </td>
-                            <td>
-                              A Candidate has to submit a manuscript within 1
-                              week.
-                            </td>
                             <td>
                               <FormControlLabel
                                 value="Minor Changings."
@@ -544,16 +506,16 @@ export default function EvaluateSynopsisPhD() {
                                 onChange={handleChange}
                               />
                             </td>
-                          </tr>
-                          <tr>
-                            <td>2</td>
                             <td>
-                              The candidate is recommended to do <b>major</b>{" "}
+                              The candidate is recommended to do <b>minor</b>
                               changings.
                             </td>
                             <td>
-                              Candidate has to re-appear in next semester.{" "}
+                              A Candidate has to submit a manuscript within 1
+                              week.
                             </td>
+                          </tr>
+                          <tr>
                             <td>
                               <FormControlLabel
                                 value="Major Changings."
@@ -562,6 +524,13 @@ export default function EvaluateSynopsisPhD() {
                                 name="evaluationStatus"
                                 onChange={handleChange}
                               />
+                            </td>
+                            <td>
+                              The candidate is recommended to do <b>major</b>{" "}
+                              changings.
+                            </td>
+                            <td>
+                              Candidate has to re-appear in next semester.{" "}
                             </td>
                           </tr>
                         </RadioGroup>
