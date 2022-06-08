@@ -85,10 +85,10 @@ const Drawer = styled(MuiDrawer, {
     ...(!open && {
       whiteSpace: "noWrap",
     }),
-    /* transition: theme.transitions.create("width", {
+    transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
-    }), */
+    }),
     width: drawerWidth,
 
     boxSizing: "border-box",
@@ -223,7 +223,7 @@ const DashboardContent = (props) => {
               // height: "80px",
             }}
           >
-            <IconButton
+            {/* <IconButton
               edge="start"
               color="inherit"
               aria-label="open drawer"
@@ -234,7 +234,7 @@ const DashboardContent = (props) => {
               }}
             >
               <MenuIcon />
-            </IconButton>
+            </IconButton> */}
             <Typography
               component="h1"
               variant="h6"
@@ -289,9 +289,9 @@ const DashboardContent = (props) => {
               py: [2.5],
             }}
           >
-            <IconButton onClick={toggleDrawer}>
+            {/* <IconButton onClick={toggleDrawer}>
               <ChevronLeftIcon />
-            </IconButton>
+            </IconButton> */}
             <Typography
               component="h1"
               variant="h5"
