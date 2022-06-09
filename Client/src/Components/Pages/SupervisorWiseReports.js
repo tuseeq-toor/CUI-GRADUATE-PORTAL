@@ -1,109 +1,473 @@
-import React from "react";
-import Box from "@mui/material/Box";
+import React, { useState, useEffect, useRef } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
+import studentService from "../../API/students";
+import profile from "../../../src/avatar-1.jpg";
+import synopsisService from "../../API/synopsis";
+import "../../Components/UI/ActiveTab.css";
 
-import { studentData, studentHeader } from "../DummyData/DummyData";
-import DataTable from "../UI/TableUI";
+import {
+  Autocomplete,
+  Button,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  TextField,
+} from "@mui/material";
+import { useSelector } from "react-redux";
+import thesisService from "../../API/thesis";
+import { useReactToPrint } from "react-to-print";
+import adminService from "../../API/admin";
 
 export default function SuperivorWiseReports() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    alert("Submitted");
-    const data = new FormData(event.currentTarget);
-    const userEmail = data.get("email");
-    const userPassword = data.get("password");
-    /* axios.post("${process.env.REACT_APP_URL}auth/login", {
-        email: userEmail,
-        password: userPassword,
-      })
-      .then((res) => {
-        const data = res.data.user;
-	console.log(data);
-        navigate("/Dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      }); */
+  const { isLoggedIn, user } = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
+  const [autocompleteValue, setAutocompleteValue] = useState(null);
+  const [autocompleteStudentValue, setAutocompleteStudentValue] =
+    useState(null);
+  const [supervisoryCommittee, setSupervisoryCommittee] = useState([]);
+  const [committeeMembers, setCommitteeMembers] = useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]);
+  const [selectedStudent, setSelectedStudent] = useState([]);
+  const [supervisors, setSupervisors] = useState([]);
+
+  async function getSupervisoryCommittee() {
+    const res = await adminService.getSupervisoryCommittee();
+
+    console.log(res);
+
+    console.log("reshere", res);
+
+    const committeeData = res.data.map((data) => data.committee);
+
+    const data = res?.data?.map((res) => {
+      let members = res?.committee.map((data) => data.username);
+
+      return {
+        RegistrationNo: res.student_id?.registrationNo,
+        StudentName: res.student_id?.username,
+        committeeMembers: members,
+        committee: res.committee,
+        student_id: res.student_id,
+        // id: res?._id,
+      };
+    });
+
+    setCommitteeMembers(committeeData);
+
+    setSupervisoryCommittee(data);
+  }
+
+  const getSupervisors = async () => {
+    let data = await studentService.getSupervisors();
+
+    console.table("SubmissionM", data?.supervisors);
+    setSupervisors(data?.supervisors);
   };
+  useEffect(() => {
+    getSupervisors();
+    getSupervisoryCommittee();
+  }, []);
+
+  console.log(committeeMembers);
+  console.log(supervisoryCommittee);
+
+  const componentRef = useRef();
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
+  const handleSupervisorStudents = (selectedSupervisor) => {
+    setFilteredStudents([]);
+    let supervisorStudents = [];
+
+    supervisoryCommittee.forEach((committee) => {
+      let supervisor = committee.committeeMembers.filter(
+        (memberName) => selectedSupervisor.username === memberName
+      );
+      console.log(supervisor);
+      if (supervisor.length > 0) {
+        supervisorStudents.push(committee);
+      }
+    });
+
+    console.log(supervisorStudents);
+    setFilteredStudents(supervisorStudents);
+  };
+
+  const defaultProps = {
+    options: supervisors,
+    getOptionLabel: (supervisor) => supervisor?.username || "",
+  };
+  const defaultstudentProps = {
+    options: filteredStudents,
+    getOptionLabel: (student) => student?.StudentName || "",
+  };
+  console.log(selectedStudent);
   return (
     <>
-      <Box>
-        <FormControl color="secondary" fullWidth sx={{ marginBottom: "15px" }}>
-          <InputLabel id="demo-simple-select-label">Supervisor</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Supervisor"
+      <Box sx={{ minWidth: 120, mb: 6 }}>
+        <Box sx={{ mb: 4 }}>
+          {/* <label>Select Supervisor</label> */}
+          <Autocomplete
+            {...defaultProps}
+            id="controlled-demo"
+            value={autocompleteValue}
+            onCl
+            onChange={(value, newValue) => {
+              let supervisor = newValue;
+              console.log(supervisor);
+              setAutocompleteValue(supervisor);
+              handleSupervisorStudents(supervisor);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Select Supervisor"
+                variant="outlined"
+                color="secondary"
+              />
+            )}
+          />
+        </Box>
+        <Box sx={{ mb: 4 }}>
+          {/* <label>Filter Student</label> */}
+          <Autocomplete
+            {...defaultstudentProps}
+            id="controlled-demo"
+            value={autocompleteStudentValue}
+            onChange={(value, newValue) => {
+              let student = newValue;
+              console.log(student);
+              setAutocompleteStudentValue(student);
+
+              if (student) {
+                setSelectedStudent([student]);
+              } else {
+                setSelectedStudent([]);
+              }
+            }}
+            /* onClose={() => {
+              setAutocompleteValue("");
+              console.log(autocompleteValue);
+            }} */
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Filter Student"
+                variant="outlined"
+                color="secondary"
+              />
+            )}
+          />
+        </Box>
+        {/* <FormControl sx={{ mb: 1 }}>
+          <FormLabel color="secondary">Student</FormLabel>
+          <RadioGroup
+            row
+            name="studentType"
+            value={reportType}
+            onChange={(e) => {
+              setReportType(e.target.value);
+              if (e.target.value === "Synopsis") {
+                setselectedReport([]);
+                setSubmittedReport(submittedSynopsis);
+              } else {
+                setselectedReport([]);
+                setSubmittedReport(submittedThesis);
+              }
+            }}
           >
-            <MenuItem selected="selected" value="237">
-              -
-            </MenuItem>
-            <MenuItem value="239">Dr. Abid Khan</MenuItem>
-            <MenuItem value="4209">Dr. Adeel Anjum</MenuItem>
-            <MenuItem value="25565">Dr. Adnan Akhunzada</MenuItem>
-            <MenuItem value="2281">Dr. Ahmad R. Shahid</MenuItem>
-            <MenuItem value="4208">Dr. Aimal Tariq Rextin</MenuItem>
-            <MenuItem value="6925">Dr. Amir Hanif Dar</MenuItem>
-            <MenuItem value="3014">Dr. Ashfaq Hussain Farooqi</MenuItem>
-            <MenuItem value="663">Dr. Assad Abbas</MenuItem>
-            <MenuItem value="3012">Dr. Basit Raza</MenuItem>
-            <MenuItem value="2089">Dr. Farhana Jabeen</MenuItem>
-            <MenuItem value="3343">Dr. Ghufran Ahmed</MenuItem>
-            <MenuItem value="252">Dr. Hasan Ali Khattak</MenuItem>
-            <MenuItem value="2187">Dr. Iftikhar Azim Niaz</MenuItem>
-            <MenuItem value="253">Dr. Inayat-ur-Rehman</MenuItem>
-            <MenuItem value="284">Dr. Javed Iqbal</MenuItem>
-            <MenuItem value="654">Dr. Majid Iqbal Khan</MenuItem>
-            <MenuItem value="3344">Dr. Malik Ahmad Kamran</MenuItem>
-            <MenuItem value="633">Dr. Mansoor Ahmed</MenuItem>
-            <MenuItem value="264">Dr. Mariam Akbar</MenuItem>
-            <MenuItem value="4243">Dr. Masoom Alam</MenuItem>
-            <MenuItem value="2678">Dr. Mubeen Ghafoor</MenuItem>
-            <MenuItem value="282">Dr. Muhammad Asim Noor</MenuItem>
-            <MenuItem value="263">Dr. Muhammad Imran</MenuItem>
-            <MenuItem value="281">Dr. Muhammad Manzoor ilahi Tamimy</MenuItem>
-            <MenuItem value="19074">Dr. Muhammad Waqar</MenuItem>
-            <MenuItem value="3356">Dr. Munam Ali Shah</MenuItem>
-            <MenuItem value="1211">Dr. Nadeem Javaid</MenuItem>
-            <MenuItem value="659">Dr. Saif ur Rehman Khan</MenuItem>
-            <MenuItem value="280">Dr. Saif Ur Rehman Malik</MenuItem>
-            <MenuItem value="10430">Dr. Sajjad A. Madani</MenuItem>
-            <MenuItem value="272">Dr. Shahid Hussain</MenuItem>
-            <MenuItem value="19178">Dr. Sheneela Naz</MenuItem>
-            <MenuItem value="240">Dr. Syed Sohaib Ali</MenuItem>
-            <MenuItem value="245">Dr. Tahir Mustafa Madni</MenuItem>
-            <MenuItem value="784">Dr. Tehseen Zia</MenuItem>
-            <MenuItem value="19205">Dr. Usman Yaseen</MenuItem>
-            <MenuItem value="273">Dr. Uzair Iqbal</MenuItem>
-            <MenuItem value="3656">Dr. Zobia Rehman</MenuItem>
-            <MenuItem value="4564">Prof. Dr. Sohail Asghar</MenuItem>
-          </Select>
-        </FormControl>
+            <FormControlLabel
+              value="Synopsis"
+              control={<Radio color="secondary" />}
+              label="Synopsis"
+            />
+            <FormControlLabel
+              value="Thesis"
+              control={<Radio color="secondary" />}
+              label="Thesis"
+            />
+          </RadioGroup>
+        </FormControl> */}
       </Box>
 
-      <Box>
-        <FormControl color="secondary" fullWidth sx={{ marginBottom: "15px" }}>
-          <InputLabel id="demo-simple-select-label">Program</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Program"
-          >
-            <MenuItem value="1">MS (CS)</MenuItem>
-            <MenuItem value="2">MS (SE)</MenuItem>
-            <MenuItem value="3">PhD (CS)</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
+      {/* {(filteredStudents || selectedStudent).map((student) => { */}
+      {(
+        (selectedStudent.length > 0 && selectedStudent) ||
+        filteredStudents
+      ).map((student) => {
+        return (
+          <>
+            <div key={student?.student_id?._id} ref={componentRef}>
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "0 1rem",
+                }}
+              >
+                <div>
+                  <img
+                    src={
+                      process.env.REACT_APP_URL +
+                        "/" +
+                        student?.student_id?.profilePicture || profile
+                    }
+                    alt="Student Profile"
+                    style={{
+                      height: "80px",
+                      width: "80px",
+                      borderRadius: "100%",
+                      marginBottom: "1rem",
+                    }}
+                  />
 
-      <div className="col-md-2 col-sm-4">Students :</div>
+                  <div
+                    style={{
+                      margin: "0",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "20rem",
+                        margin: "0",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <h3 style={{ margin: "0 1rem 0 0" }}>Name:</h3>
+                      <p style={{ margin: "0" }}>
+                        {student?.student_id?.username}
+                      </p>
+                    </div>
+                    <h3
+                      style={{
+                        marginRight: "1rem",
+                        marginTop: "0",
+                        marginBottom: "0",
+                      }}
+                    >
+                      Registration Number:
+                    </h3>
+                    <p style={{ marginTop: "0", marginBottom: "0" }}>
+                      {student?.student_id?.registrationNo}
+                    </p>
+                  </div>
+                  <div
+                    style={{
+                      margin: "1rem 0 0 0",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "20rem",
+                        margin: "0",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <h3 style={{ margin: "0 1rem 0 0" }}>Father Name:</h3>
+                      <p style={{ margin: "0" }}>
+                        {student?.student_id?.fatherName}
+                      </p>
+                    </div>
+                    <h3
+                      style={{
+                        marginRight: "1rem",
+                        marginTop: "0",
+                        marginBottom: "0",
+                      }}
+                    >
+                      Supervisor:
+                    </h3>
+                    <p style={{ marginTop: "0", marginBottom: "0" }}>
+                      {student?.student_id?.supervisor_id?.fullName}
+                    </p>
+                  </div>
+                </div>
+              </Box>
+              <table
+                cellSpacing={0}
+                cellPadding={4}
+                style={{
+                  color: "#333333",
+                  borderCollapse: "separate",
+                  margin: "1rem",
+                }}
+              >
+                <tbody>
+                  <tr
+                    style={{
+                      color: "#333333",
+                    }}
+                  >
+                    <td
+                      valign="top"
+                      style={{
+                        fontWeight: "bold",
+                        width: "20%",
+                      }}
+                    ></td>
+                  </tr>
 
-      <DataTable header={studentHeader} data={studentData} />
+                  <tr
+                    style={{
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <td
+                      valign="top"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                        width: "20%",
+                      }}
+                    >
+                      Email
+                    </td>
+                    <td>{student?.student_id?.email}</td>
+                  </tr>
+                  <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
+                    <td
+                      valign="top"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                        width: "20%",
+                      }}
+                    >
+                      Mobile No.
+                    </td>
+                    <td>{student?.student_id?.mobile}</td>
+                  </tr>
+                  <tr
+                    style={{
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <td
+                      valign="top"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                        width: "20%",
+                      }}
+                    >
+                      Track
+                    </td>
+                    <td>{student?.student_id?.thesisTrack}</td>
+                  </tr>
+
+                  {/* <tr
+                    style={{
+                      color: "#333333",
+                      backgroundColor: "#F7F6F3",
+                    }}
+                  >
+                    <td
+                      valign="top"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                        width: "20%",
+                      }}
+                    >
+                      {studentType === "Synopsis" ? (
+                        <>Synopsis Title</>
+                      ) : (
+                        <>Thesis Title</>
+                      )}
+                    </td>
+                    <td>{student.thesisTitle || student.synopsisTitle}</td>
+                  </tr> */}
+                  <tr
+                    style={{
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <td
+                      valign="top"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                        width: "20%",
+                      }}
+                    >
+                      Registration Date
+                    </td>
+                    <td>{student?.student_id?.thesisRegistration}</td>
+                  </tr>
+                  {/* <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
+              <td
+                valign="top"
+                style={{
+                  backgroundColor: "#E9ECF1",
+                  fontWeight: "bold",
+                  width: "20%",
+                }}
+              >
+                External
+              </td>
+              <td> {selectedSchedule?.student_id?.studentTitle} </td>
+            </tr> */}
+                  {/* <tr
+                    style={{
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <td
+                      valign="top"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                        width: "20%",
+                      }}
+                    >
+                      {reportType === "Synopsis" ? (
+                        <>Synopsis Status</>
+                      ) : (
+                        <>Thesis Status</>
+                      )}
+                    </td>
+
+                    <td>{report.thesisStatus || report.synopsisStatus}</td>
+                  </tr> */}
+                </tbody>
+              </table>
+              <div
+                style={{
+                  width: "10%",
+                  minWidth: "6rem",
+                  maxWidth: "10rem",
+                  margin: "2rem auto",
+                  borderTop: "8px dotted #572E74",
+                }}
+              />
+            </div>
+          </>
+        );
+      })}
+      <Button
+        type="button"
+        variant="contained"
+        color="secondary"
+        sx={{ mb: 2 }}
+        onClick={handlePrint}
+      >
+        Print PDF
+      </Button>
     </>
   );
 }

@@ -22,7 +22,7 @@ import { useSelector } from "react-redux";
 import thesisService from "../../API/thesis";
 import { useReactToPrint } from "react-to-print";
 
-export default function SuperivorReport() {
+export default function SummaryReport() {
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
   const [isSelected, setIsSelected] = useState(false);

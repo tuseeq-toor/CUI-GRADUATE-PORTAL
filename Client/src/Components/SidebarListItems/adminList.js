@@ -251,6 +251,11 @@ export const adminListitems = [
       }, */
 
       {
+        text: "Supervisor Wise Report",
+        icon: <PieChartIcon />,
+        path: "/Dashboard/SupervisorWiseReport",
+      },
+      {
         text: "Summary Report",
         icon: <PieChartIcon />,
         path: "/Dashboard/summary-report",

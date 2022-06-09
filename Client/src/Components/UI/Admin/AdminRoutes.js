@@ -19,9 +19,9 @@ import EvaluateSynopsisMS from "../../Pages/EvaluateSynopsisMS";
 import EvaluateSynopsisPhD from "../../Pages/EvaluateSynopsisPhD";
 import SessionWiseReports from "../../Pages/SessionWiseReports";
 import SupervisorReports from "../../Pages/SuperivorReports";
-import SupervisorWiseReports from "../../Pages/SupervisorWiseReports";
+
 import ManageNotification from "../../Pages/managenotification";
-import SynopsisWiseReports from "../../Pages/SynopsisWiseReports";
+import SynopsisWiseReports from "../../Pages/SummaryReport";
 import ThesisWiseReports from "../../Pages/ThesisWiseReports";
 import ViewFaculty from "../../Pages/ViewFaculty";
 import ViewMSStudentDetail from "../../Pages/ViewMSStudentDetail";
@@ -68,6 +68,7 @@ import SendNotificationPhD from "../../Pages/SendNotificationPhD";
 import ForgotPassword from "../ForgotPassword";
 import ResetPassword from "../ResetPassword";
 import SendAnnouncement from "../../Pages/SendAnnouncement";
+import SuperivorWiseReports from "../../Pages/SupervisorWiseReports";
 const AdminRoutes = (props) => {
   const { isLoggedIn } = useSelector((state) => state.auth);
   console.log(isLoggedIn);
@@ -255,8 +256,8 @@ const AdminRoutes = (props) => {
               element={<ChangePassword />}
             />
             <Route
-              path="/Dashboard/ViewSupervisorProgram-WiseReport"
-              element={<SupervisorWiseReports />}
+              path="/Dashboard/SupervisorWiseReport"
+              element={<SuperivorWiseReports />}
             />
 
             <Route

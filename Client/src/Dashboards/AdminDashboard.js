@@ -47,7 +47,7 @@ import SessionWiseReports from "../Components/Pages/SessionWiseReports";
 import SupervisorReports from "../Components/Pages/SuperivorReports";
 import SupervisorWiseReports from "../Components/Pages/SupervisorWiseReports";
 
-import SynopsisWiseReports from "../Components/Pages/SynopsisWiseReports";
+import SynopsisWiseReports from "../Components/Pages/SummaryReport";
 import ThesisWiseReports from "../Components/Pages/ThesisWiseReports";
 import ViewFaculty from "../Components/Pages/ViewFaculty";
 import ViewMSStudentDetail from "../Components/Pages/ViewMSStudentDetail";
