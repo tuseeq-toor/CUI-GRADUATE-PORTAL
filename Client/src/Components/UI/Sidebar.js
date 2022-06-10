@@ -71,7 +71,7 @@ export const Sidebar = () => {
           <>
             <ListItem
               key={item.text}
-              button
+              className="tabhover"
               onClick={() => {
                 item.active = !item.active;
                 setOpen(!open);

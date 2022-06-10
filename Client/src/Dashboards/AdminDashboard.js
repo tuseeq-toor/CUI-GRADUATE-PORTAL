@@ -208,7 +208,7 @@ const DashboardContent = (props) => {
         <AppBar
           sx={{
             backgroundColor: "#572E74",
-            height: "7",
+            /* height: "7", */
             /* my: [3],
             mx: [3],
             right: "10px", */
@@ -220,7 +220,7 @@ const DashboardContent = (props) => {
           <Toolbar
             sx={{
               pr: "24px", // keep right padding when drawer closed
-              // height: "80px",
+              // height: "72px",
             }}
           >
             {/* <IconButton
@@ -286,7 +286,7 @@ const DashboardContent = (props) => {
               alignItems: "center",
               justifyContent: "space-around",
               px: [1],
-              py: [2.5],
+              py: [3],
             }}
           >
             {/* <IconButton onClick={toggleDrawer}>
@@ -326,7 +326,7 @@ const DashboardContent = (props) => {
             flexGrow: 1,
             pt: 6,
             pb: 6,
-            marginTop: "91px",
+            marginTop: "81px",
             height: `calc(100vh - 91px)`,
             overflow: "auto",
           }}
