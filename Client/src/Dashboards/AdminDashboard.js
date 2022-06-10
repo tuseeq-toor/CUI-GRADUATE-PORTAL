@@ -57,7 +57,7 @@ import ManageNotification from "../Components/Pages/managenotification";
 import { Sidebar } from "../Components/UI/Sidebar";
 import AvatarMenu from "../Components/UI/AvatarMenu";
 
-const drawerWidth = 320;
+const drawerWidth = 335;
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -311,7 +311,7 @@ const DashboardContent = (props) => {
               overflowY: "auto",
             }}
           >
-            <List wrap sx={{ mx: [3], ...(!open && { mx: [1] }) }}>
+            <List wrap sx={{ mt: "8px", mx: [3], ...(!open && { mx: [1] }) }}>
               <Sidebar />
             </List>
           </Box>
