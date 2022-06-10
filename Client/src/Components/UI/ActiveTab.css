@@ -36,11 +36,42 @@
   border: 1px solid darkgray;
   border-radius: 4px;
 }
+
+.supervisorWiseReport {
+  width: 100%;
+  /* max-width: 960px; */
+  /* border: 2px solid darkgray; */
+  border-radius: 4px;
+}
+
+.supervisorWiseReport .col1 {
+  width: 15%;
+}
+.supervisorWiseReport .col2 {
+  width: 20%;
+}
+.supervisorWiseReport .col3 {
+  width: 10%;
+}
+.supervisorWiseReport .col4 {
+  width: 40%;
+}
+.cols {
+}
+
 @media print {
   .pdf {
     margin: 2rem auto;
     width: 95%;
     max-width: 960px;
     border: none;
+  }
+  .supervisorWiseReport {
+    padding: 1rem;
+    width: 100%;
+    border: none;
+  }
+  .cols {
+    display: none;
   }
 }

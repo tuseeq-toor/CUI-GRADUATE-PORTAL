@@ -167,7 +167,7 @@ export default function EvaluateThesisMS() {
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Search"
+                label="Enter Registration Number"
                 variant="outlined"
                 color="secondary"
               />

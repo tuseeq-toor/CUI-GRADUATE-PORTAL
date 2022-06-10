@@ -14,6 +14,7 @@ import {
   Button,
   FormControlLabel,
   FormLabel,
+  Paper,
   Radio,
   RadioGroup,
   TextField,
@@ -54,7 +55,6 @@ export default function SuperivorWiseReports() {
         committeeMembers: members,
         committee: res.committee,
         student_id: res.student_id,
-        // id: res?._id,
       };
     });
 
@@ -112,7 +112,7 @@ export default function SuperivorWiseReports() {
   console.log(selectedStudent);
   return (
     <>
-      <Box sx={{ minWidth: 120, mb: 6 }}>
+      <Box sx={{ minWidth: 120, mb: 2 }}>
         <Box sx={{ mb: 4 }}>
           {/* <label>Select Supervisor</label> */}
           <Autocomplete
@@ -136,7 +136,7 @@ export default function SuperivorWiseReports() {
             )}
           />
         </Box>
-        <Box sx={{ mb: 4 }}>
+        <Box>
           {/* <label>Filter Student</label> */}
           <Autocomplete
             {...defaultstudentProps}
@@ -198,154 +198,132 @@ export default function SuperivorWiseReports() {
         </FormControl> */}
       </Box>
 
-      {/* {(filteredStudents || selectedStudent).map((student) => { */}
-      {(
-        (selectedStudent.length > 0 && selectedStudent) ||
-        filteredStudents
-      ).map((student) => {
-        return (
-          <>
-            <div key={student?.student_id?._id} ref={componentRef}>
-              <Box
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "0 1rem",
-                }}
-              >
-                <div>
-                  <img
-                    src={
-                      process.env.REACT_APP_URL +
-                        "/" +
-                        student?.student_id?.profilePicture || profile
-                    }
-                    alt="Student Profile"
-                    style={{
-                      height: "80px",
-                      width: "80px",
-                      borderRadius: "100%",
-                      marginBottom: "1rem",
-                    }}
-                  />
-
-                  <div
-                    style={{
-                      margin: "0",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "20rem",
-                        margin: "0",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <h3 style={{ margin: "0 1rem 0 0" }}>Name:</h3>
-                      <p style={{ margin: "0" }}>
-                        {student?.student_id?.username}
-                      </p>
-                    </div>
-                    <h3
-                      style={{
-                        marginRight: "1rem",
-                        marginTop: "0",
-                        marginBottom: "0",
-                      }}
-                    >
-                      Registration Number:
-                    </h3>
-                    <p style={{ marginTop: "0", marginBottom: "0" }}>
-                      {student?.student_id?.registrationNo}
-                    </p>
-                  </div>
-                  <div
-                    style={{
-                      margin: "1rem 0 0 0",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "20rem",
-                        margin: "0",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <h3 style={{ margin: "0 1rem 0 0" }}>Father Name:</h3>
-                      <p style={{ margin: "0" }}>
-                        {student?.student_id?.fatherName}
-                      </p>
-                    </div>
-                    <h3
-                      style={{
-                        marginRight: "1rem",
-                        marginTop: "0",
-                        marginBottom: "0",
-                      }}
-                    >
-                      Supervisor:
-                    </h3>
-                    <p style={{ marginTop: "0", marginBottom: "0" }}>
-                      {student?.student_id?.supervisor_id?.fullName}
-                    </p>
-                  </div>
-                </div>
-              </Box>
+      {/* checks if selectedStudent is empty then maps filteredStudents else maps selectedStudent */}
+      <div ref={componentRef} className="supervisorWiseReport">
+        {(
+          (selectedStudent.length > 0 && selectedStudent) ||
+          filteredStudents
+        ).map((student) => {
+          return (
+            <Paper
+              variant="outlined"
+              elevation={3}
+              key={student?.student_id?._id}
+              style={{
+                display: "grid",
+                placeItems: "center",
+                // placeContent: "center",
+                marginBottom: "2rem",
+              }}
+            >
               <table
-                cellSpacing={0}
-                cellPadding={4}
+                cellSpacing={4}
+                cellPadding={6}
                 style={{
                   color: "#333333",
                   borderCollapse: "separate",
-                  margin: "1rem",
+                  padding: ".5rem",
+                  /* margin: "1rem", */
+                  /* border: "2px solid #572E74",
+                  borderRadius: "6px", */
                 }}
               >
+                <colgroup className="cols">
+                  <col className="col1" />
+                  <col className="col2" />
+                  <col className="col3" />
+                  <col className="col4" />
+                </colgroup>
                 <tbody>
-                  <tr
-                    style={{
-                      color: "#333333",
-                    }}
-                  >
-                    <td
-                      valign="top"
-                      style={{
-                        fontWeight: "bold",
-                        width: "20%",
-                      }}
-                    ></td>
+                  <tr>
+                    <td>
+                      <img
+                        src={
+                          process.env.REACT_APP_URL +
+                            "/" +
+                            student?.student_id?.profilePicture || ""
+                        }
+                        alt="Student Profile"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          objectFit: "cover",
+                          height: "8rem",
+                          width: "8rem",
+                          borderRadius: "100%",
+                        }}
+                      />
+                    </td>
                   </tr>
-
                   <tr
                     style={{
                       backgroundColor: "white",
                     }}
                   >
                     <td
-                      valign="top"
+                      valign="middle"
                       style={{
                         backgroundColor: "#E9ECF1",
                         fontWeight: "bold",
-                        width: "20%",
+                      }}
+                    >
+                      Name
+                    </td>
+                    <td>{student?.student_id?.username}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
                       }}
                     >
                       Email
                     </td>
                     <td>{student?.student_id?.email}</td>
                   </tr>
-                  <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
+                  <tr
+                    style={{
+                      backgroundColor: "white",
+                    }}
+                  >
                     <td
-                      valign="top"
+                      valign="middle"
                       style={{
                         backgroundColor: "#E9ECF1",
                         fontWeight: "bold",
-                        width: "20%",
+                      }}
+                    >
+                      Father Name
+                    </td>
+                    <td>{student?.student_id?.fatherName}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Supervisor
+                    </td>
+                    <td>{student?.student_id?.supervisor_id?.username}</td>
+                  </tr>
+                  <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Registration No.
+                    </td>
+                    <td>{student?.student_id?.registrationNo}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
                       }}
                     >
                       Mobile No.
@@ -358,11 +336,20 @@ export default function SuperivorWiseReports() {
                     }}
                   >
                     <td
-                      valign="top"
+                      valign="middle"
                       style={{
                         backgroundColor: "#E9ECF1",
                         fontWeight: "bold",
-                        width: "20%",
+                      }}
+                    >
+                      Registration Date
+                    </td>
+                    <td>{student?.student_id?.thesisRegistration}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
                       }}
                     >
                       Track
@@ -377,11 +364,11 @@ export default function SuperivorWiseReports() {
                     }}
                   >
                     <td
-                      valign="top"
+                      valign="middle"
                       style={{
                         backgroundColor: "#E9ECF1",
                         fontWeight: "bold",
-                        width: "20%",
+                        
                       }}
                     >
                       {studentType === "Synopsis" ? (
@@ -392,30 +379,13 @@ export default function SuperivorWiseReports() {
                     </td>
                     <td>{student.thesisTitle || student.synopsisTitle}</td>
                   </tr> */}
-                  <tr
-                    style={{
-                      backgroundColor: "white",
-                    }}
-                  >
-                    <td
-                      valign="top"
-                      style={{
-                        backgroundColor: "#E9ECF1",
-                        fontWeight: "bold",
-                        width: "20%",
-                      }}
-                    >
-                      Registration Date
-                    </td>
-                    <td>{student?.student_id?.thesisRegistration}</td>
-                  </tr>
                   {/* <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
               <td
-                valign="top"
+                valign="middle"
                 style={{
                   backgroundColor: "#E9ECF1",
                   fontWeight: "bold",
-                  width: "20%",
+                  
                 }}
               >
                 External
@@ -428,11 +398,11 @@ export default function SuperivorWiseReports() {
                     }}
                   >
                     <td
-                      valign="top"
+                      valign="middle"
                       style={{
                         backgroundColor: "#E9ECF1",
                         fontWeight: "bold",
-                        width: "20%",
+                        
                       }}
                     >
                       {reportType === "Synopsis" ? (
@@ -446,24 +416,24 @@ export default function SuperivorWiseReports() {
                   </tr> */}
                 </tbody>
               </table>
-              <div
+              {/* <div
                 style={{
-                  width: "10%",
-                  minWidth: "6rem",
-                  maxWidth: "10rem",
+                  width: "100%",
+                  // minWidth: "6rem",
+                  // maxWidth: "10rem",
                   margin: "2rem auto",
-                  borderTop: "8px dotted #572E74",
+                  borderTop: "2px Dashed #572E74",
                 }}
-              />
-            </div>
-          </>
-        );
-      })}
+              /> */}
+            </Paper>
+          );
+        })}
+      </div>
       <Button
         type="button"
         variant="contained"
         color="secondary"
-        sx={{ mb: 2 }}
+        sx={{ mb: 2, mt: 2 }}
         onClick={handlePrint}
       >
         Print PDF

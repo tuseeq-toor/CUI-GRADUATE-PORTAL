@@ -101,7 +101,10 @@ router.get(
   async (req, res, next) => {
     try {
       const committeeData = await SupervisoryCommittee.find()
-        .populate("student_id")
+        .populate({
+          path: "student_id",
+          populate: { path: "supervisor_id coSupervisor_id" },
+        })
         .populate({
           path: "committee",
           populate: [{ path: "faculty_id", model: "Faculty" }],
