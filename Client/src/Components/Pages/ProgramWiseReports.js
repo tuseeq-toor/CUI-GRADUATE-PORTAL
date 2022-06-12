@@ -1,475 +1,505 @@
-import React from "react";
-import Box from "@mui/material/Box";
+import React, { useState, useEffect, useRef } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
+import Box from "@mui/material/Box";
+import studentService from "../../API/students";
+import profile from "../../../src/avatar-1.jpg";
+import synopsisService from "../../API/synopsis";
+import "../../Components/UI/ActiveTab.css";
 
-export default function EvaluateSynopsisPhD() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    alert("Submitted");
-    const data = new FormData(event.currentTarget);
-    const userEmail = data.get("email");
-    const userPassword = data.get("password");
-    /* axios.post("${process.env.REACT_APP_URL}auth/login", {
-        email: userEmail,
-        password: userPassword,
-      })
-      .then((res) => {
-        const data = res.data.user;
-	console.log(data);
-        navigate("/Dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      }); */
+import {
+  Autocomplete,
+  Button,
+  FormControlLabel,
+  FormLabel,
+  Paper,
+  Radio,
+  RadioGroup,
+  TextField,
+} from "@mui/material";
+import { useSelector } from "react-redux";
+import thesisService from "../../API/thesis";
+import { useReactToPrint } from "react-to-print";
+import adminService from "../../API/admin";
+import programsService from "../../API/programs";
+
+export default function ProgramWiseReports() {
+  const { isLoggedIn, user } = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
+  const [autocompleteProgramValue, setAutocompleteProgramValue] =
+    useState(null);
+  const [autocompleteStudentValue, setAutocompleteStudentValue] =
+    useState(null);
+  const [supervisoryCommittee, setSupervisoryCommittee] = useState([]);
+  const [committeeMembers, setCommitteeMembers] = useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]);
+  const [selectedStudent, setSelectedStudent] = useState([]);
+  const [supervisors, setSupervisors] = useState([]);
+  const [programs, setPrograms] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
+  const [submittedThesis, setSubmittedThesis] = useState([]);
+
+  async function getSupervisoryCommittee() {
+    const programs = await programsService.getPrograms();
+    const students = await studentService.getStudents();
+    const submittedSynopsis = await synopsisService.getSubmittedSynopsis();
+    const submittedThesis = await thesisService.getSubmittedThesis();
+
+    console.log(programs);
+    console.log(students);
+
+    setPrograms(programs);
+    setStudents(students);
+
+    setSubmittedSynopsis(submittedSynopsis);
+    setSubmittedThesis(submittedThesis);
+
+    console.log(submittedSynopsis);
+    console.log(submittedThesis);
+
+    /* const committeeData = res.data.map((data) => data.committee);
+
+    const data = res?.data?.map((res) => {
+      let members = res?.committee.map((data) => data.username);
+
+      return {
+        RegistrationNo: res.student_id?.registrationNo,
+        StudentName: res.student_id?.username,
+        committeeMembers: members,
+        committee: res.committee,
+        student_id: res.student_id,
+      };
+    }); */
+
+    /* setCommitteeMembers(committeeData);
+
+    setSupervisoryCommittee(data); */
+  }
+
+  const getSupervisors = async () => {
+    let data = await studentService.getSupervisors();
+
+    console.table("SubmissionM", data?.supervisors);
+    setSupervisors(data?.supervisors);
   };
+  useEffect(() => {
+    getSupervisors();
+    getSupervisoryCommittee();
+  }, []);
+
+  console.log(committeeMembers);
+  console.log(supervisoryCommittee);
+
+  const componentRef = useRef();
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
+  const handleStudentPrograms = (selectedProgram) => {
+    setFilteredStudents([]);
+    let selectedStudents = [];
+
+    students.forEach((student) => {
+      if (
+        student.program_id.programShortName === selectedProgram.programShortName
+      ) {
+        let filteredSynopsis = submittedSynopsis.filter(
+          (synopsis) => synopsis.student_id._id === student._id
+        );
+        let filteredThesis = submittedThesis.filter(
+          (synopsis) => synopsis.student_id._id === student._id
+        );
+        console.log(filteredSynopsis);
+        console.log(filteredThesis);
+
+        selectedStudents.push({
+          student_id: student,
+          synopsis: filteredSynopsis[0] || null,
+          thesis: filteredThesis[0] || null,
+        });
+      }
+    });
+
+    console.log(selectedStudents);
+    setFilteredStudents(selectedStudents);
+  };
+
+  const defaultProps = {
+    options: programs,
+    getOptionLabel: (program) => program?.programShortName || "",
+  };
+  const defaultstudentProps = {
+    options: filteredStudents,
+    getOptionLabel: (student) => student?.student_id?.username || "",
+  };
+  console.log(selectedStudent);
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-      <Box>
-        <FormControl color="secondary" fullWidth sx={{ marginBottom: "15px" }}>
-          <InputLabel id="demo-simple-select-label">Track</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            //v
-            label="Track"
-            //onChange={handleChange}
+    <>
+      <Box sx={{ minWidth: 120, mb: 2 }}>
+        <Box sx={{ mb: 4 }}>
+          {/* <label>Select Supervisor</label> */}
+          <Autocomplete
+            {...defaultProps}
+            id="controlled-demo"
+            value={autocompleteProgramValue}
+            onCl
+            onChange={(value, newValue) => {
+              let program = newValue;
+              console.log(program);
+              setAutocompleteProgramValue(program);
+              handleStudentPrograms(program);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Select Program"
+                variant="outlined"
+                color="secondary"
+              />
+            )}
+          />
+        </Box>
+        <Box>
+          {/* <label>Filter Student</label> */}
+          <Autocomplete
+            {...defaultstudentProps}
+            id="controlled-demo"
+            value={autocompleteStudentValue}
+            onChange={(value, newValue) => {
+              let student = newValue;
+              console.log(student);
+              setAutocompleteStudentValue(student);
+
+              if (student) {
+                setSelectedStudent([student]);
+              } else {
+                setSelectedStudent([]);
+              }
+            }}
+            /* onClose={() => {
+              setAutocompleteValue("");
+              console.log(autocompleteValue);
+            }} */
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Filter Student"
+                variant="outlined"
+                color="secondary"
+              />
+            )}
+          />
+        </Box>
+        {/* <FormControl sx={{ mb: 1 }}>
+          <FormLabel color="secondary">Student</FormLabel>
+          <RadioGroup
+            row
+            name="studentType"
+            value={reportType}
+            onChange={(e) => {
+              setReportType(e.target.value);
+              if (e.target.value === "Synopsis") {
+                setselectedReport([]);
+                setSubmittedReport(submittedSynopsis);
+              } else {
+                setselectedReport([]);
+                setSubmittedReport(submittedThesis);
+              }
+            }}
           >
-            <MenuItem value="Regular">Regular</MenuItem>
-            <MenuItem value="By Publication">By Publication</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-      <Box>
-        <FormControl color="secondary" fullWidth sx={{ marginBottom: "15px" }}>
-          <InputLabel id="demo-simple-select-label">Program</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            //v
-            label="Program"
-            //onChange={handleChange}
-          >
-            <MenuItem value="14">MS (CS)</MenuItem>
-            <MenuItem value="15">MS (SE)</MenuItem>
-            <MenuItem value="16">MS (IS)</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-      <Box>
-        <FormControl color="secondary" fullWidth sx={{ marginBottom: "15px" }}>
-          <InputLabel id="demo-simple-select-label">Session</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Session"
-          >
-            <MenuItem value="1036">FALL 2021</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-      <Box>
-        <FormControl color="secondary" fullWidth sx={{ marginBottom: "15px" }}>
-          <InputLabel id="demo-simple-select-label">Registration No</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="Registration No"
-          >
-            <MenuItem value="6001">FA19-RCS-008</MenuItem>
-            <MenuItem value="5959">FA19-RCS-017</MenuItem>
-            <MenuItem value="5951">FA19-RCS-021</MenuItem>
-            <MenuItem value="6029">FA19-RCS-023</MenuItem>
-            <MenuItem value="5987">FA19-RCS-024</MenuItem>
-            <MenuItem value="5960">FA19-RCS-026</MenuItem>
-            <MenuItem value="6101">FA19-RCS-030</MenuItem>
-            <MenuItem value="6015">FA19-RCS-033</MenuItem>
-            <MenuItem value="6048">FA19-RCS-046</MenuItem>
-            <MenuItem value="5937">FA19-RCS-050</MenuItem>
-            <MenuItem value="6055">FA19-RCS-058</MenuItem>
-            <MenuItem value="5942">FA19-RCS-066</MenuItem>
-            <MenuItem value="6007">FA19-RCS-075</MenuItem>
-            <MenuItem value="5980">FA19-RCS-089</MenuItem>
-            <MenuItem value="6086">FA20-RCS-015</MenuItem>
-            <MenuItem value="5936">FA20-RCS-020</MenuItem>
-            <MenuItem value="5930">FA20-RCS-021</MenuItem>
-            <MenuItem value="6088">FA20-RCS-034</MenuItem>
-            <MenuItem value="5978">SP18-RCS-013</MenuItem>
-            <MenuItem value="1495">SP18-RCS-034</MenuItem>
-            <MenuItem value="5950">SP19-RCS-009</MenuItem>
-            <MenuItem value="6012">SP19-RCS-014</MenuItem>
-            <MenuItem value="5963">SP19-RCS-018</MenuItem>
-            <MenuItem value="6013">SP19-RCS-021</MenuItem>
-            <MenuItem value="5974">SP19-RCS-032</MenuItem>
-            <MenuItem value="6033">SP19-RCS-045</MenuItem>
-            <MenuItem value="5966">SP19-RCS-048</MenuItem>
-            <MenuItem value="5956">SP19-RCS-051</MenuItem>
-            <MenuItem value="6011">SP19-RCS-059</MenuItem>
-            <MenuItem value="6064">SP20-RCS-005</MenuItem>
-            <MenuItem value="5932">SP20-RCS-013</MenuItem>
-            <MenuItem value="6073">SP20-RCS-016</MenuItem>
-            <MenuItem value="6014">SP20-RCS-054</MenuItem>
-            <MenuItem value="6068">SP20-RCS-065</MenuItem>
-            <MenuItem value="6066">SP20-RCS-069</MenuItem>
-            <MenuItem value="6078">SP20-RCS-070</MenuItem>
-            <MenuItem value="6016">SP20-RCS-072</MenuItem>
-          </Select>
-        </FormControl>
+            <FormControlLabel
+              value="Synopsis"
+              control={<Radio color="secondary" />}
+              label="Synopsis"
+            />
+            <FormControlLabel
+              value="Thesis"
+              control={<Radio color="secondary" />}
+              label="Thesis"
+            />
+          </RadioGroup>
+        </FormControl> */}
       </Box>
 
-      <div className="row">
-        <div className="col-md-12 mt-3">
-          <div className="border">
-            <table
-              className="small-12 medium-12 large-12 columns table table-sm"
-              cellSpacing={0}
-              cellPadding={4}
-              id="ContentPlaceHolder1_DetailsView1"
-              style={{ color: "#333333", borderCollapse: "collapse" }}
+      {/* checks if selectedStudent is empty then maps filteredStudents else maps selectedStudent */}
+      <div ref={componentRef} className="supervisorWiseReport">
+        {(
+          (selectedStudent.length > 0 && selectedStudent) ||
+          filteredStudents
+        ).map((student) => {
+          return (
+            <Paper
+              variant="outlined"
+              elevation={3}
+              key={student?.student_id?._id}
+              style={{
+                display: "grid",
+                placeItems: "center",
+                // placeContent: "center",
+                marginBottom: "2rem",
+              }}
             >
-              <tbody>
-                <tr
-                  style={{
-                    color: "#333333",
-                    backgroundColor: "#F7F6F3",
-                  }}
-                >
-                  <td
-                    valign="top"
+              <table
+                cellSpacing={4}
+                cellPadding={6}
+                style={{
+                  color: "#333333",
+                  borderCollapse: "separate",
+                  padding: ".5rem",
+                  /* margin: "1rem", */
+                  /* border: "2px solid #572E74",
+                  borderRadius: "6px", */
+                }}
+              >
+                <colgroup className="cols">
+                  <col className="col1" />
+                  <col className="col2" />
+                  <col className="col3" />
+                  <col className="col4" />
+                </colgroup>
+                <tbody>
+                  <tr>
+                    <td>
+                      <img
+                        src={
+                          process.env.REACT_APP_URL +
+                            "/" +
+                            student?.student_id?.profilePicture || ""
+                        }
+                        alt="Student Profile"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          objectFit: "cover",
+                          height: "8rem",
+                          width: "8rem",
+                          borderRadius: "100%",
+                        }}
+                      />
+                    </td>
+                  </tr>
+                  <tr
                     style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
+                      backgroundColor: "white",
                     }}
                   >
-                    Registration No
-                  </td>
-                  <td>FA17-PCS-005</td>
-                </tr>
-                <tr style={{ backgroundColor: "White" }}>
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Name
-                  </td>
-                  <td>HAROON HAIDER KHAN</td>
-                </tr>
-                <tr
-                  style={{
-                    color: "#333333",
-                    backgroundColor: "#F7F6F3",
-                  }}
-                >
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Email
-                  </td>
-                  <td>FA17-PCS-005@isbstudent.comsats.edu.pk</td>
-                </tr>
-                <tr style={{ backgroundColor: "White" }}>
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Program
-                  </td>
-                  <td>PhD (CS)</td>
-                </tr>
-                <tr
-                  style={{
-                    color: "#333333",
-                    backgroundColor: "#F7F6F3",
-                  }}
-                >
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Course work completion
-                  </td>
-                  <td>FA18</td>
-                </tr>
-                <tr style={{ backgroundColor: "White" }}>
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Comprehensive Exam
-                  </td>
-                  <td>FALL 2019</td>
-                </tr>
-                <tr
-                  style={{
-                    color: "#333333",
-                    backgroundColor: "#F7F6F3",
-                  }}
-                >
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Synopsis Status
-                  </td>
-                  <td>N/A</td>
-                </tr>
-                <tr style={{ backgroundColor: "White" }}>
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Thesis Title
-                  </td>
-                  <td>
-                    Handling Pixel Entropy with Deep Dynamic Semantic
-                    Segmentation Model{" "}
-                  </td>
-                </tr>
-                <tr
-                  style={{
-                    color: "#333333",
-                    backgroundColor: "#F7F6F3",
-                  }}
-                >
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Area of Specialization
-                  </td>
-                  <td>
-                    ARTIFICIAL INTELLIGENCE , MACHINE LEARNING , DEEP LEARNING
-                  </td>
-                </tr>
-                <tr style={{ backgroundColor: "White" }}>
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Foreign Submission
-                  </td>
-                  <td>N/A</td>
-                </tr>
-                <tr
-                  style={{
-                    color: "#333333",
-                    backgroundColor: "#F7F6F3",
-                  }}
-                >
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    GAT Subject
-                  </td>
-                  <td>N/A</td>
-                </tr>
-                <tr style={{ backgroundColor: "White" }}>
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Status
-                  </td>
-                  <td>&nbsp;</td>
-                </tr>
-                <tr
-                  style={{
-                    color: "#333333",
-                    backgroundColor: "#F7F6F3",
-                  }}
-                >
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Supervisor
-                  </td>
-                  <td>Dr. Majid Iqbal Khan</td>
-                </tr>
-                <tr style={{ backgroundColor: "White" }}>
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Co-Supervisor
-                  </td>
-                  <td>Dr. Tehseen Zia</td>
-                </tr>
-                <tr
-                  style={{
-                    color: "#333333",
-                    backgroundColor: "#F7F6F3",
-                  }}
-                >
-                  <td
-                    valign="top"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                      width: "20%",
-                    }}
-                  >
-                    Synopsis File
-                  </td>
-                  <td>
-                    <a
-                      href="Files/PhD/Synopsis/Synopsis_fa17-pcs-005.pdf"
-                      target="_blank"
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
                     >
-                      Synopsis_fa17-pcs-005.pdf
-                    </a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+                      Name
+                    </td>
+                    <td>{student?.student_id?.username}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Email
+                    </td>
+                    <td>{student?.student_id?.email}</td>
+                  </tr>
+                  <tr
+                    style={{
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Father Name
+                    </td>
+                    <td>{student?.student_id?.fatherName}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Supervisor
+                    </td>
+                    <td>{student?.student_id?.supervisor_id?.username}</td>
+                  </tr>
+                  <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Registration No.
+                    </td>
+                    <td>{student?.student_id?.registrationNo}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Mobile No.
+                    </td>
+                    <td>{student?.student_id?.mobile}</td>
+                  </tr>
+                  <tr
+                    style={{
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Registration Date
+                    </td>
+                    <td>{student?.student_id?.thesisRegistration}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Track
+                    </td>
+                    <td>{student?.student_id?.thesisTrack}</td>
+                  </tr>
+
+                  <tr
+                    style={{
+                      color: "#333333",
+                      backgroundColor: "#F7F6F3",
+                    }}
+                  >
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Synopsis Title
+                    </td>
+                    <td>{student?.synopsis?.synopsisTitle || "-"}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Synopsis Status
+                    </td>
+                    <td>
+                      {student?.synopsis?.synopsisStatus || "Not Submitted"}
+                    </td>
+                  </tr>
+                  <tr
+                    style={{
+                      color: "#333333",
+                      backgroundColor: "#F7F6F3",
+                    }}
+                  >
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Thesis Title
+                    </td>
+                    <td>{student?.thesis?.thesisTitle || "-"}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Thesis Status
+                    </td>
+                    <td>{student?.thesis?.thesisStatus || "Not Submitted"}</td>
+                  </tr>
+                  {/* <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
+              <td
+                valign="middle"
+                style={{
+                  backgroundColor: "#E9ECF1",
+                  fontWeight: "bold",
+                  
+                }}
+              >
+                External
+              </td>
+              <td> {selectedSchedule?.student_id?.studentTitle} </td>
+            </tr> */}
+                  {/* <tr
+                    style={{
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                        
+                      }}
+                    >
+                      {reportType === "Synopsis" ? (
+                        <>Synopsis Status</>
+                      ) : (
+                        <>Thesis Status</>
+                      )}
+                    </td>
+
+                    <td>{report.thesisStatus || report.synopsisStatus}</td>
+                  </tr> */}
+                </tbody>
+              </table>
+              {/* <div
+                style={{
+                  width: "100%",
+                  // minWidth: "6rem",
+                  // maxWidth: "10rem",
+                  margin: "2rem auto",
+                  borderTop: "2px Dashed #572E74",
+                }}
+              /> */}
+            </Paper>
+          );
+        })}
       </div>
-      <div className="row">
-        <div className="col-md-12 p-4">
-          {" "}
-          <table className="border table table-sm">
-            <tbody>
-              <tr>
-                <th colSpan={4}>
-                  <b>
-                    After in depth examination of the manuscript following are
-                    the recommendations of GAC member
-                  </b>
-                </th>
-              </tr>
-              <tr>
-                <td>1</td>
-                <td>
-                  The candidate is recommended to do <b>minor</b> changings.
-                </td>
-                <td>
-                  A candidate has to re-submit manuscript (e.g. within 4 weeks
-                  for PhD student and 1 week for MS Student).
-                </td>
-                <td>
-                  <input
-                    id="ContentPlaceHolder1_rbtnMinor"
-                    type="radio"
-                    name="ctl00$ContentPlaceHolder1$againcb"
-                    defaultValue="rbtnMinor"
-                    defaultChecked="checked"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>
-                  The candidate is recommended to do <b>major</b> changings.
-                </td>
-                <td>Candidate has to appear in next semester. </td>
-                <td>
-                  <input
-                    id="ContentPlaceHolder1_rbtnMajor"
-                    type="radio"
-                    name="ctl00$ContentPlaceHolder1$againcb"
-                    defaultValue="rbtnMajor"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>
-                  The candidate is <b>not allowed</b> to resubmit the same
-                  manuscript for reexamination
-                </td>
-                <td>
-                  Candidate has to appear in next semester with different idea.
-                </td>
-                <td>
-                  <input
-                    id="ContentPlaceHolder1_rbtnNotAllowed"
-                    type="radio"
-                    name="ctl00$ContentPlaceHolder1$againcb"
-                    defaultValue="rbtnNotAllowed"
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <TextField
-            color="secondary"
-            fullWidth
-            sx={{ marginTop: "15px", marginBottom: "15px" }}
-            id="outlined-multiline-flexible"
-            label="Comments"
-            multiline
-            maxRows={8}
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            color="secondary"
-            size="large"
-          >
-            Submit
-          </Button>
-        </div>
-      </div>
-    </Box>
+      <Button
+        type="button"
+        variant="contained"
+        color="secondary"
+        sx={{ mb: 2, mt: 2 }}
+        onClick={handlePrint}
+      >
+        Print PDF
+      </Button>
+    </>
   );
 }

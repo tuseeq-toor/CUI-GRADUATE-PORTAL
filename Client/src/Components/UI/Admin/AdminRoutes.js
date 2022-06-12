@@ -236,7 +236,7 @@ const AdminRoutes = (props) => {
               element={<SupervisorReports />}
             />
             <Route
-              path="/Dashboard/Program-WiseReport"
+              path="/Dashboard/ProgramWiseReport"
               element={<ProgramWiseReports />}
             />
             <Route
@@ -244,7 +244,7 @@ const AdminRoutes = (props) => {
               element={<SynopsisWiseReports />}
             />
             <Route
-              path="/Dashboard/Session-WiseReport"
+              path="/Dashboard/SessionWiseReport"
               element={<SessionWiseReports />}
             />
             <Route

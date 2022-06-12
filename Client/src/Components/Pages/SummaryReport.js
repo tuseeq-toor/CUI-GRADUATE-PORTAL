@@ -139,7 +139,7 @@ export default function SummaryReport() {
             <MenuItem value={"Synopsis Not Submitted for GAC"}>
               Synopsis Not Submitted for GAC
             </MenuItem>
-            <MenuItem value={"Unscheduled"}>Unscheduled</MenuItem>
+            <MenuItem value={"unscheduled"}>Unscheduled</MenuItem>
             <MenuItem value={"Scheduled"}>Scheduled</MenuItem>
             <MenuItem value={"Conducted"}>Conducted</MenuItem>
             <MenuItem value={"Approved By GAC"}>Approved By GAC</MenuItem>

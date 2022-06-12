@@ -11,7 +11,7 @@ router.get("/", (req, res) => {
     .populate("student_id session_id")
     .populate({
       path: "student_id",
-      populate: { path: "program_id" },
+      populate: { path: "program_id supervisor_id coSupervisor_id" },
     })
     // .populate({
     //   path: "student_id",

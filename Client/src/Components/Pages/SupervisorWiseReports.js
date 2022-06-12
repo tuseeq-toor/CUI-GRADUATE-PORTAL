@@ -36,9 +36,19 @@ export default function SuperivorWiseReports() {
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState([]);
   const [supervisors, setSupervisors] = useState([]);
+  const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
+  const [submittedThesis, setSubmittedThesis] = useState([]);
 
   async function getSupervisoryCommittee() {
     const res = await adminService.getSupervisoryCommittee();
+    const submittedSynopsis = await synopsisService.getSubmittedSynopsis();
+    const submittedThesis = await thesisService.getSubmittedThesis();
+
+    setSubmittedSynopsis(submittedSynopsis);
+    setSubmittedThesis(submittedThesis);
+
+    console.log(submittedSynopsis);
+    console.log(submittedThesis);
 
     console.log(res);
 
@@ -91,9 +101,20 @@ export default function SuperivorWiseReports() {
       let supervisor = committee.committeeMembers.filter(
         (memberName) => selectedSupervisor.username === memberName
       );
+      let filteredSynopsis = submittedSynopsis.filter(
+        (synopsis) => synopsis.student_id._id === committee.student_id._id
+      );
+      let filteredThesis = submittedThesis.filter(
+        (synopsis) => synopsis.student_id._id === committee.student_id._id
+      );
       console.log(supervisor);
+      console.log(filteredSynopsis);
       if (supervisor.length > 0) {
-        supervisorStudents.push(committee);
+        supervisorStudents.push({
+          student_id: committee.student_id,
+          synopsis: filteredSynopsis[0] || null,
+          thesis: filteredThesis[0] || null,
+        });
       }
     });
 
@@ -107,7 +128,7 @@ export default function SuperivorWiseReports() {
   };
   const defaultstudentProps = {
     options: filteredStudents,
-    getOptionLabel: (student) => student?.StudentName || "",
+    getOptionLabel: (student) => student?.student_id?.username || "",
   };
   console.log(selectedStudent);
   return (
@@ -357,7 +378,7 @@ export default function SuperivorWiseReports() {
                     <td>{student?.student_id?.thesisTrack}</td>
                   </tr>
 
-                  {/* <tr
+                  <tr
                     style={{
                       color: "#333333",
                       backgroundColor: "#F7F6F3",
@@ -368,17 +389,51 @@ export default function SuperivorWiseReports() {
                       style={{
                         backgroundColor: "#E9ECF1",
                         fontWeight: "bold",
-                        
                       }}
                     >
-                      {studentType === "Synopsis" ? (
-                        <>Synopsis Title</>
-                      ) : (
-                        <>Thesis Title</>
-                      )}
+                      Synopsis Title
                     </td>
-                    <td>{student.thesisTitle || student.synopsisTitle}</td>
-                  </tr> */}
+                    <td>{student?.synopsis?.synopsisTitle || "-"}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Synopsis Status
+                    </td>
+                    <td>
+                      {student?.synopsis?.synopsisStatus || "Not Submitted"}
+                    </td>
+                  </tr>
+                  <tr
+                    style={{
+                      color: "#333333",
+                      backgroundColor: "#F7F6F3",
+                    }}
+                  >
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Thesis Title
+                    </td>
+                    <td>{student?.thesis?.thesisTitle || "-"}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Thesis Status
+                    </td>
+                    <td>{student?.thesis?.thesisStatus || "Not Submitted"}</td>
+                  </tr>
                   {/* <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
               <td
                 valign="middle"

@@ -1,123 +1,479 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
+import studentService from "../../API/students";
+import profile from "../../../src/avatar-1.jpg";
+import synopsisService from "../../API/synopsis";
+import "../../Components/UI/ActiveTab.css";
 
-export default function SendNotification() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    alert("Submitted");
-    const data = new FormData(event.currentTarget);
-    const userEmail = data.get("email");
-    const userPassword = data.get("password");
-    /*  axios.post("${process.env.REACT_APP_URL}auth/login", {
-        email: userEmail,
-        password: userPassword,
-      })
-      .then((res) => {
-        const data = res.data.user;
-	console.log(data);
-        navigate("/Dashboard");
-      })
-      .catch((err) => {
-        console.log(err);
-      }); */
+import {
+  Autocomplete,
+  Button,
+  FormControlLabel,
+  FormLabel,
+  Paper,
+  Radio,
+  RadioGroup,
+  TextField,
+} from "@mui/material";
+import { useSelector } from "react-redux";
+import thesisService from "../../API/thesis";
+import { useReactToPrint } from "react-to-print";
+import adminService from "../../API/admin";
+import programsService from "../../API/programs";
+import sessionsService from "../../API/sessions";
+import progressReportService from "../../API/progressReports";
+
+export default function SessionWiseReports() {
+  const { isLoggedIn, user } = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
+  const [autocompleteSessionValue, setAutocompleteSessionValue] =
+    useState(null);
+  const [autocompleteStudentValue, setAutocompleteStudentValue] =
+    useState(null);
+
+  const [filteredStudents, setFilteredStudents] = useState([]);
+  const [selectedStudent, setSelectedStudent] = useState([]);
+  const [sessions, setSessions] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
+  const [submittedThesis, setSubmittedThesis] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const sessions = await sessionsService.getSessions();
+      const { data } = await progressReportService.getReports();
+      const submittedSynopsis = await synopsisService.getSubmittedSynopsis();
+      const synopsisSchedules = await synopsisService.getSynopsisSchedules();
+      const synopsisEvaluations =
+        await synopsisService.getSynopsisEvaluations();
+      const submittedThesis = await thesisService.getSubmittedThesis();
+
+      console.log(synopsisSchedules);
+      console.log(synopsisEvaluations);
+      console.log(sessions);
+      console.log(data);
+
+      setSessions(sessions);
+      setStudents(data);
+
+      setSubmittedSynopsis(submittedSynopsis);
+      setSubmittedThesis(submittedThesis);
+
+      console.log(submittedSynopsis);
+      console.log(submittedThesis);
+    }
+    fetchData();
+  }, []);
+
+  const componentRef = useRef();
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
+  const handleStudentSessions = (selectedSession) => {
+    setFilteredStudents([]);
+    let selectedStudents = [];
+
+    students.forEach((student) => {
+      if (student.session_id.title === selectedSession.title) {
+        let filteredSynopsis = submittedSynopsis.filter(
+          (synopsis) => synopsis.student_id._id === student._id
+        );
+        let filteredThesis = submittedThesis.filter(
+          (synopsis) => synopsis.student_id._id === student._id
+        );
+        console.log(filteredSynopsis);
+        console.log(filteredThesis);
+
+        selectedStudents.push({
+          student_id: student.student_id,
+          synopsis: filteredSynopsis[0] || null,
+          thesis: filteredThesis[0] || null,
+        });
+      }
+    });
+
+    console.log(selectedStudents);
+    setFilteredStudents(selectedStudents);
   };
+
+  const defaultProps = {
+    options: sessions,
+    getOptionLabel: (session) => session?.title || "",
+  };
+  const defaultstudentProps = {
+    options: filteredStudents,
+    getOptionLabel: (student) => student?.student_id?.username || "",
+  };
+  console.log(selectedStudent);
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-      <Box sx={{ minWidth: 120, marginBottom: "15px" }}>
-        <FormControl fullWidth color="secondary">
-          <InputLabel id="demo-simple-select-label">
-            Registration No.
-          </InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            //value={age}
-            label="Registration No"
-            //onChange={handleChange}
+    <>
+      <Box sx={{ minWidth: 120, mb: 2 }}>
+        <Box sx={{ mb: 4 }}>
+          {/* <label>Select Supervisor</label> */}
+          <Autocomplete
+            {...defaultProps}
+            id="controlled-demo"
+            value={autocompleteSessionValue}
+            onCl
+            onChange={(value, newValue) => {
+              let session = newValue;
+              console.log(session);
+              setAutocompleteSessionValue(session);
+              handleStudentSessions(session);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Select Program"
+                variant="outlined"
+                color="secondary"
+              />
+            )}
+          />
+        </Box>
+        <Box>
+          {/* <label>Filter Student</label> */}
+          <Autocomplete
+            {...defaultstudentProps}
+            id="controlled-demo"
+            value={autocompleteStudentValue}
+            onChange={(value, newValue) => {
+              let student = newValue;
+              console.log(student);
+              setAutocompleteStudentValue(student);
+
+              if (student) {
+                setSelectedStudent([student]);
+              } else {
+                setSelectedStudent([]);
+              }
+            }}
+            /* onClose={() => {
+              setAutocompleteValue("");
+              console.log(autocompleteValue);
+            }} */
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Filter Student"
+                variant="outlined"
+                color="secondary"
+              />
+            )}
+          />
+        </Box>
+        {/* <FormControl sx={{ mb: 1 }}>
+          <FormLabel color="secondary">Student</FormLabel>
+          <RadioGroup
+            row
+            name="studentType"
+            value={reportType}
+            onChange={(e) => {
+              setReportType(e.target.value);
+              if (e.target.value === "Synopsis") {
+                setselectedReport([]);
+                setSubmittedReport(submittedSynopsis);
+              } else {
+                setselectedReport([]);
+                setSubmittedReport(submittedThesis);
+              }
+            }}
           >
-            <MenuItem selected="selected" value={5916}>
-              SP21-PCS-005
-            </MenuItem>
-            <MenuItem value={5918}>SP21-PCS-003</MenuItem>
-            <MenuItem value={5923}>SP21-PCS-001</MenuItem>
-            <MenuItem value={4918}>SP20-PCS-003</MenuItem>
-            <MenuItem value={3698}>SP20-PCS-001</MenuItem>
-            <MenuItem value={5917}>SP19-PCS-004</MenuItem>
-            <MenuItem value={3689}>SP19-PCS-001</MenuItem>
-            <MenuItem value={3576}>SP18-PCS-004</MenuItem>
-            <MenuItem value={239}>SP18-PCS-003</MenuItem>
-            <MenuItem value={3697}>SP18-PCS-001</MenuItem>
-            <MenuItem value={3594}>SP17-PCS-005</MenuItem>
-            <MenuItem value={2503}>SP17-PCS-001</MenuItem>
-            <MenuItem value={2514}>SP15-PCS-006</MenuItem>
-            <MenuItem value={6098}>SP15-PCS-005</MenuItem>
-            <MenuItem value={1428}>SP15-PCS-004</MenuItem>
-            <MenuItem value={1383}>SP15-PCS-003</MenuItem>
-            <MenuItem value={3575}>SP15-PCS-002</MenuItem>
-            <MenuItem value={3701}>SP15-PCS-001</MenuItem>
-            <MenuItem value={1487}>SP14-PCS-007</MenuItem>
-            <MenuItem value={3584}>SP00-PCS-000</MenuItem>
-            <MenuItem value={6071}>FA20-PCS-004</MenuItem>
-            <MenuItem value={6070}>FA20-PCS-003</MenuItem>
-            <MenuItem value={5920}>FA20-PCS-002</MenuItem>
-            <MenuItem value={3685}>FA19-PCS-002</MenuItem>
-            <MenuItem value={3722}>FA18-PCS-004</MenuItem>
-            <MenuItem value={3581}>FA18-PCS-002</MenuItem>
-            <MenuItem value={1499}>FA18-PCS-001</MenuItem>
-            <MenuItem value={1387}>FA17-PCS-014</MenuItem>
-            <MenuItem value={3572}>FA17-PCS-013</MenuItem>
-            <MenuItem value={3596}>FA17-PCS-008</MenuItem>
-            <MenuItem value={3711}>FA17-PCS-007</MenuItem>
-            <MenuItem value={3679}>FA17-PCS-005</MenuItem>
-            <MenuItem value={2512}>FA17-PCS-003</MenuItem>
-            <MenuItem value={5924}>FA17-PCS-001</MenuItem>
-            <MenuItem value={1434}>FA16-PCS-007</MenuItem>
-            <MenuItem value={1385}>FA16-PCS-004</MenuItem>
-            <MenuItem value={3652}>FA16-PCS-003</MenuItem>
-            <MenuItem value={3700}>FA16-PCS-001</MenuItem>
-            <MenuItem value={3681}>FA15-PCS-007</MenuItem>
-            <MenuItem value={3693}>FA15-PCS-005</MenuItem>
-            <MenuItem value={2511}>FA15-PCS-001</MenuItem>
-            <MenuItem value={3880}>FA14-PCS-014</MenuItem>
-            <MenuItem value={2510}>FA14-PCS-011</MenuItem>
-            <MenuItem value={3688}>FA14-PCS-010</MenuItem>
-            <MenuItem value={1436}>FA14-PCS-007</MenuItem>
-            <MenuItem value={3680}>FA14-PCS-004</MenuItem>
-            <MenuItem value={3696}>FA14-PCS-003</MenuItem>
-            <MenuItem value={3895}>FA14-PCS-001</MenuItem>
-            <MenuItem value={3573}>FA13-PCS-007</MenuItem>
-            <MenuItem value={2502}>FA13-PCS-004</MenuItem>
-            <MenuItem value={2507}>FA13-PCS-003</MenuItem>
-            <MenuItem value={3574}>FA13-PCS-002</MenuItem>
-          </Select>
-        </FormControl>
+            <FormControlLabel
+              value="Synopsis"
+              control={<Radio color="secondary" />}
+              label="Synopsis"
+            />
+            <FormControlLabel
+              value="Thesis"
+              control={<Radio color="secondary" />}
+              label="Thesis"
+            />
+          </RadioGroup>
+        </FormControl> */}
       </Box>
 
-      <TextField
-        id="standard-basic"
-        sx={{ width: "100%", marginBottom: "15px" }}
-        label="Student Name"
-        color="secondary"
-        variant="outlined"
-      />
+      {/* checks if selectedStudent is empty then maps filteredStudents else maps selectedStudent */}
+      <div ref={componentRef} className="supervisorWiseReport">
+        {(
+          (selectedStudent.length > 0 && selectedStudent) ||
+          filteredStudents
+        ).map((student) => {
+          return (
+            <Paper
+              variant="outlined"
+              elevation={3}
+              key={student?.student_id?._id}
+              style={{
+                display: "grid",
+                placeItems: "center",
+                // placeContent: "center",
+                marginBottom: "2rem",
+              }}
+            >
+              <table
+                cellSpacing={4}
+                cellPadding={6}
+                style={{
+                  color: "#333333",
+                  borderCollapse: "separate",
+                  padding: ".5rem",
+                  /* margin: "1rem", */
+                  /* border: "2px solid #572E74",
+                  borderRadius: "6px", */
+                }}
+              >
+                <colgroup className="cols">
+                  <col className="col1" />
+                  <col className="col2" />
+                  <col className="col3" />
+                  <col className="col4" />
+                </colgroup>
+                <tbody>
+                  <tr>
+                    <td>
+                      <img
+                        src={
+                          process.env.REACT_APP_URL +
+                            "/" +
+                            student?.student_id?.profilePicture || ""
+                        }
+                        alt="Student Profile"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          objectFit: "cover",
+                          height: "8rem",
+                          width: "8rem",
+                          borderRadius: "100%",
+                        }}
+                      />
+                    </td>
+                  </tr>
+                  <tr
+                    style={{
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Name
+                    </td>
+                    <td>{student?.student_id?.username}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Email
+                    </td>
+                    <td>{student?.student_id?.email}</td>
+                  </tr>
+                  <tr
+                    style={{
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Father Name
+                    </td>
+                    <td>{student?.student_id?.fatherName}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Supervisor
+                    </td>
+                    <td>{student?.student_id?.supervisor_id?.username}</td>
+                  </tr>
+                  <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Registration No.
+                    </td>
+                    <td>{student?.student_id?.registrationNo}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Mobile No.
+                    </td>
+                    <td>{student?.student_id?.mobile}</td>
+                  </tr>
+                  <tr
+                    style={{
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Registration Date
+                    </td>
+                    <td>{student?.student_id?.thesisRegistration}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Track
+                    </td>
+                    <td>{student?.student_id?.thesisTrack}</td>
+                  </tr>
 
-      <TextField
-        id="standard-basic"
-        sx={{ width: "100%", marginBottom: "15px" }}
-        label="Notification"
-        color="secondary"
-        variant="outlined"
-      />
+                  <tr
+                    style={{
+                      color: "#333333",
+                      backgroundColor: "#F7F6F3",
+                    }}
+                  >
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Synopsis Title
+                    </td>
+                    <td>{student?.synopsis?.synopsisTitle || "-"}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Synopsis Status
+                    </td>
+                    <td>
+                      {student?.synopsis?.synopsisStatus || "Not Submitted"}
+                    </td>
+                  </tr>
+                  <tr
+                    style={{
+                      color: "#333333",
+                      backgroundColor: "#F7F6F3",
+                    }}
+                  >
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Thesis Title
+                    </td>
+                    <td>{student?.thesis?.thesisTitle || "-"}</td>
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Thesis Status
+                    </td>
+                    <td>{student?.thesis?.thesisStatus || "Not Submitted"}</td>
+                  </tr>
+                  {/* <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
+              <td
+                valign="middle"
+                style={{
+                  backgroundColor: "#E9ECF1",
+                  fontWeight: "bold",
+                  
+                }}
+              >
+                External
+              </td>
+              <td> {selectedSchedule?.student_id?.studentTitle} </td>
+            </tr> */}
+                  {/* <tr
+                    style={{
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <td
+                      valign="middle"
+                      style={{
+                        backgroundColor: "#E9ECF1",
+                        fontWeight: "bold",
+                        
+                      }}
+                    >
+                      {reportType === "Synopsis" ? (
+                        <>Synopsis Status</>
+                      ) : (
+                        <>Thesis Status</>
+                      )}
+                    </td>
 
-      <Button type="submit" variant="contained" size="large" color="secondary">
-        Send Notification
+                    <td>{report.thesisStatus || report.synopsisStatus}</td>
+                  </tr> */}
+                </tbody>
+              </table>
+              {/* <div
+                style={{
+                  width: "100%",
+                  // minWidth: "6rem",
+                  // maxWidth: "10rem",
+                  margin: "2rem auto",
+                  borderTop: "2px Dashed #572E74",
+                }}
+              /> */}
+            </Paper>
+          );
+        })}
+      </div>
+      <Button
+        type="button"
+        variant="contained"
+        color="secondary"
+        sx={{ mb: 2, mt: 2 }}
+        onClick={handlePrint}
+      >
+        Print PDF
       </Button>
-    </Box>
+    </>
   );
 }
