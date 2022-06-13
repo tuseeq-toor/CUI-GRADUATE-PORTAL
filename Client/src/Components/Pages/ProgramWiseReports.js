@@ -18,6 +18,7 @@ import {
   Radio,
   RadioGroup,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import thesisService from "../../API/thesis";
@@ -60,24 +61,6 @@ export default function ProgramWiseReports() {
 
     console.log(submittedSynopsis);
     console.log(submittedThesis);
-
-    /* const committeeData = res.data.map((data) => data.committee);
-
-    const data = res?.data?.map((res) => {
-      let members = res?.committee.map((data) => data.username);
-
-      return {
-        RegistrationNo: res.student_id?.registrationNo,
-        StudentName: res.student_id?.username,
-        committeeMembers: members,
-        committee: res.committee,
-        student_id: res.student_id,
-      };
-    }); */
-
-    /* setCommitteeMembers(committeeData);
-
-    setSupervisoryCommittee(data); */
   }
 
   const getSupervisors = async () => {
@@ -117,11 +100,16 @@ export default function ProgramWiseReports() {
         console.log(filteredSynopsis);
         console.log(filteredThesis);
 
-        selectedStudents.push({
-          student_id: student,
-          synopsis: filteredSynopsis[0] || null,
-          thesis: filteredThesis[0] || null,
-        });
+        if (filteredSynopsis.length > 0 || filteredThesis.length > 0) {
+          selectedStudents.push({
+            student_id:
+              filteredSynopsis[0].student_id ||
+              filteredThesis[0].student_id ||
+              null,
+            synopsis: filteredSynopsis[0] || null,
+            thesis: filteredThesis[0] || null,
+          });
+        }
       }
     });
 
@@ -141,6 +129,13 @@ export default function ProgramWiseReports() {
   return (
     <>
       <Box sx={{ minWidth: 120, mb: 2 }}>
+        <Typography
+          sx={{ mb: 4, color: "#572E74", fontWeight: "500" }}
+          textAlign={"center"}
+          variant="h5"
+        >
+          Program Wise Report
+        </Typography>
         <Box sx={{ mb: 4 }}>
           {/* <label>Select Supervisor</label> */}
           <Autocomplete

@@ -96,40 +96,27 @@ export const gacListitems = [
     icon: <ListIcon />,
     active: false,
     subMenu: [
-      /* {
-        text: "Supervisor's Report",
-        icon: <PeopleIcon />,
-        path: "/Dashboard/Supervisor'sReport",
-      },
       {
         text: "Program-Wise Report",
         icon: <LeaderboardIcon />,
-        path: "/Dashboard/Program-WiseReport",
-      },
-
-      {
-        text: "Thesis-Wise Report",
-        icon: <TableChartIcon />,
-        path: "/Dashboard/Thesis-WiseReport",
-      }, */
-
-      {
-        text: "Summary Report",
-        icon: <PieChartIcon />,
-        path: "/Dashboard/summary-report",
-      },
-
-      /* {
-        text: "Supervisor/Program-Wise Report",
-        icon: <FindInPageIcon />,
-        path: "/Dashboard/ViewSupervisorProgram-WiseReport",
+        path: "/Dashboard/ProgramWiseReport",
       },
 
       {
         text: "Session-Wise Report",
         icon: <ScreenSearchDesktopIcon />,
-        path: "/Dashboard/Session-WiseReport",
-      }, */
+        path: "/Dashboard/SessionWiseReport",
+      },
+      {
+        text: "Supervisor Wise Report",
+        icon: <PieChartIcon />,
+        path: "/Dashboard/SupervisorWiseReport",
+      },
+      {
+        text: "Summary Report",
+        icon: <PieChartIcon />,
+        path: "/Dashboard/summary-report",
+      },
     ],
   },
 

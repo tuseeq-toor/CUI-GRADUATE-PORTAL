@@ -14,13 +14,16 @@ import {
   Button,
   FormControlLabel,
   FormLabel,
+  Paper,
   Radio,
   RadioGroup,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import thesisService from "../../API/thesis";
 import { useReactToPrint } from "react-to-print";
+import sessionsService from "../../API/sessions";
 
 export default function SummaryReport() {
   const { isLoggedIn, user } = useSelector((state) => state.auth);
@@ -32,26 +35,35 @@ export default function SummaryReport() {
   const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
   const [submittedThesis, setSubmittedThesis] = useState([]);
   const [submittedReport, setSubmittedReport] = useState([]);
+  const [filteredSynopsis, setFilteredSynopsis] = useState([]);
+  const [filteredThesis, setFilteredThesis] = useState([]);
+  const [sessions, setSessions] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [autocompleteSessionValue, setAutocompleteSessionValue] =
+    useState(null);
 
   useEffect(() => {
     async function fetchData() {
-      const alreadysubmittedSynopsis =
-        await synopsisService.getSubmittedSynopsis();
-      const alreadysubmittedThesis = await thesisService.getSubmittedThesis();
+      const sessions = await sessionsService.getSessions();
+      const students = await studentService.getStudents();
+      const submittedSynopsis = await synopsisService.getSubmittedSynopsis();
+      const submittedThesis = await thesisService.getSubmittedThesis();
 
-      setSubmittedSynopsis(alreadysubmittedSynopsis);
-      setSubmittedThesis(alreadysubmittedThesis);
+      setStudents(students);
+      setSessions(sessions);
+      setSubmittedSynopsis(submittedSynopsis);
+      setSubmittedThesis(submittedThesis);
 
       if (reportType === "Synopsis") {
-        setSubmittedReport(alreadysubmittedSynopsis);
+        setSubmittedReport(submittedSynopsis);
       } else {
-        setSubmittedReport(alreadysubmittedThesis);
+        setSubmittedReport(submittedThesis);
       }
 
       setLoading(true);
     }
     fetchData();
-  }, []);
+  }, [reportType]);
 
   console.log(submittedSynopsis);
   console.log(submittedThesis);
@@ -63,30 +75,127 @@ export default function SummaryReport() {
     content: () => componentRef.current,
   });
 
+  console.log(selectedReport);
   const handleRegistrationNo = (e) => {
-    setselectedReport([]);
-    if (reportType === "Synopsis") {
-      let array = submittedSynopsis.filter(
-        (oneSynopsis) => e.target.value === oneSynopsis.synopsisStatus
-      );
-      setselectedReport(array);
-      // if (array.length !== 0) {
-      //   setIsSelected(true);
-      // }
+    // setselectedReport([]);
+    console.log(filteredSynopsis);
+    console.log(filteredThesis);
+
+    if (filteredSynopsis.length > 0 || filteredThesis.length > 0) {
+      filteredSynopsis.forEach((synopsis) => {
+        if (autocompleteSessionValue === synopsis.student_id.session_id.title) {
+          if (reportType === "Synopsis") {
+            let array = filteredSynopsis.filter(
+              (oneSynopsis) => e.target.value === oneSynopsis.synopsisStatus
+            );
+            setselectedReport(array);
+          } else {
+            let array = filteredThesis.filter(
+              (oneThesis) => e.target.value === oneThesis.thesisStatus
+            );
+            setselectedReport(array);
+          }
+        }
+      });
+      filteredThesis.forEach((thesis) => {
+        if (autocompleteSessionValue === thesis.student_id.session_id.title) {
+          if (reportType !== "Synopsis") {
+            let array = filteredThesis.filter(
+              (oneSynopsis) => e.target.value === oneSynopsis.synopsisStatus
+            );
+            setselectedReport(array);
+          } else {
+            let array = filteredThesis.filter(
+              (oneThesis) => e.target.value === oneThesis.thesisStatus
+            );
+            setselectedReport(array);
+          }
+        }
+      });
+
+      if (reportType === "Synopsis") {
+        let array = filteredSynopsis.filter(
+          (oneSynopsis) => e.target.value === oneSynopsis.synopsisStatus
+        );
+        setselectedReport(array);
+      } else {
+        let array = filteredThesis.filter(
+          (oneThesis) => e.target.value === oneThesis.thesisStatus
+        );
+        setselectedReport(array);
+      }
     } else {
-      let array = submittedThesis.filter(
-        (oneThesis) => e.target.value === oneThesis.thesisStatus
-      );
-      setselectedReport(array);
-      // if (array.length !== 0) {
-      //   setIsSelected(true);
-      // }
+      if (reportType === "Synopsis") {
+        let array = submittedSynopsis.filter(
+          (oneSynopsis) => e.target.value === oneSynopsis.synopsisStatus
+        );
+        setselectedReport(array);
+      } else {
+        let array = submittedThesis.filter(
+          (oneThesis) => e.target.value === oneThesis.thesisStatus
+        );
+        setselectedReport(array);
+      }
     }
+  };
+  console.log(selectedReport);
+
+  const handleStudentSessions = (selectedSession) => {
+    setFilteredSynopsis([]);
+    setFilteredThesis([]);
+    let selectedStudents = [];
+
+    students.forEach((student) => {
+      if (student?.session_id?.title === selectedSession?.title) {
+        let filteredSynopsis = submittedSynopsis.filter(
+          (synopsis) => synopsis.student_id._id === student._id
+        );
+        let filteredThesis = submittedThesis.filter(
+          (synopsis) => synopsis.student_id._id === student._id
+        );
+        console.log(filteredSynopsis);
+        console.log(filteredThesis);
+
+        if (filteredSynopsis.length > 0 || filteredThesis.length > 0) {
+          selectedStudents.push({
+            student_id:
+              filteredSynopsis[0].student_id ||
+              filteredThesis[0].student_id ||
+              [],
+            synopsis: filteredSynopsis[0] || [],
+            thesis: filteredThesis[0] || [],
+          });
+        }
+      }
+    });
+    console.log(selectedStudents);
+
+    setFilteredSynopsis(selectedStudents.map((student) => student.synopsis));
+    setFilteredThesis(selectedStudents.map((student) => student.thesis));
+
+    if (selectedStudents.length === 0) {
+      setselectedReport([]);
+    }
+
+    console.log(filteredSynopsis);
+    console.log(filteredThesis);
+  };
+
+  const defaultProps = {
+    options: sessions,
+    getOptionLabel: (session) => session?.title || "",
   };
 
   return (
     <>
       <Box sx={{ minWidth: 120, mb: 6 }}>
+        <Typography
+          sx={{ mb: 4, color: "#572E74", fontWeight: "500" }}
+          textAlign={"center"}
+          variant="h5"
+        >
+          Summary Report
+        </Typography>
         <FormControl sx={{ mb: 1 }}>
           <FormLabel color="secondary">Student</FormLabel>
           <RadioGroup
@@ -116,6 +225,29 @@ export default function SummaryReport() {
             />
           </RadioGroup>
         </FormControl>
+        {/* <Box sx={{ mb: 4 }}>
+ 
+          <Autocomplete
+            {...defaultProps}
+            id="controlled-demo"
+            value={autocompleteSessionValue}
+            onCl
+            onChange={(value, newValue) => {
+              let session = newValue;
+              console.log(session);
+              setAutocompleteSessionValue(session);
+              handleStudentSessions(session);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Select Session"
+                variant="outlined"
+                color="secondary"
+              />
+            )}
+          />
+        </Box> */}
         <FormControl fullWidth>
           <InputLabel color="secondary">Select Status</InputLabel>
           <Select
@@ -139,7 +271,7 @@ export default function SummaryReport() {
             <MenuItem value={"Synopsis Not Submitted for GAC"}>
               Synopsis Not Submitted for GAC
             </MenuItem>
-            <MenuItem value={"unscheduled"}>Unscheduled</MenuItem>
+            <MenuItem value={"Unscheduled"}>Unscheduled</MenuItem>
             <MenuItem value={"Scheduled"}>Scheduled</MenuItem>
             <MenuItem value={"Conducted"}>Conducted</MenuItem>
             <MenuItem value={"Approved By GAC"}>Approved By GAC</MenuItem>
@@ -183,234 +315,221 @@ export default function SummaryReport() {
       {selectedReport.map((report) => {
         return (
           <>
-            <div ref={componentRef}>
-              <Box
+            <div ref={componentRef} className="supervisorWiseReport">
+              <Paper
+                variant="outlined"
+                elevation={3}
+                key={report?.student_id?._id}
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "0 1rem",
+                  display: "grid",
+                  placeItems: "center",
+                  // placeContent: "center",
+                  marginBottom: "2rem",
                 }}
               >
-                <div>
-                  <img
-                    src={
-                      process.env.REACT_APP_URL +
-                        "/" +
-                        report?.student_id?.profilePicture || profile
-                    }
-                    alt="Student Profile"
-                    style={{
-                      height: "80px",
-                      width: "80px",
-                      borderRadius: "100%",
-                      marginBottom: "1rem",
-                    }}
-                  />
+                <table
+                  cellSpacing={4}
+                  cellPadding={6}
+                  style={{
+                    color: "#333333",
+                    borderCollapse: "separate",
+                    padding: ".5rem",
+                    /* margin: "1rem", */
+                    /* border: "2px solid #572E74",
+                  borderRadius: "6px", */
+                  }}
+                >
+                  <colgroup className="cols">
+                    <col className="col1" />
+                    <col className="col2" />
+                    <col className="col3" />
+                    <col className="col4" />
+                  </colgroup>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <img
+                          src={
+                            process.env.REACT_APP_URL +
+                              "/" +
+                              report?.student_id?.profilePicture || ""
+                          }
+                          alt="Student Profile"
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            objectFit: "cover",
+                            height: "8rem",
+                            width: "8rem",
+                            borderRadius: "100%",
+                          }}
+                        />
+                      </td>
+                    </tr>
+                    <tr
+                      style={{
+                        backgroundColor: "white",
+                      }}
+                    >
+                      <td
+                        valign="middle"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Name
+                      </td>
+                      <td>{report?.student_id?.username}</td>
+                      <td
+                        valign="middle"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Email
+                      </td>
+                      <td>{report?.student_id?.email}</td>
+                    </tr>
+                    <tr
+                      style={{
+                        backgroundColor: "white",
+                      }}
+                    >
+                      <td
+                        valign="middle"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Father Name
+                      </td>
+                      <td>{report?.student_id?.fatherName}</td>
+                      <td
+                        valign="middle"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Supervisor
+                      </td>
+                      <td>{report?.student_id?.supervisor_id?.username}</td>
+                    </tr>
+                    <tr
+                      style={{ color: "#333333", backgroundColor: "#F7F6F3" }}
+                    >
+                      <td
+                        valign="middle"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Registration No.
+                      </td>
+                      <td>{report?.student_id?.registrationNo}</td>
+                      <td
+                        valign="middle"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Mobile No.
+                      </td>
+                      <td>{report?.student_id?.mobile}</td>
+                    </tr>
+                    <tr
+                      style={{
+                        backgroundColor: "white",
+                      }}
+                    >
+                      <td
+                        valign="middle"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Registration Date
+                      </td>
+                      <td>{report?.student_id?.thesisRegistration}</td>
+                      <td
+                        valign="middle"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Track
+                      </td>
+                      <td>{report?.student_id?.thesisTrack}</td>
+                    </tr>
 
-                  <div
-                    style={{
-                      margin: "0",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div
+                    <tr
                       style={{
-                        width: "20rem",
-                        margin: "0",
-                        display: "flex",
-                        alignItems: "center",
+                        color: "#333333",
+                        backgroundColor: "#F7F6F3",
                       }}
                     >
-                      <h3 style={{ margin: "0 1rem 0 0" }}>Name:</h3>
-                      <p style={{ margin: "0" }}>
-                        {report?.student_id?.username}
-                      </p>
-                    </div>
-                    <h3
-                      style={{
-                        marginRight: "1rem",
-                        marginTop: "0",
-                        marginBottom: "0",
-                      }}
-                    >
-                      Registration Number:
-                    </h3>
-                    <p style={{ marginTop: "0", marginBottom: "0" }}>
-                      {report?.student_id?.registrationNo}
-                    </p>
-                  </div>
-                  <div
-                    style={{
-                      margin: "1rem 0 0 0",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "20rem",
-                        margin: "0",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <h3 style={{ margin: "0 1rem 0 0" }}>Father Name:</h3>
-                      <p style={{ margin: "0" }}>
-                        {report?.student_id?.fatherName}
-                      </p>
-                    </div>
-                    <h3
-                      style={{
-                        marginRight: "1rem",
-                        marginTop: "0",
-                        marginBottom: "0",
-                      }}
-                    >
-                      Supervisor:
-                    </h3>
-                    <p style={{ marginTop: "0", marginBottom: "0" }}>
-                      {report?.supervisor_id?.fullName}
-                    </p>
-                  </div>
-                </div>
-              </Box>
-              <table
-                cellSpacing={0}
-                cellPadding={4}
-                style={{
-                  color: "#333333",
-                  borderCollapse: "separate",
-                  margin: "1rem",
-                }}
-              >
-                <tbody>
-                  <tr
-                    style={{
-                      color: "#333333",
-                    }}
-                  >
-                    <td
-                      valign="top"
-                      style={{
-                        fontWeight: "bold",
-                        width: "20%",
-                      }}
-                    ></td>
-                  </tr>
+                      <td
+                        valign="middle"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {reportType === "Synopsis" ? (
+                          <>Synopsis Status</>
+                        ) : (
+                          <>Thesis Status</>
+                        )}
+                      </td>
+                      <td>{report.thesisStatus || report.synopsisStatus}</td>
+                      <td
+                        valign="middle"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {reportType === "Synopsis" ? (
+                          <>Synopsis Title</>
+                        ) : (
+                          <>Thesis Title</>
+                        )}
+                      </td>
+                      <td>{report.thesisTitle || report.synopsisTitle}</td>
+                    </tr>
 
-                  <tr
-                    style={{
-                      backgroundColor: "white",
-                    }}
-                  >
-                    <td
-                      valign="top"
-                      style={{
-                        backgroundColor: "#E9ECF1",
-                        fontWeight: "bold",
-                        width: "20%",
-                      }}
-                    >
-                      Email
-                    </td>
-                    <td>{report?.student_id?.email}</td>
-                  </tr>
-                  <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
-                    <td
-                      valign="top"
-                      style={{
-                        backgroundColor: "#E9ECF1",
-                        fontWeight: "bold",
-                        width: "20%",
-                      }}
-                    >
-                      Mobile No.
-                    </td>
-                    <td>{report?.student_id?.mobile}</td>
-                  </tr>
-                  <tr
-                    style={{
-                      backgroundColor: "white",
-                    }}
-                  >
-                    <td
-                      valign="top"
-                      style={{
-                        backgroundColor: "#E9ECF1",
-                        fontWeight: "bold",
-                        width: "20%",
-                      }}
-                    >
-                      Track
-                    </td>
-                    <td>{report?.student_id?.thesisTrack}</td>
-                  </tr>
-
-                  <tr
-                    style={{
-                      color: "#333333",
-                      backgroundColor: "#F7F6F3",
-                    }}
-                  >
-                    <td
-                      valign="top"
-                      style={{
-                        backgroundColor: "#E9ECF1",
-                        fontWeight: "bold",
-                        width: "20%",
-                      }}
-                    >
-                      {reportType === "Synopsis" ? (
-                        <>Synopsis Title</>
-                      ) : (
-                        <>Thesis Title</>
-                      )}
-                    </td>
-                    <td>{report.thesisTitle || report.synopsisTitle}</td>
-                  </tr>
-                  <tr
-                    style={{
-                      backgroundColor: "white",
-                    }}
-                  >
-                    <td
-                      valign="top"
-                      style={{
-                        backgroundColor: "#E9ECF1",
-                        fontWeight: "bold",
-                        width: "20%",
-                      }}
-                    >
-                      Registration Date
-                    </td>
-                    <td>{report?.student_id?.thesisRegistration}</td>
-                  </tr>
-                  {/* <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
+                    {/* <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
               <td
-                valign="top"
+                valign="middle"
                 style={{
                   backgroundColor: "#E9ECF1",
                   fontWeight: "bold",
-                  width: "20%",
+                  
                 }}
               >
                 External
               </td>
-              <td> {selectedSchedule?.student_id?.reportTitle} </td>
+              <td> {selectedSchedule?.student_id?.studentTitle} </td>
             </tr> */}
-                  <tr
+                    {/* <tr
                     style={{
                       backgroundColor: "white",
                     }}
                   >
                     <td
-                      valign="top"
+                      valign="middle"
                       style={{
                         backgroundColor: "#E9ECF1",
                         fontWeight: "bold",
-                        width: "20%",
+                        
                       }}
                     >
                       {reportType === "Synopsis" ? (
@@ -421,18 +540,19 @@ export default function SummaryReport() {
                     </td>
 
                     <td>{report.thesisStatus || report.synopsisStatus}</td>
-                  </tr>
-                </tbody>
-              </table>
-              <div
+                  </tr> */}
+                  </tbody>
+                </table>
+                {/* <div
                 style={{
-                  width: "10%",
-                  minWidth: "6rem",
-                  maxWidth: "10rem",
+                  width: "100%",
+                  // minWidth: "6rem",
+                  // maxWidth: "10rem",
                   margin: "2rem auto",
-                  borderTop: "8px dotted #572E74",
+                  borderTop: "2px Dashed #572E74",
                 }}
-              />
+              /> */}
+              </Paper>
             </div>
           </>
         );

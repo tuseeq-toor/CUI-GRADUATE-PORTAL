@@ -18,6 +18,7 @@ import {
   Radio,
   RadioGroup,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import thesisService from "../../API/thesis";
@@ -110,11 +111,16 @@ export default function SuperivorWiseReports() {
       console.log(supervisor);
       console.log(filteredSynopsis);
       if (supervisor.length > 0) {
-        supervisorStudents.push({
-          student_id: committee.student_id,
-          synopsis: filteredSynopsis[0] || null,
-          thesis: filteredThesis[0] || null,
-        });
+        if (filteredSynopsis.length > 0 || filteredThesis.length > 0) {
+          supervisorStudents.push({
+            student_id:
+              filteredSynopsis[0].student_id ||
+              filteredThesis[0].student_id ||
+              null,
+            synopsis: filteredSynopsis[0] || null,
+            thesis: filteredThesis[0] || null,
+          });
+        }
       }
     });
 
@@ -134,13 +140,19 @@ export default function SuperivorWiseReports() {
   return (
     <>
       <Box sx={{ minWidth: 120, mb: 2 }}>
+        <Typography
+          sx={{ mb: 4, color: "#572E74", fontWeight: "500" }}
+          textAlign={"center"}
+          variant="h5"
+        >
+          Supervisor Wise Report
+        </Typography>
         <Box sx={{ mb: 4 }}>
           {/* <label>Select Supervisor</label> */}
           <Autocomplete
             {...defaultProps}
             id="controlled-demo"
             value={autocompleteValue}
-            onCl
             onChange={(value, newValue) => {
               let supervisor = newValue;
               console.log(supervisor);

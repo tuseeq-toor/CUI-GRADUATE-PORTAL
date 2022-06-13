@@ -18,6 +18,7 @@ import {
   Radio,
   RadioGroup,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import thesisService from "../../API/thesis";
@@ -46,7 +47,7 @@ export default function SessionWiseReports() {
   useEffect(() => {
     async function fetchData() {
       const sessions = await sessionsService.getSessions();
-      const { data } = await progressReportService.getReports();
+      const students = await studentService.getStudents();
       const submittedSynopsis = await synopsisService.getSubmittedSynopsis();
       const synopsisSchedules = await synopsisService.getSynopsisSchedules();
       const synopsisEvaluations =
@@ -56,10 +57,10 @@ export default function SessionWiseReports() {
       console.log(synopsisSchedules);
       console.log(synopsisEvaluations);
       console.log(sessions);
-      console.log(data);
+      console.log(students);
 
       setSessions(sessions);
-      setStudents(data);
+      setStudents(students);
 
       setSubmittedSynopsis(submittedSynopsis);
       setSubmittedThesis(submittedThesis);
@@ -81,7 +82,7 @@ export default function SessionWiseReports() {
     let selectedStudents = [];
 
     students.forEach((student) => {
-      if (student.session_id.title === selectedSession.title) {
+      if (student?.session_id?.title === selectedSession.title) {
         let filteredSynopsis = submittedSynopsis.filter(
           (synopsis) => synopsis.student_id._id === student._id
         );
@@ -91,11 +92,16 @@ export default function SessionWiseReports() {
         console.log(filteredSynopsis);
         console.log(filteredThesis);
 
-        selectedStudents.push({
-          student_id: student.student_id,
-          synopsis: filteredSynopsis[0] || null,
-          thesis: filteredThesis[0] || null,
-        });
+        if (filteredSynopsis.length > 0 || filteredThesis.length > 0) {
+          selectedStudents.push({
+            student_id:
+              filteredSynopsis[0].student_id ||
+              filteredThesis[0].student_id ||
+              null,
+            synopsis: filteredSynopsis[0] || null,
+            thesis: filteredThesis[0] || null,
+          });
+        }
       }
     });
 
@@ -115,6 +121,13 @@ export default function SessionWiseReports() {
   return (
     <>
       <Box sx={{ minWidth: 120, mb: 2 }}>
+        <Typography
+          sx={{ mb: 4, color: "#572E74", fontWeight: "500" }}
+          textAlign={"center"}
+          variant="h5"
+        >
+          Session Wise Report
+        </Typography>
         <Box sx={{ mb: 4 }}>
           {/* <label>Select Supervisor</label> */}
           <Autocomplete
@@ -131,7 +144,7 @@ export default function SessionWiseReports() {
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Select Program"
+                label="Select Session"
                 variant="outlined"
                 color="secondary"
               />

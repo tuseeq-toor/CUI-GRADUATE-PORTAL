@@ -56,6 +56,7 @@ import ViewPhDStudentDetail from "../Components/Pages/ViewPhDStudentDetail";
 import ManageNotification from "../Components/Pages/managenotification";
 import { Sidebar } from "../Components/UI/Sidebar";
 import AvatarMenu from "../Components/UI/AvatarMenu";
+import ReportsMenu from "../Components/UI/ReportsMenu";
 
 const drawerWidth = 335;
 
@@ -249,6 +250,7 @@ const DashboardContent = (props) => {
               />
               {/* {activeTab} */}
             </Typography>
+            <ReportsMenu />
             <IconButton color="inherit">
               <AvatarMenu />
               {/* <Badge badgeContent={4} color="secondary"></Badge> */}
