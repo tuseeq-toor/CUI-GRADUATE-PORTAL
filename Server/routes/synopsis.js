@@ -317,7 +317,7 @@ router.get("/submitted-synopsis", auth.verifyUser, (req, res) => {
     .populate({
       path: "student_id",
       populate: {
-        path: "program_id",
+        path: "program_id session_id supervisor_id coSupervisor_id",
       },
     })
     .populate("supervisor_id coSupervisor_id")

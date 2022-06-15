@@ -28,7 +28,7 @@ import ReportTemplate from "../UI/ReportTemplate";
 
 const statuses = ["Scheduled", "Unscheduled", "Pass Out"];
 
-export default function SupervisorWiseReports() {
+export default function SummaryReport() {
   const componentRef = useRef();
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
@@ -41,23 +41,18 @@ export default function SupervisorWiseReports() {
   const [submittedReport, setSubmittedReport] = useState([]);
   const [filteredSynopsis, setFilteredSynopsis] = useState([]);
   const [filteredReport, setFilteredReport] = useState([]);
-  const [supervisors, setSupervisors] = useState([]);
+  const [sessions, setSessions] = useState([]);
   const [students, setStudents] = useState([]);
-  const [selectedSupervisor, setSelectedSupervisor] = useState("");
-  const [selectedStudent, setSelectedStudent] = useState("");
-
-  const [totalSupervisorStudents, setTotalSupervisorStudents] = useState("");
-  const [totalSlotsAvailable, setTotalSlotsAvailable] = useState("");
-  const [totalPassedOut, setTotalPassedOut] = useState("");
+  const [selectedSession, setSelectedSession] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   useEffect(() => {
     async function fetchData() {
-      const { supervisors } = await studentService.getSupervisors();
+      const sessions = await sessionsService.getSessions();
       const students = await studentService.getStudents();
       const submittedSynopsis = await synopsisService.getSubmittedSynopsis();
       const submittedThesis = await thesisService.getSubmittedThesis();
 
-      console.log(supervisors);
       console.log(submittedSynopsis);
       console.log(submittedThesis);
 
@@ -74,7 +69,7 @@ export default function SupervisorWiseReports() {
         if (filteredSynopsis.length > 0 && filteredThesis.length > 0) {
           selectedStudents.push({
             student_id: filteredSynopsis[0].student_id,
-            supervisor: filteredSynopsis[0].student_id.supervisor_id.username,
+            sessionTitle: filteredSynopsis[0].student_id.session_id.title,
             synopsisStatus: filteredSynopsis[0].synopsisStatus,
             synopsisTitle: filteredSynopsis[0].synopsisTitle,
             thesisStatus: filteredThesis[0].thesisStatus,
@@ -83,88 +78,96 @@ export default function SupervisorWiseReports() {
         } else if (filteredThesis.length > 0) {
           selectedStudents.push({
             student_id: filteredThesis[0].student_id,
-            supervisor: filteredThesis[0].student_id.supervisor_id.username,
+            sessionTitle: filteredThesis[0].student_id.session_id.title,
             thesisStatus: filteredThesis[0].thesisStatus,
             thesisTitle: filteredThesis[0].thesisTitle,
           });
         } else if (filteredSynopsis.length > 0) {
           selectedStudents.push({
             student_id: filteredSynopsis[0].student_id,
-            supervisor: filteredSynopsis[0].student_id.supervisor_id.username,
+            sessionTitle: filteredSynopsis[0].student_id.session_id.title,
             synopsisStatus: filteredSynopsis[0].synopsisStatus,
             synopsisTitle: filteredSynopsis[0].synopsisTitle,
           });
         }
       });
       setSelectedReport(selectedStudents);
-      setFilteredReport(selectedStudents);
-      setSupervisors(supervisors);
-      setStudents(students);
+      // setFilteredReport(selectedStudents);
+      setSessions(sessions);
     }
     fetchData();
   }, []);
 
   console.log(selectedReport);
-  console.log(supervisors);
 
   useEffect(() => {
-    console.log(selectedSupervisor);
+    console.log(selectedStatus);
 
-    if (selectedSupervisor) {
+    if (selectedSession) {
       let std = [];
 
       selectedReport.forEach((student) => {
-        if (selectedStudent) {
+        if (selectedStatus) {
           if (reportType === "Synopsis") {
             if (
-              student.supervisor === selectedSupervisor.username &&
-              student.student_id.username === selectedStudent
+              student.sessionTitle === selectedSession.title &&
+              student.synopsisStatus === selectedStatus
             ) {
               std.push(student);
             }
           } else {
             if (
-              student.supervisor === selectedSupervisor.username &&
-              student.student_id.username === selectedStudent
+              student.sessionTitle === selectedSession.title &&
+              student.thesisStatus === selectedStatus
             ) {
               std.push(student);
             }
           }
         } else {
-          if (student.supervisor === selectedSupervisor.username) {
+          if (student.sessionTitle === selectedSession.title) {
             std.push(student);
           }
         }
       });
       setFilteredReport(std);
     }
-  }, [selectedSupervisor, reportType]);
+  }, [selectedSession, reportType]);
 
   useEffect(() => {
-    console.log(selectedSupervisor);
-
-    if (selectedSupervisor) {
-      let totalStudents = 0;
-      let slotsAvailable = 7;
-      let studentsPassedOut = 0;
-
-      students.forEach((student) => {
-        if (student.supervisor_id.username === selectedSupervisor.username) {
-          totalStudents++;
-
-          if (
-            student.synopsisStatus === "Pass Out" ||
-            student.thesisStatus === "Pass Out"
-          ) {
-            studentsPassedOut++;
+    let std = [];
+    if (selectedStatus) {
+      selectedReport.forEach((student) => {
+        if (selectedSession) {
+          if (reportType === "Synopsis") {
+            if (
+              student.synopsisStatus === selectedStatus &&
+              student.sessionTitle === selectedSession.title
+            ) {
+              std.push(student);
+            }
+          } else {
+            if (
+              student.thesisStatus === selectedStatus &&
+              student.sessionTitle === selectedSession.title
+            ) {
+              std.push(student);
+            }
+          }
+        } else {
+          if (reportType === "Synopsis") {
+            if (student.synopsisStatus === selectedStatus) {
+              std.push(student);
+            }
+          } else {
+            if (student.thesisStatus === selectedStatus) {
+              std.push(student);
+            }
           }
         }
       });
-      setTotalSupervisorStudents(totalStudents);
-      setTotalSlotsAvailable(slotsAvailable - totalStudents);
-      setTotalPassedOut(studentsPassedOut);
+      setFilteredReport(std);
     }
-  }, [selectedSupervisor, reportType]);
+  }, [selectedStatus, reportType]);
 
   console.log(filteredReport);
 
@@ -172,13 +175,13 @@ export default function SupervisorWiseReports() {
     content: () => componentRef.current,
   });
 
-  const supervisorProps = {
-    options: supervisors,
-    getOptionLabel: (supervisor) => supervisor?.username || "",
+  const defaultProps = {
+    options: sessions,
+    getOptionLabel: (session) => session?.title || "",
   };
-  const studentProps = {
-    options: filteredReport,
-    getOptionLabel: (report) => report?.student_id?.username || "",
+  const statusProps = {
+    options: statuses,
+    getOptionLabel: (status) => status || "",
   };
 
   return (
@@ -189,7 +192,7 @@ export default function SupervisorWiseReports() {
           textAlign={"center"}
           variant="h5"
         >
-          Supervisor Wise Report
+          Summary Report
         </Typography>
         <FormControl sx={{ mb: 1 }}>
           <FormLabel color="secondary">Student</FormLabel>
@@ -218,19 +221,19 @@ export default function SupervisorWiseReports() {
           <Box width={"49%"} sx={{ mb: 4 }}>
             <Autocomplete
               fullWidth
-              {...supervisorProps}
+              {...defaultProps}
               id="controlled-demo"
-              value={selectedSupervisor}
+              value={selectedSession}
               onChange={(value, newValue) => {
-                let supervisor = newValue;
-                console.log(supervisor);
-                setSelectedSupervisor(supervisor);
+                let session = newValue;
+                console.log(session);
+                setSelectedSession(session);
               }}
               renderInput={(params) => (
                 <TextField
                   fullWidth
                   {...params}
-                  label="Select Supervisor"
+                  label="Select Session"
                   variant="outlined"
                   color="secondary"
                 />
@@ -240,19 +243,19 @@ export default function SupervisorWiseReports() {
           <Box width={"49%"} sx={{ mb: 4 }}>
             <Autocomplete
               fullWidth
-              {...studentProps}
+              {...statusProps}
               id="controlled-demo"
-              value={selectedStudent}
+              value={selectedStatus}
               onChange={(value, newValue) => {
-                let std = newValue;
-                console.log(std);
-                setSelectedStudent(std);
+                let status = newValue;
+                console.log(status);
+                setSelectedStatus(status);
               }}
               renderInput={(params) => (
                 <TextField
                   fullWidth
                   {...params}
-                  label="Select Student"
+                  label="Select Status"
                   variant="outlined"
                   color="secondary"
                 />
@@ -261,64 +264,70 @@ export default function SupervisorWiseReports() {
           </Box>
         </Box>
 
-        <Box sx={{ mb: 4 }}>
-          <table
-            cellSpacing={4}
-            cellPadding={6}
-            style={{
-              color: "#333333",
-              borderCollapse: "separate",
-              padding: ".5rem",
+        {/* <FormControl fullWidth>
+          <InputLabel color="secondary">Select Status</InputLabel>
+          <Select
+            color="secondary"
+            value={selectedStatus}
+            name="selectedStatus"
+            label="Select Status"
+            onChange={(e) => {
+              setSelectedStatus(e.target.value);
             }}
           >
-            <colgroup className="cols">
-              <col width="180px" />
-              <col width="50px" />
-              <col width="180px" />
-              <col width="50px" />
-              <col width="180px" />
-              <col width="50px" />
-            </colgroup>
-            <tbody>
-              <tr
-                style={{
-                  backgroundColor: "white",
-                }}
-              >
-                <td
-                  valign="middle"
-                  style={{
-                    backgroundColor: "#E9ECF1",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Total Students :
-                </td>
-                <td>{totalSupervisorStudents}</td>
-                <td
-                  valign="middle"
-                  style={{
-                    backgroundColor: "#E9ECF1",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Slots Available :
-                </td>
-                <td>{totalSlotsAvailable}</td>
-                <td
-                  valign="middle"
-                  style={{
-                    backgroundColor: "#E9ECF1",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Students Passed Out :
-                </td>
-                <td>{totalPassedOut}</td>
-              </tr>
-            </tbody>
-          </table>
-        </Box>
+            <MenuItem value={"Synopsis Evaluation"}>
+              Synopsis Evaluation
+            </MenuItem>
+            <MenuItem value={"Internal Evaluation"}>
+              Internal Evaluation
+            </MenuItem>
+            <MenuItem value={"External Evaluation"}>
+              External Evaluation
+            </MenuItem>
+            <MenuItem value={"Pass Out"}>Pass Out</MenuItem>
+            <MenuItem value={"Dismissed"}>Dismissed</MenuItem>
+            <MenuItem value={"Synopsis Not Submitted for GAC"}>
+              Synopsis Not Submitted for GAC
+            </MenuItem>
+            <MenuItem value={"Unscheduled"}>Unscheduled</MenuItem>
+            <MenuItem value={"Scheduled"}>Scheduled</MenuItem>
+            <MenuItem value={"Conducted"}>Conducted</MenuItem>
+            <MenuItem value={"Approved By GAC"}>Approved By GAC</MenuItem>
+            <MenuItem value={"Minor Changes"}>Minor Changes</MenuItem>
+            <MenuItem value={"Synopsis Not Submitted for DEAN office"}>
+              Synopsis Not Submitted for DEAN office
+            </MenuItem>
+            <MenuItem value={"Synopsis Submitted for DEAN office"}>
+              Synopsis Submitted for DEAN office
+            </MenuItem>
+            <MenuItem value={"Forwarded to DEAN Office "}>
+              Forwarded to DEAN Office
+            </MenuItem>
+            <MenuItem value={"Changes suggested by DEAN office"}>
+              Changes suggested by DEAN office
+            </MenuItem>
+            <MenuItem value={"Approved By DEAN"}>Approved By DEAN</MenuItem>
+            <MenuItem value={"Thesis Not Submitted for Internal"}>
+              Thesis Not Submitted for Internal
+            </MenuItem>
+            <MenuItem value={"Thesis Submitted for Internal"}>
+              Thesis Submitted for Internal
+            </MenuItem>
+            <MenuItem value={"Accepted by Internal"}>
+              Accepted by Internal
+            </MenuItem>
+            <MenuItem value={"Thesis not Submitted for Internal"}>
+              Thesis not Submitted for Internal
+            </MenuItem>
+            <MenuItem value={"Thesis Submitted for Internal"}>
+              Thesis Submitted for Internal
+            </MenuItem>
+            <MenuItem value={"Deffered"}>Deffered</MenuItem>
+            <MenuItem value={"Accepted"}>Accepted</MenuItem>
+            <MenuItem value={"Major Changes"}>Major Changes</MenuItem>
+            <MenuItem value={"Rejected"}>Rejected</MenuItem>
+          </Select>
+        </FormControl> */}
       </Box>
 
       {filteredReport.map((report) => {

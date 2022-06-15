@@ -24,54 +24,69 @@ import { useSelector } from "react-redux";
 import thesisService from "../../API/thesis";
 import { useReactToPrint } from "react-to-print";
 import adminService from "../../API/admin";
-import programsService from "../../API/programs";
-import sessionsService from "../../API/sessions";
-import progressReportService from "../../API/progressReports";
 
-const statuses = ["Scheduled", "Unscheduled", "Pass Out"];
-
-export default function SessionWiseReports() {
+export default function SuperivorWiseReports() {
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
-  const [autocompleteSessionValue, setAutocompleteSessionValue] =
-    useState(null);
+  const [autocompleteValue, setAutocompleteValue] = useState(null);
   const [autocompleteStudentValue, setAutocompleteStudentValue] =
     useState(null);
-
+  const [supervisoryCommittee, setSupervisoryCommittee] = useState([]);
+  const [committeeMembers, setCommitteeMembers] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState([]);
-  const [sessions, setSessions] = useState([]);
-  const [students, setStudents] = useState([]);
+  const [supervisors, setSupervisors] = useState([]);
   const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
   const [submittedThesis, setSubmittedThesis] = useState([]);
 
+  async function getSupervisoryCommittee() {
+    const res = await adminService.getSupervisoryCommittee();
+    const submittedSynopsis = await synopsisService.getSubmittedSynopsis();
+    const submittedThesis = await thesisService.getSubmittedThesis();
+
+    setSubmittedSynopsis(submittedSynopsis);
+    setSubmittedThesis(submittedThesis);
+
+    console.log(submittedSynopsis);
+    console.log(submittedThesis);
+
+    console.log(res);
+
+    console.log("reshere", res);
+
+    const committeeData = res.data.map((data) => data.committee);
+
+    const data = res?.data?.map((res) => {
+      let members = res?.committee.map((data) => data.username);
+
+      return {
+        RegistrationNo: res.student_id?.registrationNo,
+        StudentName: res.student_id?.username,
+        committeeMembers: members,
+        committee: res.committee,
+        student_id: res.student_id,
+      };
+    });
+
+    setCommitteeMembers(committeeData);
+
+    setSupervisoryCommittee(data);
+  }
+
+  const getSupervisors = async () => {
+    let data = await studentService.getSupervisors();
+
+    console.table("SubmissionM", data?.supervisors);
+    setSupervisors(data?.supervisors);
+  };
   useEffect(() => {
-    async function fetchData() {
-      const sessions = await sessionsService.getSessions();
-      const students = await studentService.getStudents();
-      const submittedSynopsis = await synopsisService.getSubmittedSynopsis();
-      const synopsisSchedules = await synopsisService.getSynopsisSchedules();
-      const synopsisEvaluations =
-        await synopsisService.getSynopsisEvaluations();
-      const submittedThesis = await thesisService.getSubmittedThesis();
-
-      console.log(synopsisSchedules);
-      console.log(synopsisEvaluations);
-      console.log(sessions);
-      console.log(students);
-
-      setSessions(sessions);
-      setStudents(students);
-
-      setSubmittedSynopsis(submittedSynopsis);
-      setSubmittedThesis(submittedThesis);
-
-      console.log(submittedSynopsis);
-      console.log(submittedThesis);
-    }
-    fetchData();
+    getSupervisors();
+    getSupervisoryCommittee();
   }, []);
+
+  console.log(committeeMembers);
+  console.log(supervisoryCommittee);
 
   const componentRef = useRef();
 
@@ -79,23 +94,25 @@ export default function SessionWiseReports() {
     content: () => componentRef.current,
   });
 
-  const handleStudentSessions = (selectedSession) => {
+  const handleSupervisorStudents = (selectedSupervisor) => {
     setFilteredStudents([]);
-    let selectedStudents = [];
+    let supervisorStudents = [];
 
-    students.forEach((student) => {
-      if (student?.session_id?.title === selectedSession.title) {
-        let filteredSynopsis = submittedSynopsis.filter(
-          (synopsis) => synopsis.student_id._id === student._id
-        );
-        let filteredThesis = submittedThesis.filter(
-          (synopsis) => synopsis.student_id._id === student._id
-        );
-        console.log(filteredSynopsis);
-        console.log(filteredThesis);
-
+    supervisoryCommittee.forEach((committee) => {
+      let supervisor = committee.committeeMembers.filter(
+        (memberName) => selectedSupervisor.username === memberName
+      );
+      let filteredSynopsis = submittedSynopsis.filter(
+        (synopsis) => synopsis.student_id._id === committee.student_id._id
+      );
+      let filteredThesis = submittedThesis.filter(
+        (synopsis) => synopsis.student_id._id === committee.student_id._id
+      );
+      console.log(supervisor);
+      console.log(filteredSynopsis);
+      if (supervisor.length > 0) {
         if (filteredSynopsis.length > 0 || filteredThesis.length > 0) {
-          selectedStudents.push({
+          supervisorStudents.push({
             student_id:
               filteredSynopsis[0].student_id ||
               filteredThesis[0].student_id ||
@@ -107,13 +124,13 @@ export default function SessionWiseReports() {
       }
     });
 
-    console.log(selectedStudents);
-    setFilteredStudents(selectedStudents);
+    console.log(supervisorStudents);
+    setFilteredStudents(supervisorStudents);
   };
 
   const defaultProps = {
-    options: sessions,
-    getOptionLabel: (session) => session?.title || "",
+    options: supervisors,
+    getOptionLabel: (supervisor) => supervisor?.username || "",
   };
   const defaultstudentProps = {
     options: filteredStudents,
@@ -128,25 +145,24 @@ export default function SessionWiseReports() {
           textAlign={"center"}
           variant="h5"
         >
-          Session Wise Report
+          Supervisor Wise Report
         </Typography>
         <Box sx={{ mb: 4 }}>
           {/* <label>Select Supervisor</label> */}
           <Autocomplete
             {...defaultProps}
             id="controlled-demo"
-            value={autocompleteSessionValue}
-            onCl
+            value={autocompleteValue}
             onChange={(value, newValue) => {
-              let session = newValue;
-              console.log(session);
-              setAutocompleteSessionValue(session);
-              handleStudentSessions(session);
+              let supervisor = newValue;
+              console.log(supervisor);
+              setAutocompleteValue(supervisor);
+              handleSupervisorStudents(supervisor);
             }}
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Select Session"
+                label="Select Supervisor"
                 variant="outlined"
                 color="secondary"
               />

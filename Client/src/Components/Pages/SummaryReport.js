@@ -24,23 +24,27 @@ import { useSelector } from "react-redux";
 import thesisService from "../../API/thesis";
 import { useReactToPrint } from "react-to-print";
 import sessionsService from "../../API/sessions";
+import ReportTemplate from "../UI/ReportTemplate";
+
+const statuses = ["Scheduled", "Unscheduled", "Pass Out"];
 
 export default function SummaryReport() {
+  const componentRef = useRef();
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
   const [isSelected, setIsSelected] = useState(false);
 
   const [reportType, setReportType] = useState("Synopsis");
-  const [selectedReport, setselectedReport] = useState([]);
+  const [selectedReport, setSelectedReport] = useState([]);
   const [submittedSynopsis, setSubmittedSynopsis] = useState([]);
   const [submittedThesis, setSubmittedThesis] = useState([]);
   const [submittedReport, setSubmittedReport] = useState([]);
   const [filteredSynopsis, setFilteredSynopsis] = useState([]);
-  const [filteredThesis, setFilteredThesis] = useState([]);
+  const [filteredReport, setFilteredReport] = useState([]);
   const [sessions, setSessions] = useState([]);
   const [students, setStudents] = useState([]);
-  const [autocompleteSessionValue, setAutocompleteSessionValue] =
-    useState(null);
+  const [selectedSession, setSelectedSession] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   useEffect(() => {
     async function fetchData() {
@@ -49,141 +53,135 @@ export default function SummaryReport() {
       const submittedSynopsis = await synopsisService.getSubmittedSynopsis();
       const submittedThesis = await thesisService.getSubmittedThesis();
 
-      setStudents(students);
-      setSessions(sessions);
-      setSubmittedSynopsis(submittedSynopsis);
-      setSubmittedThesis(submittedThesis);
+      console.log(submittedSynopsis);
+      console.log(submittedThesis);
 
-      if (reportType === "Synopsis") {
-        setSubmittedReport(submittedSynopsis);
-      } else {
-        setSubmittedReport(submittedThesis);
-      }
+      let selectedStudents = [];
 
-      setLoading(true);
-    }
-    fetchData();
-  }, [reportType]);
-
-  console.log(submittedSynopsis);
-  console.log(submittedThesis);
-  console.log(submittedReport);
-
-  const componentRef = useRef();
-
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-  });
-
-  console.log(selectedReport);
-  const handleRegistrationNo = (e) => {
-    // setselectedReport([]);
-    console.log(filteredSynopsis);
-    console.log(filteredThesis);
-
-    if (filteredSynopsis.length > 0 || filteredThesis.length > 0) {
-      filteredSynopsis.forEach((synopsis) => {
-        if (autocompleteSessionValue === synopsis.student_id.session_id.title) {
-          if (reportType === "Synopsis") {
-            let array = filteredSynopsis.filter(
-              (oneSynopsis) => e.target.value === oneSynopsis.synopsisStatus
-            );
-            setselectedReport(array);
-          } else {
-            let array = filteredThesis.filter(
-              (oneThesis) => e.target.value === oneThesis.thesisStatus
-            );
-            setselectedReport(array);
-          }
-        }
-      });
-      filteredThesis.forEach((thesis) => {
-        if (autocompleteSessionValue === thesis.student_id.session_id.title) {
-          if (reportType !== "Synopsis") {
-            let array = filteredThesis.filter(
-              (oneSynopsis) => e.target.value === oneSynopsis.synopsisStatus
-            );
-            setselectedReport(array);
-          } else {
-            let array = filteredThesis.filter(
-              (oneThesis) => e.target.value === oneThesis.thesisStatus
-            );
-            setselectedReport(array);
-          }
-        }
-      });
-
-      if (reportType === "Synopsis") {
-        let array = filteredSynopsis.filter(
-          (oneSynopsis) => e.target.value === oneSynopsis.synopsisStatus
-        );
-        setselectedReport(array);
-      } else {
-        let array = filteredThesis.filter(
-          (oneThesis) => e.target.value === oneThesis.thesisStatus
-        );
-        setselectedReport(array);
-      }
-    } else {
-      if (reportType === "Synopsis") {
-        let array = submittedSynopsis.filter(
-          (oneSynopsis) => e.target.value === oneSynopsis.synopsisStatus
-        );
-        setselectedReport(array);
-      } else {
-        let array = submittedThesis.filter(
-          (oneThesis) => e.target.value === oneThesis.thesisStatus
-        );
-        setselectedReport(array);
-      }
-    }
-  };
-  console.log(selectedReport);
-
-  const handleStudentSessions = (selectedSession) => {
-    setFilteredSynopsis([]);
-    setFilteredThesis([]);
-    let selectedStudents = [];
-
-    students.forEach((student) => {
-      if (student?.session_id?.title === selectedSession?.title) {
+      students.forEach((student) => {
         let filteredSynopsis = submittedSynopsis.filter(
           (synopsis) => synopsis.student_id._id === student._id
         );
         let filteredThesis = submittedThesis.filter(
           (synopsis) => synopsis.student_id._id === student._id
         );
-        console.log(filteredSynopsis);
-        console.log(filteredThesis);
 
-        if (filteredSynopsis.length > 0 || filteredThesis.length > 0) {
+        if (filteredSynopsis.length > 0 && filteredThesis.length > 0) {
           selectedStudents.push({
-            student_id:
-              filteredSynopsis[0].student_id ||
-              filteredThesis[0].student_id ||
-              [],
-            synopsis: filteredSynopsis[0] || [],
-            thesis: filteredThesis[0] || [],
+            student_id: filteredSynopsis[0].student_id,
+            sessionTitle: filteredSynopsis[0].student_id.session_id.title,
+            synopsisStatus: filteredSynopsis[0].synopsisStatus,
+            synopsisTitle: filteredSynopsis[0].synopsisTitle,
+            thesisStatus: filteredThesis[0].thesisStatus,
+            thesisTitle: filteredThesis[0].thesisTitle,
+          });
+        } else if (filteredThesis.length > 0) {
+          selectedStudents.push({
+            student_id: filteredThesis[0].student_id,
+            sessionTitle: filteredThesis[0].student_id.session_id.title,
+            thesisStatus: filteredThesis[0].thesisStatus,
+            thesisTitle: filteredThesis[0].thesisTitle,
+          });
+        } else if (filteredSynopsis.length > 0) {
+          selectedStudents.push({
+            student_id: filteredSynopsis[0].student_id,
+            sessionTitle: filteredSynopsis[0].student_id.session_id.title,
+            synopsisStatus: filteredSynopsis[0].synopsisStatus,
+            synopsisTitle: filteredSynopsis[0].synopsisTitle,
           });
         }
-      }
-    });
-    console.log(selectedStudents);
-
-    setFilteredSynopsis(selectedStudents.map((student) => student.synopsis));
-    setFilteredThesis(selectedStudents.map((student) => student.thesis));
-
-    if (selectedStudents.length === 0) {
-      setselectedReport([]);
+      });
+      setSelectedReport(selectedStudents);
+      setFilteredReport(selectedStudents);
+      setSessions(sessions);
     }
+    fetchData();
+  }, []);
 
-    console.log(filteredSynopsis);
-    console.log(filteredThesis);
-  };
+  console.log(selectedReport);
+
+  useEffect(() => {
+    console.log(selectedStatus);
+
+    if (selectedSession) {
+      let std = [];
+
+      selectedReport.forEach((student) => {
+        if (selectedStatus) {
+          if (reportType === "Synopsis") {
+            if (
+              student.sessionTitle === selectedSession.title &&
+              student.synopsisStatus === selectedStatus
+            ) {
+              std.push(student);
+            }
+          } else {
+            if (
+              student.sessionTitle === selectedSession.title &&
+              student.thesisStatus === selectedStatus
+            ) {
+              std.push(student);
+            }
+          }
+        } else {
+          if (student.sessionTitle === selectedSession.title) {
+            std.push(student);
+          }
+        }
+      });
+      setFilteredReport(std);
+    }
+  }, [selectedSession, reportType]);
+
+  useEffect(() => {
+    let std = [];
+    if (selectedStatus) {
+      selectedReport.forEach((student) => {
+        if (selectedSession) {
+          if (reportType === "Synopsis") {
+            if (
+              student.synopsisStatus === selectedStatus &&
+              student.sessionTitle === selectedSession.title
+            ) {
+              std.push(student);
+            }
+          } else {
+            if (
+              student.thesisStatus === selectedStatus &&
+              student.sessionTitle === selectedSession.title
+            ) {
+              std.push(student);
+            }
+          }
+        } else {
+          if (reportType === "Synopsis") {
+            if (student.synopsisStatus === selectedStatus) {
+              std.push(student);
+            }
+          } else {
+            if (student.thesisStatus === selectedStatus) {
+              std.push(student);
+            }
+          }
+        }
+      });
+      setFilteredReport(std);
+    }
+  }, [selectedStatus, reportType]);
+
+  console.log(filteredReport);
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
   const defaultProps = {
     options: sessions,
     getOptionLabel: (session) => session?.title || "",
+  };
+  const statusProps = {
+    options: statuses,
+    getOptionLabel: (status) => status || "",
   };
 
   return (
@@ -204,13 +202,6 @@ export default function SummaryReport() {
             value={reportType}
             onChange={(e) => {
               setReportType(e.target.value);
-              if (e.target.value === "Synopsis") {
-                setselectedReport([]);
-                setSubmittedReport(submittedSynopsis);
-              } else {
-                setselectedReport([]);
-                setSubmittedReport(submittedThesis);
-              }
             }}
           >
             <FormControlLabel
@@ -225,37 +216,64 @@ export default function SummaryReport() {
             />
           </RadioGroup>
         </FormControl>
-        {/* <Box sx={{ mb: 4 }}>
- 
-          <Autocomplete
-            {...defaultProps}
-            id="controlled-demo"
-            value={autocompleteSessionValue}
-            onCl
-            onChange={(value, newValue) => {
-              let session = newValue;
-              console.log(session);
-              setAutocompleteSessionValue(session);
-              handleStudentSessions(session);
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Select Session"
-                variant="outlined"
-                color="secondary"
-              />
-            )}
-          />
-        </Box> */}
-        <FormControl fullWidth>
+
+        <Box style={{ display: "flex", gap: "1%" }}>
+          <Box width={"49%"} sx={{ mb: 4 }}>
+            <Autocomplete
+              fullWidth
+              {...defaultProps}
+              id="controlled-demo"
+              value={selectedSession}
+              onChange={(value, newValue) => {
+                let session = newValue;
+                console.log(session);
+                setSelectedSession(session);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  fullWidth
+                  {...params}
+                  label="Select Session"
+                  variant="outlined"
+                  color="secondary"
+                />
+              )}
+            />
+          </Box>
+          <Box width={"49%"} sx={{ mb: 4 }}>
+            <Autocomplete
+              fullWidth
+              {...statusProps}
+              id="controlled-demo"
+              value={selectedStatus}
+              onChange={(value, newValue) => {
+                let status = newValue;
+                console.log(status);
+                setSelectedStatus(status);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  fullWidth
+                  {...params}
+                  label="Select Status"
+                  variant="outlined"
+                  color="secondary"
+                />
+              )}
+            />
+          </Box>
+        </Box>
+
+        {/* <FormControl fullWidth>
           <InputLabel color="secondary">Select Status</InputLabel>
           <Select
             color="secondary"
-            value={selectedReport.thesisStatus || selectedReport.syopsisStatus}
-            name="thesisStatus"
+            value={selectedStatus}
+            name="selectedStatus"
             label="Select Status"
-            onChange={handleRegistrationNo}
+            onChange={(e) => {
+              setSelectedStatus(e.target.value);
+            }}
           >
             <MenuItem value={"Synopsis Evaluation"}>
               Synopsis Evaluation
@@ -309,252 +327,19 @@ export default function SummaryReport() {
             <MenuItem value={"Major Changes"}>Major Changes</MenuItem>
             <MenuItem value={"Rejected"}>Rejected</MenuItem>
           </Select>
-        </FormControl>
+        </FormControl> */}
       </Box>
 
-      {selectedReport.map((report) => {
+      {filteredReport.map((report) => {
         return (
-          <>
-            <div ref={componentRef} className="supervisorWiseReport">
-              <Paper
-                variant="outlined"
-                elevation={3}
-                key={report?.student_id?._id}
-                style={{
-                  display: "grid",
-                  placeItems: "center",
-                  // placeContent: "center",
-                  marginBottom: "2rem",
-                }}
-              >
-                <table
-                  cellSpacing={4}
-                  cellPadding={6}
-                  style={{
-                    color: "#333333",
-                    borderCollapse: "separate",
-                    padding: ".5rem",
-                    /* margin: "1rem", */
-                    /* border: "2px solid #572E74",
-                  borderRadius: "6px", */
-                  }}
-                >
-                  <colgroup className="cols">
-                    <col className="col1" />
-                    <col className="col2" />
-                    <col className="col3" />
-                    <col className="col4" />
-                  </colgroup>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <img
-                          src={
-                            process.env.REACT_APP_URL +
-                              "/" +
-                              report?.student_id?.profilePicture || ""
-                          }
-                          alt="Student Profile"
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            objectFit: "cover",
-                            height: "8rem",
-                            width: "8rem",
-                            borderRadius: "100%",
-                          }}
-                        />
-                      </td>
-                    </tr>
-                    <tr
-                      style={{
-                        backgroundColor: "white",
-                      }}
-                    >
-                      <td
-                        valign="middle"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Name
-                      </td>
-                      <td>{report?.student_id?.username}</td>
-                      <td
-                        valign="middle"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Email
-                      </td>
-                      <td>{report?.student_id?.email}</td>
-                    </tr>
-                    <tr
-                      style={{
-                        backgroundColor: "white",
-                      }}
-                    >
-                      <td
-                        valign="middle"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Father Name
-                      </td>
-                      <td>{report?.student_id?.fatherName}</td>
-                      <td
-                        valign="middle"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Supervisor
-                      </td>
-                      <td>{report?.student_id?.supervisor_id?.username}</td>
-                    </tr>
-                    <tr
-                      style={{ color: "#333333", backgroundColor: "#F7F6F3" }}
-                    >
-                      <td
-                        valign="middle"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Registration No.
-                      </td>
-                      <td>{report?.student_id?.registrationNo}</td>
-                      <td
-                        valign="middle"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Mobile No.
-                      </td>
-                      <td>{report?.student_id?.mobile}</td>
-                    </tr>
-                    <tr
-                      style={{
-                        backgroundColor: "white",
-                      }}
-                    >
-                      <td
-                        valign="middle"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Registration Date
-                      </td>
-                      <td>{report?.student_id?.thesisRegistration}</td>
-                      <td
-                        valign="middle"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        Track
-                      </td>
-                      <td>{report?.student_id?.thesisTrack}</td>
-                    </tr>
-
-                    <tr
-                      style={{
-                        color: "#333333",
-                        backgroundColor: "#F7F6F3",
-                      }}
-                    >
-                      <td
-                        valign="middle"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {reportType === "Synopsis" ? (
-                          <>Synopsis Status</>
-                        ) : (
-                          <>Thesis Status</>
-                        )}
-                      </td>
-                      <td>{report.thesisStatus || report.synopsisStatus}</td>
-                      <td
-                        valign="middle"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {reportType === "Synopsis" ? (
-                          <>Synopsis Title</>
-                        ) : (
-                          <>Thesis Title</>
-                        )}
-                      </td>
-                      <td>{report.thesisTitle || report.synopsisTitle}</td>
-                    </tr>
-
-                    {/* <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
-              <td
-                valign="middle"
-                style={{
-                  backgroundColor: "#E9ECF1",
-                  fontWeight: "bold",
-                  
-                }}
-              >
-                External
-              </td>
-              <td> {selectedSchedule?.student_id?.studentTitle} </td>
-            </tr> */}
-                    {/* <tr
-                    style={{
-                      backgroundColor: "white",
-                    }}
-                  >
-                    <td
-                      valign="middle"
-                      style={{
-                        backgroundColor: "#E9ECF1",
-                        fontWeight: "bold",
-                        
-                      }}
-                    >
-                      {reportType === "Synopsis" ? (
-                        <>Synopsis Status</>
-                      ) : (
-                        <>Thesis Status</>
-                      )}
-                    </td>
-
-                    <td>{report.thesisStatus || report.synopsisStatus}</td>
-                  </tr> */}
-                  </tbody>
-                </table>
-                {/* <div
-                style={{
-                  width: "100%",
-                  // minWidth: "6rem",
-                  // maxWidth: "10rem",
-                  margin: "2rem auto",
-                  borderTop: "2px Dashed #572E74",
-                }}
-              /> */}
-              </Paper>
-            </div>
-          </>
+          <div ref={componentRef} className="supervisorWiseReport">
+            {reportType === "Synopsis" && report.synopsisStatus && (
+              <ReportTemplate report={report} reportType={reportType} />
+            )}
+            {reportType === "Thesis" && report.thesisStatus && (
+              <ReportTemplate report={report} reportType={reportType} />
+            )}
+          </div>
         );
       })}
       <Button
