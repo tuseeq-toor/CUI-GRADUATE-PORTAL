@@ -25,6 +25,23 @@ module.exports = signupMail = (email) => {
     }
   });
 };
+module.exports = reportMail = (email) => {
+  var mailOptions = {
+    from: "tuseeqtoor9@gmail.com",
+    to: email,
+    subject: "Signup Successful",
+    text: "That was easy!",
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+};
+
 module.exports = resetPasswordMail = (email, token) => {
   var mailOptions = {
     from: "tuseeqtoor9@gmail.com",

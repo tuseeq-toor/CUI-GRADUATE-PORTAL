@@ -15,6 +15,19 @@ export default function SendThesisReport() {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [evaluations, setEvaluations] = useState([]);
 
+  const uniqueEvaluatedLabels = (array) => {
+    const arrayUniqueByKey = [
+      ...new Map(
+        array.map((item) => [
+          item[item.schedule_id.student_id.registrationNo],
+          item,
+        ])
+      ).values(),
+    ];
+
+    return arrayUniqueByKey;
+  };
+
   useEffect(() => {
     async function fetchData() {
       const res = await thesisService.getThesisEvaluations();
@@ -42,7 +55,9 @@ export default function SendThesisReport() {
 
       console.log(filteredThesisEvaluation);
 
-      const data = filteredThesisEvaluation.map((res) => ({
+      var values = uniqueEvaluatedLabels(filteredThesisEvaluation);
+
+      const data = values.map((res) => ({
         name: res?.schedule_id?.student_id?.username,
         registrationNo: res?.schedule_id?.student_id?.registrationNo,
         email: res?.schedule_id?.student_id?.email,
