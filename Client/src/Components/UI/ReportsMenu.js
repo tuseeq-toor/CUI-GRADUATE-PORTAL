@@ -84,94 +84,97 @@ export default function ReportsMenu() {
 
   return (
     <div style={{ marginRight: "1.5rem" }}>
-      {currentRole !== "STUDENT" && currentRole !== "SUPERVISOR" && (
-        <>
-          <Button
-            color="secondary"
-            id="demo-customized-button"
-            aria-controls={open ? "demo-customized-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-            variant="contained"
-            disableElevation
-            onClick={handleClick}
-            endIcon={<KeyboardArrowDownIcon />}
-          >
-            All Reports
-          </Button>
-          <StyledMenu
-            id="demo-customized-menu"
-            MenuListProps={{
-              "aria-labelledby": "demo-customized-button",
-            }}
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-          >
-            <MenuItem
-              onClick={() => {
-                navigate("/dashboard/ProcessedReports");
-                handleClose();
-              }}
-              disableRipple
+      {currentRole !== "STUDENT" &&
+        currentRole !== "SUPERVISOR" &&
+        currentRole !== "MS_COR" &&
+        currentRole !== "PHD_COR" && (
+          <>
+            <Button
+              color="secondary"
+              id="demo-customized-button"
+              aria-controls={open ? "demo-customized-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              variant="contained"
+              disableElevation
+              onClick={handleClick}
+              endIcon={<KeyboardArrowDownIcon />}
             >
-              {/* <EditIcon /> */}
-              Processed Report
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                navigate("/dashboard/InprocessReports");
-                handleClose();
+              All Reports
+            </Button>
+            <StyledMenu
+              id="demo-customized-menu"
+              MenuListProps={{
+                "aria-labelledby": "demo-customized-button",
               }}
-              disableRipple
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
             >
-              {/* <EditIcon /> */}
-              In Process Report
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                navigate("/dashboard/ProgramWiseReport");
-                handleClose();
-              }}
-              disableRipple
-            >
-              {/* <EditIcon /> */}
-              Program Wise Report
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                navigate("/dashboard/SessionWiseReport");
-                handleClose();
-              }}
-              disableRipple
-            >
-              {/* <FileCopyIcon /> */}
-              Session Wise Report
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                navigate("/dashboard/SupervisorWiseReport");
-                handleClose();
-              }}
-              disableRipple
-            >
-              {/* <ArchiveIcon /> */}
-              Supervisor Wise Report
-            </MenuItem>
-            <Divider sx={{ my: 0.5 }} />
-            <MenuItem
-              onClick={() => {
-                navigate("/dashboard/summary-report");
-                handleClose();
-              }}
-              disableRipple
-            >
-              {/* <MoreHorizIcon /> */}
-              Summary Report
-            </MenuItem>
-          </StyledMenu>
-        </>
-      )}
+              <MenuItem
+                onClick={() => {
+                  navigate("/dashboard/ProcessedReports");
+                  handleClose();
+                }}
+                disableRipple
+              >
+                {/* <EditIcon /> */}
+                Processed Report
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  navigate("/dashboard/InprocessReports");
+                  handleClose();
+                }}
+                disableRipple
+              >
+                {/* <EditIcon /> */}
+                In Process Report
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  navigate("/dashboard/ProgramWiseReport");
+                  handleClose();
+                }}
+                disableRipple
+              >
+                {/* <EditIcon /> */}
+                Program Wise Report
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  navigate("/dashboard/SessionWiseReport");
+                  handleClose();
+                }}
+                disableRipple
+              >
+                {/* <FileCopyIcon /> */}
+                Session Wise Report
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  navigate("/dashboard/SupervisorWiseReport");
+                  handleClose();
+                }}
+                disableRipple
+              >
+                {/* <ArchiveIcon /> */}
+                Supervisor Wise Report
+              </MenuItem>
+              <Divider sx={{ my: 0.5 }} />
+              <MenuItem
+                onClick={() => {
+                  navigate("/dashboard/summary-report");
+                  handleClose();
+                }}
+                disableRipple
+              >
+                {/* <MoreHorizIcon /> */}
+                Summary Report
+              </MenuItem>
+            </StyledMenu>
+          </>
+        )}
     </div>
   );
 }

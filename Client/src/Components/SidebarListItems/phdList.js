@@ -260,7 +260,7 @@ export const phdListitems = [
     ],
   },
 
-  {
+  /* {
     text: "Reports",
     icon: <ListIcon />,
     active: false,
@@ -297,7 +297,7 @@ export const phdListitems = [
         path: "/Dashboard/summary-report",
       },
     ],
-  },
+  }, */
   /* {
     text: "View Notification",
     icon: <ManageAccountsIcon />,

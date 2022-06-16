@@ -12,6 +12,7 @@ import "../../Components/UI/ActiveTab.css";
 import {
   Autocomplete,
   Button,
+  CircularProgress,
   FormControlLabel,
   FormLabel,
   Paper,
@@ -31,7 +32,7 @@ const statuses = ["Scheduled", "Unscheduled", "Pass Out"];
 export default function SupervisorWiseReports() {
   const componentRef = useRef();
   const { isLoggedIn, user } = useSelector((state) => state.auth);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isSelected, setIsSelected] = useState(false);
 
   const [reportType, setReportType] = useState("Synopsis");
@@ -99,7 +100,7 @@ export default function SupervisorWiseReports() {
       setSelectedReport(selectedStudents);
       setFilteredReport(selectedStudents);
       setSupervisors(supervisors);
-      // setStudents(students);
+      setLoading(false);
     }
     fetchData();
   }, []);
@@ -268,89 +269,106 @@ export default function SupervisorWiseReports() {
           </Box>
         </Box>
 
-        {selectedSupervisor && (
-          <Box>
-            <table
-              cellSpacing={4}
-              cellPadding={6}
-              style={{
-                color: "#333333",
-                borderCollapse: "separate",
-                padding: ".5rem",
-              }}
-            >
-              <colgroup className="cols">
-                <col width="180px" />
-                <col width="50px" />
-                <col width="180px" />
-                <col width="50px" />
-                <col width="180px" />
-                <col width="50px" />
-              </colgroup>
-              <tbody>
-                <tr
-                  style={{
-                    backgroundColor: "white",
-                  }}
-                >
-                  <td
-                    valign="middle"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Total Students
-                  </td>
-                  <td>{totalSupervisorStudents}</td>
-                  <td
-                    valign="middle"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Slots Available
-                  </td>
-                  <td>{totalSlotsAvailable}</td>
-                  <td
-                    valign="middle"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Students Passed Out
-                  </td>
-                  <td>{totalPassedOut}</td>
-                </tr>
-              </tbody>
-            </table>
+        {loading ? (
+          <Box
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginBottom: "4rem",
+              marginTop: "4rem",
+            }}
+          >
+            <CircularProgress size={60} thickness={4.5} color="secondary" />
           </Box>
+        ) : (
+          <>
+            <div ref={componentRef} className="supervisorWiseReport">
+              {selectedSupervisor && (
+                <Box>
+                  <table
+                    cellSpacing={4}
+                    cellPadding={6}
+                    style={{
+                      color: "#333333",
+                      borderCollapse: "separate",
+                      padding: ".5rem",
+                    }}
+                  >
+                    <colgroup className="cols">
+                      <col width="180px" />
+                      <col width="50px" />
+                      <col width="180px" />
+                      <col width="50px" />
+                      <col width="180px" />
+                      <col width="50px" />
+                    </colgroup>
+                    <tbody>
+                      <tr
+                        style={{
+                          backgroundColor: "white",
+                        }}
+                      >
+                        <td
+                          valign="middle"
+                          style={{
+                            backgroundColor: "#E9ECF1",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Total Students
+                        </td>
+                        <td>{totalSupervisorStudents}</td>
+                        <td
+                          valign="middle"
+                          style={{
+                            backgroundColor: "#E9ECF1",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Slots Available
+                        </td>
+                        <td>{totalSlotsAvailable}</td>
+                        <td
+                          valign="middle"
+                          style={{
+                            backgroundColor: "#E9ECF1",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Students Passed Out
+                        </td>
+                        <td>{totalPassedOut}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </Box>
+              )}
+              {filteredReport.map((report) => {
+                return (
+                  <div>
+                    {reportType === "Synopsis" && report.synopsisStatus && (
+                      <ReportTemplate report={report} reportType={reportType} />
+                    )}
+                    {reportType === "Thesis" && report.thesisStatus && (
+                      <ReportTemplate report={report} reportType={reportType} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <Button
+              fullWidth
+              type="button"
+              variant="contained"
+              color="secondary"
+              sx={{ mb: 2 }}
+              onClick={handlePrint}
+            >
+              Print PDF
+            </Button>
+          </>
         )}
       </Box>
-
-      {filteredReport.map((report) => {
-        return (
-          <div ref={componentRef} className="supervisorWiseReport">
-            {reportType === "Synopsis" && report.synopsisStatus && (
-              <ReportTemplate report={report} reportType={reportType} />
-            )}
-            {reportType === "Thesis" && report.thesisStatus && (
-              <ReportTemplate report={report} reportType={reportType} />
-            )}
-          </div>
-        );
-      })}
-      <Button
-        type="button"
-        variant="contained"
-        color="secondary"
-        sx={{ mb: 2 }}
-        onClick={handlePrint}
-      >
-        Print PDF
-      </Button>
     </>
   );
 }

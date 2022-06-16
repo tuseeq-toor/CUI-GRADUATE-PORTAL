@@ -12,6 +12,7 @@ import "../../Components/UI/ActiveTab.css";
 import {
   Autocomplete,
   Button,
+  CircularProgress,
   FormControlLabel,
   FormLabel,
   Paper,
@@ -32,7 +33,7 @@ const statuses = ["Scheduled", "Unscheduled", "Pass Out"];
 export default function SessionWiseReports() {
   const componentRef = useRef();
   const { isLoggedIn, user } = useSelector((state) => state.auth);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isSelected, setIsSelected] = useState(false);
 
   const [reportType, setReportType] = useState("Synopsis");
@@ -96,6 +97,7 @@ export default function SessionWiseReports() {
       setSelectedReport(selectedStudents);
       setFilteredReport(selectedStudents);
       setPrograms(programs);
+      setLoading(false);
     }
     fetchData();
   }, []);
@@ -236,27 +238,45 @@ export default function SessionWiseReports() {
         </Box>
       </Box>
 
-      {filteredReport.map((report) => {
-        return (
+      {loading ? (
+        <Box
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginBottom: "4rem",
+            marginTop: "2rem",
+          }}
+        >
+          <CircularProgress size={60} thickness={4.5} color="secondary" />
+        </Box>
+      ) : (
+        <>
           <div ref={componentRef} className="supervisorWiseReport">
-            {reportType === "Synopsis" && report.synopsisStatus && (
-              <ReportTemplate report={report} reportType={reportType} />
-            )}
-            {reportType === "Thesis" && report.thesisStatus && (
-              <ReportTemplate report={report} reportType={reportType} />
-            )}
+            {filteredReport.map((report) => {
+              return (
+                <div>
+                  {reportType === "Synopsis" && report.synopsisStatus && (
+                    <ReportTemplate report={report} reportType={reportType} />
+                  )}
+                  {reportType === "Thesis" && report.thesisStatus && (
+                    <ReportTemplate report={report} reportType={reportType} />
+                  )}
+                </div>
+              );
+            })}
           </div>
-        );
-      })}
-      <Button
-        type="button"
-        variant="contained"
-        color="secondary"
-        sx={{ mb: 2 }}
-        onClick={handlePrint}
-      >
-        Print PDF
-      </Button>
+          <Button
+            fullWidth
+            type="button"
+            variant="contained"
+            color="secondary"
+            sx={{ mb: 2 }}
+            onClick={handlePrint}
+          >
+            Print PDF
+          </Button>
+        </>
+      )}
     </>
   );
 }

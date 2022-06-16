@@ -12,6 +12,7 @@ import "../../Components/UI/ActiveTab.css";
 import {
   Autocomplete,
   Button,
+  CircularProgress,
   FormControlLabel,
   FormLabel,
   Paper,
@@ -57,7 +58,7 @@ const statuses = [
 export default function SummaryReport() {
   const componentRef = useRef();
   const { isLoggedIn, user } = useSelector((state) => state.auth);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isSelected, setIsSelected] = useState(false);
 
   const [reportType, setReportType] = useState("Synopsis");
@@ -120,6 +121,7 @@ export default function SummaryReport() {
       setSelectedReport(selectedStudents);
       setFilteredReport(selectedStudents);
       setSessions(sessions);
+      setLoading(false);
     }
     fetchData();
   }, []);
@@ -296,29 +298,45 @@ export default function SummaryReport() {
             />
           </Box>
         </Box>
+        {loading ? (
+          <Box
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "4rem",
+            }}
+          >
+            <CircularProgress size={60} thickness={4.5} color="secondary" />
+          </Box>
+        ) : (
+          <>
+            <div ref={componentRef} className="supervisorWiseReport">
+              {filteredReport.map((report) => {
+                return (
+                  <div>
+                    {reportType === "Synopsis" && report.synopsisStatus && (
+                      <ReportTemplate report={report} reportType={reportType} />
+                    )}
+                    {reportType === "Thesis" && report.thesisStatus && (
+                      <ReportTemplate report={report} reportType={reportType} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <Button
+              fullWidth
+              type="button"
+              variant="contained"
+              color="secondary"
+              sx={{ mb: 2 }}
+              onClick={handlePrint}
+            >
+              Print PDF
+            </Button>
+          </>
+        )}
       </Box>
-
-      {filteredReport.map((report) => {
-        return (
-          <div ref={componentRef} className="supervisorWiseReport">
-            {reportType === "Synopsis" && report.synopsisStatus && (
-              <ReportTemplate report={report} reportType={reportType} />
-            )}
-            {reportType === "Thesis" && report.thesisStatus && (
-              <ReportTemplate report={report} reportType={reportType} />
-            )}
-          </div>
-        );
-      })}
-      <Button
-        type="button"
-        variant="contained"
-        color="secondary"
-        sx={{ mb: 2 }}
-        onClick={handlePrint}
-      >
-        Print PDF
-      </Button>
     </>
   );
 }

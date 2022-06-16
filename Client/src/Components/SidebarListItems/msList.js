@@ -235,7 +235,7 @@ export const msListitems = [
     ],
   },
 
-  {
+  /* {
     text: "Reports",
     icon: <ListIcon />,
     active: false,
@@ -272,7 +272,7 @@ export const msListitems = [
         path: "/Dashboard/summary-report",
       },
     ],
-  },
+  }, */
   /* {
     text: "View Notification",
     icon: <ManageAccountsIcon />,
