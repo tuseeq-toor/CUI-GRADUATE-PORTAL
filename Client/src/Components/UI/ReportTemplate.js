@@ -1,4 +1,5 @@
-import { Paper } from "@mui/material";
+import { Paper, Typography } from "@mui/material";
+import { Box } from "@mui/system";
 import React from "react";
 
 const ReportTemplate = ({ report, reportType }) => {

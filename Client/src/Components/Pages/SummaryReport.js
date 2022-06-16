@@ -311,6 +311,30 @@ export default function SummaryReport() {
         ) : (
           <>
             <div ref={componentRef} className="supervisorWiseReport">
+              <Box
+                sx={{
+                  marginTop: 2,
+                  marginBottom: 4,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <img
+                  style={{
+                    width: "350px",
+                  }}
+                  alt="Remy Sharp"
+                  src="../assets/images/cui.png"
+                />
+                <Typography
+                  style={{ marginLeft: "-15rem" }}
+                  component="h1"
+                  variant="h5"
+                >
+                  COMSATS UNIVERSITY ISLAMABD
+                </Typography>
+              </Box>
               {filteredReport.map((report) => {
                 return (
                   <div>

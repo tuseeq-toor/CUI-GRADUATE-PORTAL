@@ -228,7 +228,7 @@ export default function EvaluateSynopsisMS() {
                         >
                           Area of Specialization
                         </td>
-                        <td>{selectedSynopsis?.specializationTrack}</td>
+                        <td>{selectedSynopsis?.SpecializationTrack}</td>
                       </tr>
                       <tr style={{ backgroundColor: "White" }}>
                         <td
@@ -349,7 +349,7 @@ export default function EvaluateSynopsisMS() {
                         >
                           Synopsis Status
                         </td>
-                        <td>{submittedSynopsis?.synopsisStatus}</td>
+                        <td>{selectedSynopsis?.synopsisStatus}</td>
                       </tr>
                       {/* <tr
                         style={{
@@ -408,9 +408,7 @@ export default function EvaluateSynopsisMS() {
                         >
                           Synopsis Title
                         </td>
-                        <td colspan="3">
-                          {selectedSchedule?.student_id?.synopsisTitle}
-                        </td>
+                        <td colspan="3">{selectedSynopsis?.synopsisTitle}</td>
                       </tr>
                     </tbody>
                   </table>
