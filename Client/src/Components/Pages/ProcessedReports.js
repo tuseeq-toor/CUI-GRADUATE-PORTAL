@@ -26,9 +26,9 @@ import { useReactToPrint } from "react-to-print";
 import sessionsService from "../../API/sessions";
 import ReportTemplate from "../UI/ReportTemplate";
 
-const statuses = ["Scheduled", "Unscheduled", "Pass Out"];
+const statuses = ["Pass Out"];
 
-export default function SupervisorWiseReports() {
+export default function ProcessedReports() {
   const componentRef = useRef();
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
@@ -41,23 +41,18 @@ export default function SupervisorWiseReports() {
   const [submittedReport, setSubmittedReport] = useState([]);
   const [filteredSynopsis, setFilteredSynopsis] = useState([]);
   const [filteredReport, setFilteredReport] = useState([]);
-  const [supervisors, setSupervisors] = useState([]);
+  const [sessions, setSessions] = useState([]);
   const [students, setStudents] = useState([]);
-  const [selectedSupervisor, setSelectedSupervisor] = useState("");
-  const [selectedStudent, setSelectedStudent] = useState("");
-
-  const [totalSupervisorStudents, setTotalSupervisorStudents] = useState("");
-  const [totalSlotsAvailable, setTotalSlotsAvailable] = useState("");
-  const [totalPassedOut, setTotalPassedOut] = useState("");
+  const [selectedSession, setSelectedSession] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("Pass Out");
 
   useEffect(() => {
     async function fetchData() {
-      const { supervisors } = await studentService.getSupervisors();
+      const sessions = await sessionsService.getSessions();
       const students = await studentService.getStudents();
       const submittedSynopsis = await synopsisService.getSubmittedSynopsis();
       const submittedThesis = await thesisService.getSubmittedThesis();
 
-      console.log(supervisors);
       console.log(submittedSynopsis);
       console.log(submittedThesis);
 
@@ -71,106 +66,124 @@ export default function SupervisorWiseReports() {
           (synopsis) => synopsis.student_id._id === student._id
         );
 
-        if (filteredSynopsis.length > 0 && filteredThesis.length > 0) {
+        if (
+          filteredSynopsis.length > 0 &&
+          filteredThesis.length > 0 &&
+          filteredSynopsis[0].synopsisStatus === "Pass Out" &&
+          filteredThesis[0].thesisStatus === "Pass Out"
+        ) {
           selectedStudents.push({
             student_id: filteredSynopsis[0].student_id,
-            supervisor: filteredSynopsis[0].student_id.supervisor_id.username,
+            sessionTitle: filteredSynopsis[0].student_id.session_id.title,
             synopsisStatus: filteredSynopsis[0].synopsisStatus,
             synopsisTitle: filteredSynopsis[0].synopsisTitle,
             thesisStatus: filteredThesis[0].thesisStatus,
             thesisTitle: filteredThesis[0].thesisTitle,
           });
-        } else if (filteredThesis.length > 0) {
+        } else if (
+          filteredThesis.length > 0 &&
+          filteredThesis[0].thesisStatus === "Pass Out"
+        ) {
           selectedStudents.push({
             student_id: filteredThesis[0].student_id,
-            supervisor: filteredThesis[0].student_id.supervisor_id.username,
+            sessionTitle: filteredThesis[0].student_id.session_id.title,
             thesisStatus: filteredThesis[0].thesisStatus,
             thesisTitle: filteredThesis[0].thesisTitle,
           });
-        } else if (filteredSynopsis.length > 0) {
+        } else if (
+          filteredSynopsis.length > 0 &&
+          filteredSynopsis[0].synopsisStatus === "Pass Out"
+        ) {
           selectedStudents.push({
             student_id: filteredSynopsis[0].student_id,
-            supervisor: filteredSynopsis[0].student_id.supervisor_id.username,
+            sessionTitle: filteredSynopsis[0].student_id.session_id.title,
             synopsisStatus: filteredSynopsis[0].synopsisStatus,
             synopsisTitle: filteredSynopsis[0].synopsisTitle,
           });
         }
       });
+
       setSelectedReport(selectedStudents);
       setFilteredReport(selectedStudents);
-      setSupervisors(supervisors);
-      // setStudents(students);
+      setSessions(sessions);
     }
     fetchData();
   }, []);
 
   console.log(selectedReport);
-  console.log(supervisors);
 
   useEffect(() => {
-    console.log(selectedSupervisor);
+    console.log(selectedStatus);
 
-    if (selectedSupervisor) {
+    if (selectedSession) {
       let std = [];
 
       selectedReport.forEach((student) => {
-        if (student.supervisor === selectedSupervisor.username) {
-          std.push(student);
-        }
-      });
-      setFilteredReport(std);
-      setStudents(std);
-    } else {
-      setFilteredReport(selectedReport);
-      setStudents([]);
-    }
-  }, [selectedSupervisor, selectedStudent]);
-
-  useEffect(() => {
-    console.log(selectedStudent);
-
-    if (selectedStudent) {
-      let std = [];
-
-      selectedReport.forEach((student) => {
-        if (
-          student.student_id.username === selectedStudent.student_id.username
-        ) {
-          std.push(student);
-        }
-      });
-      setFilteredReport(std);
-    }
-  }, [selectedStudent, selectedSupervisor]);
-
-  useEffect(() => {
-    console.log(selectedSupervisor);
-
-    if (selectedSupervisor) {
-      let totalStudents = 0;
-      let slotsAvailable = 7;
-      let studentsPassedOut = 0;
-
-      selectedReport.forEach((report) => {
-        if (
-          report.student_id.supervisor_id.username ===
-          selectedSupervisor.username
-        ) {
-          totalStudents++;
-
-          if (
-            report.synopsisStatus === "Pass Out" ||
-            report.thesisStatus === "Pass Out"
-          ) {
-            studentsPassedOut++;
+        if (selectedStatus) {
+          if (reportType === "Synopsis") {
+            if (
+              student.sessionTitle === selectedSession.title &&
+              student.synopsisStatus === selectedStatus
+            ) {
+              std.push(student);
+            }
+          } else {
+            if (
+              student.sessionTitle === selectedSession.title &&
+              student.thesisStatus === selectedStatus
+            ) {
+              std.push(student);
+            }
+          }
+        } else {
+          if (student.sessionTitle === selectedSession.title) {
+            std.push(student);
+          } else {
+            setFilteredReport(selectedReport);
           }
         }
       });
-      setTotalSupervisorStudents(totalStudents);
-      setTotalSlotsAvailable(slotsAvailable - totalStudents);
-      setTotalPassedOut(studentsPassedOut);
+      setFilteredReport(std);
+    } else {
+      setFilteredReport(selectedReport);
     }
-  }, [selectedSupervisor, reportType]);
+  }, [selectedSession, selectedStatus, reportType]);
+
+  useEffect(() => {
+    let std = [];
+    if (selectedStatus) {
+      selectedReport.forEach((student) => {
+        if (selectedSession) {
+          if (reportType === "Synopsis") {
+            if (
+              student.synopsisStatus === selectedStatus &&
+              student.sessionTitle === selectedSession.title
+            ) {
+              std.push(student);
+            }
+          } else {
+            if (
+              student.thesisStatus === selectedStatus &&
+              student.sessionTitle === selectedSession.title
+            ) {
+              std.push(student);
+            }
+          }
+        } else {
+          if (reportType === "Synopsis") {
+            if (student.synopsisStatus === selectedStatus) {
+              std.push(student);
+            }
+          } else {
+            if (student.thesisStatus === selectedStatus) {
+              std.push(student);
+            }
+          }
+        }
+      });
+      setFilteredReport(std);
+    }
+  }, [selectedStatus, selectedSession, reportType]);
 
   console.log(filteredReport);
 
@@ -178,13 +191,13 @@ export default function SupervisorWiseReports() {
     content: () => componentRef.current,
   });
 
-  const supervisorProps = {
-    options: supervisors,
-    getOptionLabel: (supervisor) => supervisor?.username || "",
+  const defaultProps = {
+    options: sessions,
+    getOptionLabel: (session) => session?.title || "",
   };
-  const studentProps = {
-    options: students,
-    getOptionLabel: (student) => student?.student_id?.username || "",
+  const statusProps = {
+    options: statuses,
+    getOptionLabel: (status) => status || "",
   };
 
   return (
@@ -195,7 +208,7 @@ export default function SupervisorWiseReports() {
           textAlign={"center"}
           variant="h5"
         >
-          Supervisor Wise Report
+          Processed Report
         </Typography>
         <FormControl sx={{ mb: 1 }}>
           <FormLabel color="secondary">Student</FormLabel>
@@ -224,20 +237,22 @@ export default function SupervisorWiseReports() {
           <Box width={"49%"} sx={{ mb: 4 }}>
             <Autocomplete
               fullWidth
-              {...supervisorProps}
+              {...defaultProps}
               id="controlled-demo"
-              value={selectedSupervisor}
+              value={selectedSession}
               onChange={(value, newValue) => {
-                let supervisor = newValue;
-                console.log(supervisor);
-                setSelectedSupervisor(supervisor);
-                setSelectedStudent(null);
+                let session = newValue;
+                console.log(session);
+                setSelectedSession(session);
+                if (session === null) {
+                  setSelectedStatus(null);
+                }
               }}
               renderInput={(params) => (
                 <TextField
                   fullWidth
                   {...params}
-                  label="Select Supervisor"
+                  label="Select Session"
                   variant="outlined"
                   color="secondary"
                 />
@@ -247,19 +262,19 @@ export default function SupervisorWiseReports() {
           <Box width={"49%"} sx={{ mb: 4 }}>
             <Autocomplete
               fullWidth
-              {...studentProps}
+              {...statusProps}
               id="controlled-demo"
-              value={selectedStudent}
+              value={selectedStatus}
               onChange={(value, newValue) => {
-                let std = newValue;
-                console.log(std);
-                setSelectedStudent(std);
+                let status = newValue;
+                console.log(status);
+                setSelectedStatus(status);
               }}
               renderInput={(params) => (
                 <TextField
                   fullWidth
                   {...params}
-                  label="Select Student"
+                  label="Select Status"
                   variant="outlined"
                   color="secondary"
                 />
@@ -267,67 +282,6 @@ export default function SupervisorWiseReports() {
             />
           </Box>
         </Box>
-
-        {selectedSupervisor && (
-          <Box>
-            <table
-              cellSpacing={4}
-              cellPadding={6}
-              style={{
-                color: "#333333",
-                borderCollapse: "separate",
-                padding: ".5rem",
-              }}
-            >
-              <colgroup className="cols">
-                <col width="180px" />
-                <col width="50px" />
-                <col width="180px" />
-                <col width="50px" />
-                <col width="180px" />
-                <col width="50px" />
-              </colgroup>
-              <tbody>
-                <tr
-                  style={{
-                    backgroundColor: "white",
-                  }}
-                >
-                  <td
-                    valign="middle"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Total Students
-                  </td>
-                  <td>{totalSupervisorStudents}</td>
-                  <td
-                    valign="middle"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Slots Available
-                  </td>
-                  <td>{totalSlotsAvailable}</td>
-                  <td
-                    valign="middle"
-                    style={{
-                      backgroundColor: "#E9ECF1",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Students Passed Out
-                  </td>
-                  <td>{totalPassedOut}</td>
-                </tr>
-              </tbody>
-            </table>
-          </Box>
-        )}
       </Box>
 
       {filteredReport.map((report) => {

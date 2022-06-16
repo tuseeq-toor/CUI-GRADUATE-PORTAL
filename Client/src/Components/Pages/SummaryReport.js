@@ -26,7 +26,33 @@ import { useReactToPrint } from "react-to-print";
 import sessionsService from "../../API/sessions";
 import ReportTemplate from "../UI/ReportTemplate";
 
-const statuses = ["Scheduled", "Unscheduled", "Pass Out"];
+const statuses = [
+  "Scheduled",
+  "Unscheduled",
+  "Pass Out",
+  "Synopsis Evaluation",
+  "Internal Evaluation",
+  "External Evaluation",
+  "Dismissed",
+  "Synopsis Not Submitted for GAC",
+  "Conducted",
+  "Approved By GAC",
+  "Minor Changes",
+  "Synopsis Not Submitted for DEAN office",
+  "Synopsis Submitted for DEAN office",
+  "Forwarded to DEAN Office",
+  "Changes suggested by DEAN office",
+  "Approved By DEAN",
+  "Thesis Not Submitted for Internal",
+  "Thesis Submitted for Internal",
+  "Accepted by Internal",
+  "Thesis not Submitted for Internal",
+  "Thesis Submitted for Internal",
+  "Deffered",
+  "Accepted",
+  "Major Changes",
+  "Rejected",
+];
 
 export default function SummaryReport() {
   const componentRef = useRef();
@@ -126,12 +152,16 @@ export default function SummaryReport() {
         } else {
           if (student.sessionTitle === selectedSession.title) {
             std.push(student);
+          } else {
+            setFilteredReport(selectedReport);
           }
         }
       });
       setFilteredReport(std);
+    } else {
+      setFilteredReport(selectedReport);
     }
-  }, [selectedSession, reportType]);
+  }, [selectedSession, selectedStatus, reportType]);
 
   useEffect(() => {
     let std = [];
@@ -167,7 +197,7 @@ export default function SummaryReport() {
       });
       setFilteredReport(std);
     }
-  }, [selectedStatus, reportType]);
+  }, [selectedStatus, selectedSession, reportType]);
 
   console.log(filteredReport);
 
@@ -228,6 +258,9 @@ export default function SummaryReport() {
                 let session = newValue;
                 console.log(session);
                 setSelectedSession(session);
+                if (session === null) {
+                  setSelectedStatus(null);
+                }
               }}
               renderInput={(params) => (
                 <TextField
@@ -263,71 +296,6 @@ export default function SummaryReport() {
             />
           </Box>
         </Box>
-
-        {/* <FormControl fullWidth>
-          <InputLabel color="secondary">Select Status</InputLabel>
-          <Select
-            color="secondary"
-            value={selectedStatus}
-            name="selectedStatus"
-            label="Select Status"
-            onChange={(e) => {
-              setSelectedStatus(e.target.value);
-            }}
-          >
-            <MenuItem value={"Synopsis Evaluation"}>
-              Synopsis Evaluation
-            </MenuItem>
-            <MenuItem value={"Internal Evaluation"}>
-              Internal Evaluation
-            </MenuItem>
-            <MenuItem value={"External Evaluation"}>
-              External Evaluation
-            </MenuItem>
-            <MenuItem value={"Pass Out"}>Pass Out</MenuItem>
-            <MenuItem value={"Dismissed"}>Dismissed</MenuItem>
-            <MenuItem value={"Synopsis Not Submitted for GAC"}>
-              Synopsis Not Submitted for GAC
-            </MenuItem>
-            <MenuItem value={"Unscheduled"}>Unscheduled</MenuItem>
-            <MenuItem value={"Scheduled"}>Scheduled</MenuItem>
-            <MenuItem value={"Conducted"}>Conducted</MenuItem>
-            <MenuItem value={"Approved By GAC"}>Approved By GAC</MenuItem>
-            <MenuItem value={"Minor Changes"}>Minor Changes</MenuItem>
-            <MenuItem value={"Synopsis Not Submitted for DEAN office"}>
-              Synopsis Not Submitted for DEAN office
-            </MenuItem>
-            <MenuItem value={"Synopsis Submitted for DEAN office"}>
-              Synopsis Submitted for DEAN office
-            </MenuItem>
-            <MenuItem value={"Forwarded to DEAN Office "}>
-              Forwarded to DEAN Office
-            </MenuItem>
-            <MenuItem value={"Changes suggested by DEAN office"}>
-              Changes suggested by DEAN office
-            </MenuItem>
-            <MenuItem value={"Approved By DEAN"}>Approved By DEAN</MenuItem>
-            <MenuItem value={"Thesis Not Submitted for Internal"}>
-              Thesis Not Submitted for Internal
-            </MenuItem>
-            <MenuItem value={"Thesis Submitted for Internal"}>
-              Thesis Submitted for Internal
-            </MenuItem>
-            <MenuItem value={"Accepted by Internal"}>
-              Accepted by Internal
-            </MenuItem>
-            <MenuItem value={"Thesis not Submitted for Internal"}>
-              Thesis not Submitted for Internal
-            </MenuItem>
-            <MenuItem value={"Thesis Submitted for Internal"}>
-              Thesis Submitted for Internal
-            </MenuItem>
-            <MenuItem value={"Deffered"}>Deffered</MenuItem>
-            <MenuItem value={"Accepted"}>Accepted</MenuItem>
-            <MenuItem value={"Major Changes"}>Major Changes</MenuItem>
-            <MenuItem value={"Rejected"}>Rejected</MenuItem>
-          </Select>
-        </FormControl> */}
       </Box>
 
       {filteredReport.map((report) => {

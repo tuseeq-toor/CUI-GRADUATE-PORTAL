@@ -241,6 +241,16 @@ export const msListitems = [
     active: false,
     subMenu: [
       {
+        text: "Processed Report",
+        icon: <ScreenSearchDesktopIcon />,
+        path: "/Dashboard/ProcessedReports",
+      },
+      {
+        text: "In Process Report",
+        icon: <PageviewIcon />,
+        path: "/Dashboard/InprocessReports",
+      },
+      {
         text: "Program-Wise Report",
         icon: <LeaderboardIcon />,
         path: "/Dashboard/ProgramWiseReport",

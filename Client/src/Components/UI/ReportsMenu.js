@@ -110,6 +110,26 @@ export default function ReportsMenu() {
           >
             <MenuItem
               onClick={() => {
+                navigate("/dashboard/ProcessedReports");
+                handleClose();
+              }}
+              disableRipple
+            >
+              {/* <EditIcon /> */}
+              Processed Report
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                navigate("/dashboard/InprocessReports");
+                handleClose();
+              }}
+              disableRipple
+            >
+              {/* <EditIcon /> */}
+              In Process Report
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
                 navigate("/dashboard/ProgramWiseReport");
                 handleClose();
               }}

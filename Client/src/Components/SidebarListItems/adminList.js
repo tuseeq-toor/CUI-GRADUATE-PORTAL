@@ -243,6 +243,17 @@ export const adminListitems = [
         icon: <TableChartIcon />,
         path: "/Dashboard/Thesis-WiseReport",
       },*/
+
+      {
+        text: "Processed Report",
+        icon: <ScreenSearchDesktopIcon />,
+        path: "/Dashboard/ProcessedReports",
+      },
+      {
+        text: "In Process Report",
+        icon: <PageviewIcon />,
+        path: "/Dashboard/InprocessReports",
+      },
       {
         text: "Program-Wise Report",
         icon: <LeaderboardIcon />,

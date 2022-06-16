@@ -99,7 +99,7 @@ export default function EditProfile() {
       console.log(value);
     } */
     let res = await studentService.updateProfile(formData);
-    if (res.afterUpdate) {
+    if (res?.afterUpdate) {
       setShowUpdateModal(true);
       console.log(res);
     } else {
