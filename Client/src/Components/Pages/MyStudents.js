@@ -1,38 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { studentData } from "../DummyData/DummyData";
-import DataTable from "../UI/TableUI";
-import axios from "axios";
-import { DataGrid } from "@mui/x-data-grid";
-import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import {
-  Button,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  InputLabel,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Select,
-} from "@mui/material";
+import { Button } from "@mui/material";
 import Modal from "@mui/material/Modal";
-
 import Box from "@mui/material/Box";
-import { Typography } from "@mui/material";
-import { TextField } from "@mui/material";
+
+import DataTable from "../UI/TableUI";
 import BackdropModal from "../UI/BackdropModal";
 import studentService from "../../API/students";
-import { useFormik } from "formik";
-import sessionsService from "../../API/sessions";
-import programsService from "../../API/programs";
-import adminService from "../../API/admin";
 import ReportTemplate from "../UI/ReportTemplate";
 import synopsisService from "../../API/synopsis";
 import thesisService from "../../API/thesis";
@@ -41,14 +14,11 @@ const style = {
   position: "absolute",
   display: "flex",
   flexDirection: "column",
-  /* gap: ".5rem", */
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 900,
   bgcolor: "background.paper",
-
-  /* border: "2px solid #000", */
   boxShadow: 24,
   p: 4,
 };
@@ -58,19 +28,17 @@ export default function MyStudents() {
     user: { faculty: currentUser },
   } = JSON.parse(localStorage.getItem("user"));
   console.log(currentUser);
-  const [reportType, setReportType] = useState("Synopsis");
-  const [filteredReport, setFilteredReport] = useState([]);
 
+  // const [reportType, setReportType] = useState("Synopsis");
+  const [filteredReport, setFilteredReport] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [students, setStudents] = useState([]);
+  const [selectedStudent, setselectedStudent] = useState({});
+
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  const [students, setStudents] = useState([]);
-  const [supervisors, setSupervisors] = useState([]);
-  const [programs, setPrograms] = useState([]);
-  const [selectedStudent, setselectedStudent] = useState({});
 
   useEffect(() => {
     async function fetchData() {
@@ -83,6 +51,7 @@ export default function MyStudents() {
       console.log(submittedThesis);
 
       let selectedStudents = [];
+      let studentsArray = [];
 
       students.forEach((student) => {
         if (student.supervisor_id.username === currentUser.fullName) {
@@ -95,90 +64,35 @@ export default function MyStudents() {
 
           console.log(filteredSynopsis);
           console.log(filteredThesis);
+          selectedStudents.push({
+            student_id: student,
+            ...(filteredSynopsis.length > 0 && {
+              synopsisStatus: filteredSynopsis[0].synopsisStatus,
+              synopsisTitle: filteredSynopsis[0].synopsisTitle,
+            }),
+            ...(filteredThesis.length > 0 && {
+              thesisStatus: filteredThesis[0].thesisStatus,
+              thesisTitle: filteredThesis[0].thesisTitle,
+            }),
+          });
 
-          if (filteredSynopsis.length > 0 && filteredThesis.length > 0) {
-            selectedStudents.push({
-              student_id: filteredSynopsis[0].student_id,
-              synopsisStatus: filteredSynopsis[0].synopsisStatus,
-              synopsisTitle: filteredSynopsis[0].synopsisTitle,
-              thesisStatus: filteredThesis[0].thesisStatus,
-              thesisTitle: filteredThesis[0].thesisTitle,
-            });
-          } else if (
-            filteredThesis.length > 0 &&
-            filteredSynopsis.length === 0
-          ) {
-            selectedStudents.push({
-              student_id: filteredThesis[0].student_id,
-              thesisStatus: filteredThesis[0].thesisStatus,
-              thesisTitle: filteredThesis[0].thesisTitle,
-            });
-          } else if (
-            filteredSynopsis.length > 0 &&
-            filteredThesis.length === 0
-          ) {
-            selectedStudents.push({
-              student_id: filteredSynopsis[0].student_id,
-              synopsisStatus: filteredSynopsis[0].synopsisStatus,
-              synopsisTitle: filteredSynopsis[0].synopsisTitle,
-            });
-          } /* else if (
-            filteredSynopsis.length === 0 &&
-            filteredThesis.length === 0
-          ) {
-            selectedStudents.push({
-              student_id: student,
-            });
-          } */
+          studentsArray.push({
+            Name: student.username,
+            RegistrationNo: student.registrationNo,
+            Email: student.email,
+            id: student._id,
+            Program: student.program_id.programShortName,
+          });
         }
       });
       console.log(selectedStudents);
       setFilteredReport(selectedStudents);
-      /* setSelectedReport(selectedStudents);
-      setSupervisors(supervisors);
-      setLoading(false); */
+      setStudents(studentsArray);
     }
     fetchData();
   }, []);
 
-  const getSupervisors = async () => {
-    let data = await studentService.getSupervisors();
-
-    console.table("SubmissionM", data?.supervisors);
-    setSupervisors(data?.supervisors);
-  };
-
-  const getPrograms = async () => {
-    let data = await programsService.getPrograms();
-    console.log(data);
-    setPrograms(data);
-  };
-
-  async function getData() {
-    const res = await studentService.getStudents();
-    console.log(res);
-
-    let data = [];
-    if (filteredReport) {
-      filteredReport.forEach((stud) => {
-        data.push({
-          Name: stud.student_id.username,
-          RegistrationNo: stud.student_id.registrationNo,
-          Email: stud.student_id.email,
-          id: stud.student_id._id,
-          Program: stud.student_id.program_id.programShortName,
-          /* data: stud, */
-        });
-      });
-      setStudents(data);
-    }
-  }
-
-  useEffect(() => {
-    getData();
-    getSupervisors();
-    getPrograms();
-  }, []);
+  console.log(students);
 
   const studentHeader = [
     {
@@ -214,7 +128,7 @@ export default function MyStudents() {
 
           <Button
             onClick={() => {
-              setselectedStudent(props.row);
+              setselectedStudent(props.row.id);
               handleOpen();
             }}
             variant="contained"
@@ -229,42 +143,13 @@ export default function MyStudents() {
     },
   ];
 
-  const formik = useFormik({
-    initialValues: {
-      registrationNo: selectedStudent?.data?.registrationNo,
-      username: selectedStudent?.data?.username,
-      fatherName: selectedStudent?.data?.fatherName,
-      email: selectedStudent?.data?.email,
-      mobile: selectedStudent?.data?.mobile,
-      supervisor_id: selectedStudent?.data?.supervisor_id?._id,
-      coSupervisor_id: selectedStudent?.data?.coSupervisor_id?._id,
-      program_id: selectedStudent?.data?.program_id?._id,
-      thesisRegistration: selectedStudent?.data?.thesisRegistration,
-      thesisTrack: selectedStudent?.data?.thesisTrack,
-      totalPublications: selectedStudent?.data?.totalPublications,
-      impactFactorPublications: selectedStudent?.data?.impactFactorPublications,
-    },
-    enableReinitialize: true,
-    onSubmit: async (values) => {
-      let res = await adminService.updateStudent(values, selectedStudent.id);
-      getData();
-      if (res.status === 200) {
-        setShowUpdateModal(true);
-
-        console.log(res);
-      } else {
-      }
-      console.log(res);
-    },
-  });
-
   console.log(selectedStudent);
 
   return (
     <>
       <Modal open={open} onClose={handleClose}>
-        <Box sx={style} component="form" onSubmit={formik.handleSubmit}>
-          <FormControl sx={{ mb: 1 }}>
+        <Box sx={style}>
+          {/*  <FormControl sx={{ mb: 1 }}>
             <FormLabel color="secondary">Student</FormLabel>
             <RadioGroup
               row
@@ -285,30 +170,15 @@ export default function MyStudents() {
                 label="Thesis"
               />
             </RadioGroup>
-          </FormControl>
+          </FormControl> */}
 
           {filteredReport.map((report) => {
             return (
-              <>
-                <div>
-                  {selectedStudent?.id === report.student_id._id && (
-                    <>
-                      {reportType === "Synopsis" && report.synopsisStatus && (
-                        <ReportTemplate
-                          report={report}
-                          reportType={reportType}
-                        />
-                      )}
-                      {reportType === "Thesis" && report.thesisStatus && (
-                        <ReportTemplate
-                          report={report}
-                          reportType={reportType}
-                        />
-                      )}
-                    </>
-                  )}
-                </div>
-              </>
+              <div>
+                {report.student_id._id === selectedStudent && (
+                  <ReportTemplate report={report} />
+                )}
+              </div>
             );
           })}
           <Button
@@ -320,180 +190,6 @@ export default function MyStudents() {
           >
             Back
           </Button>
-          {/* <Box>
-            <Box sx={{ display: "flex", gap: "1rem" }}>
-              <Box sx={{ width: "50%" }}>
-                <TextField
-                  sx={{
-                    width: "100%",
-                    marginBottom: "5px",
-                  }}
-                  label="Registration No."
-                  name="registrationNo"
-                  color="secondary"
-                  variant="standard"
-                  value={formik.values.registrationNo}
-                  onChange={formik.handleChange}
-                />
-
-                <TextField
-                  sx={{ width: "100%", marginBottom: "5px" }}
-                  label="Name"
-                  name="username"
-                  color="secondary"
-                  variant="standard"
-                  value={formik.values.username}
-                  onChange={formik.handleChange}
-                />
-                <TextField
-                  sx={{ width: "100%", marginBottom: "5px" }}
-                  label="Father Name"
-                  name="fatherName"
-                  color="secondary"
-                  variant="standard"
-                  value={formik.values.fatherName}
-                  onChange={formik.handleChange}
-                />
-                <TextField
-                  sx={{ width: "100%", marginBottom: "5px" }}
-                  label="Email"
-                  name="email"
-                  color="secondary"
-                  variant="standard"
-                  value={formik.values.email}
-                  onChange={formik.handleChange}
-                />
-                <TextField
-                  sx={{ width: "100%", marginBottom: "5px" }}
-                  label="Mobile"
-                  name="mobile"
-                  color="secondary"
-                  variant="standard"
-                  value={formik.values.mobile}
-                  onChange={formik.handleChange}
-                />
-                <Box
-                  sx={{ minWidth: 120, marginBottom: "5px", marginTop: "10px" }}
-                >
-                  <FormControl fullWidth color="secondary">
-                    <InputLabel>Program</InputLabel>
-                    <Select
-                      variant="standard"
-                      label="Program"
-                      name="program_id"
-                      value={formik.values.program_id}
-                      onChange={formik.handleChange}
-                    >
-                      {programs.map((item) => {
-                        return (
-                          <MenuItem key={item._id} value={item._id}>
-                            {item.programShortName}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                  </FormControl>
-                </Box>
-                <Box
-                  sx={{ minWidth: 120, marginBottom: "5px", marginTop: "10px" }}
-                >
-                  <FormControl fullWidth color="secondary">
-                    <InputLabel>Supervisor</InputLabel>
-                    <Select
-                      variant="standard"
-                      label="Supervisor"
-                      name="supervisor_id"
-                      value={formik.values.supervisor_id}
-                      onChange={formik.handleChange}
-                    >
-                      {supervisors.map((item) => {
-                        return (
-                          <MenuItem key={item._id} value={item._id}>
-                            {item.username}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                  </FormControl>
-                </Box>
-                <Box
-                  sx={{ minWidth: 120, marginBottom: "5px", marginTop: "10px" }}
-                >
-                  <FormControl fullWidth color="secondary">
-                    <InputLabel>Co-Supervisor</InputLabel>
-                    <Select
-                      variant="standard"
-                      label="Co-Supervisor"
-                      name="coSupervisor_id"
-                      value={formik.values.coSupervisor_id}
-                      onChange={formik.handleChange}
-                    >
-                      {supervisors.map((item) => {
-                        return (
-                          <MenuItem key={item._id} value={item._id}>
-                            {item.username}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                  </FormControl>
-                </Box>
-              </Box>
-              <Box sx={{ width: "50%" }}>
-                <TextField
-                  sx={{ width: "100%", marginBottom: "5px" }}
-                  label="Thesis Registration"
-                  name="thesisRegistration"
-                  color="secondary"
-                  variant="standard"
-                  value={formik.values.thesisRegistration}
-                  onChange={formik.handleChange}
-                />
-
-                <TextField
-                  sx={{ width: "100%", marginBottom: "5px" }}
-                  label="Thesis Track"
-                  name="thesisTrack"
-                  color="secondary"
-                  variant="standard"
-                  value={formik.values.thesisTrack}
-                  onChange={formik.handleChange}
-                />
-                {selectedStudent?.Program?.toLowerCase().includes("phd") && (
-                  <>
-                    <TextField
-                      sx={{ width: "100%", marginBottom: "5px" }}
-                      label="Total Publications"
-                      name="totalPublications"
-                      color="secondary"
-                      variant="standard"
-                      value={formik.values.totalPublications}
-                      onChange={formik.handleChange}
-                    />
-                    <TextField
-                      sx={{ width: "100%", marginBottom: "5px" }}
-                      label="Impact Factor Publications"
-                      name="impactFactorPublications"
-                      color="secondary"
-                      variant="standard"
-                      value={formik.values.impactFactorPublications}
-                      onChange={formik.handleChange}
-                    />
-                  </>
-                )}
-              </Box>
-            </Box>
-          </Box>
-          <Box>
-            <Button
-              type="submit"
-              variant="contained"
-              color="secondary"
-              sx={{ mt: 1.5 }}
-            >
-              Update
-            </Button>
-          </Box> */}
         </Box>
       </Modal>
       <div style={{ height: 400, width: "100%", backgroundColor: "white" }}>

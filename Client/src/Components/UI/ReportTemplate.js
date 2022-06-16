@@ -156,101 +156,170 @@ const ReportTemplate = ({ report, reportType }) => {
             </td>
             <td>{report?.student_id?.thesisTrack}</td>
           </tr>
-
-          <tr
-            style={{
-              color: "#333333",
-              backgroundColor: "#F7F6F3",
-            }}
-          >
-            <td
-              valign="middle"
+          {reportType ? (
+            <tr
               style={{
-                backgroundColor: "#E9ECF1",
-                fontWeight: "bold",
+                color: "#333333",
+                backgroundColor: "#F7F6F3",
               }}
             >
-              {reportType === "Synopsis" ? (
-                <>Synopsis Status</>
-              ) : (
-                <>Thesis Status</>
-              )}
-            </td>
-            <td>
-              {reportType === "Synopsis" ? (
-                <> {report?.synopsisStatus}</>
-              ) : (
-                <> {report?.thesisStatus}</>
-              )}
-            </td>
-            <td
-              valign="middle"
-              style={{
-                backgroundColor: "#E9ECF1",
-                fontWeight: "bold",
-              }}
-            >
-              {reportType === "Synopsis" ? (
-                <>Synopsis Title</>
-              ) : (
-                <>Thesis Title</>
-              )}
-            </td>
-            <td>
-              {reportType === "Synopsis" ? (
-                <> {report?.synopsisTitle}</>
-              ) : (
-                <> {report?.thesisTitle}</>
-              )}
-            </td>
-          </tr>
-
-          {/* <tr style={{ color: "#333333", backgroundColor: "#F7F6F3" }}>
               <td
                 valign="middle"
                 style={{
                   backgroundColor: "#E9ECF1",
                   fontWeight: "bold",
-                  
                 }}
               >
-                External
+                {reportType === "Synopsis" ? (
+                  <>Synopsis Status</>
+                ) : (
+                  <>Thesis Status</>
+                )}
               </td>
-              <td> {selectedSchedule?.student_id?.studentTitle} </td>
-            </tr> */}
-          {/* <tr
-                    style={{
-                      backgroundColor: "white",
-                    }}
-                  >
-                    <td
-                      valign="middle"
-                      style={{
-                        backgroundColor: "#E9ECF1",
-                        fontWeight: "bold",
-                        
-                      }}
-                    >
-                      {reportType === "Synopsis" ? (
-                        <>Synopsis Status</>
-                      ) : (
-                        <>Thesis Status</>
-                      )}
-                    </td>
+              <td>
+                {reportType === "Synopsis" ? (
+                  <> {report?.synopsisStatus}</>
+                ) : (
+                  <> {report?.thesisStatus}</>
+                )}
+              </td>
+              <td
+                valign="middle"
+                style={{
+                  backgroundColor: "#E9ECF1",
+                  fontWeight: "bold",
+                }}
+              >
+                {reportType === "Synopsis" ? (
+                  <>Synopsis Title</>
+                ) : (
+                  <>Thesis Title</>
+                )}
+              </td>
+              <td>
+                {reportType === "Synopsis" ? (
+                  <> {report?.synopsisTitle}</>
+                ) : (
+                  <> {report?.thesisTitle}</>
+                )}
+              </td>
+            </tr>
+          ) : (
+            <>
+              <tr
+                style={{
+                  color: "#333333",
+                  backgroundColor: "#F7F6F3",
+                }}
+              >
+                <td
+                  valign="middle"
+                  style={{
+                    backgroundColor: "#E9ECF1",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Synopsis Status
+                </td>
+                <td>{report.synopsisStatus || " - "}</td>
+                <td
+                  valign="middle"
+                  style={{
+                    backgroundColor: "#E9ECF1",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Synopsis Title
+                </td>
+                <td>{report.synopsisTitle || " - "}</td>
+              </tr>
 
-                    <td>{report.thesisStatus || report.synopsisStatus}</td>
-                  </tr> */}
+              <tr
+                style={{
+                  color: "#333333",
+                  backgroundColor: "#F7F6F3",
+                }}
+              >
+                <td
+                  valign="middle"
+                  style={{
+                    backgroundColor: "#E9ECF1",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Thesis Status
+                </td>
+                <td>{report.thesisStatus || " - "}</td>
+                <td
+                  valign="middle"
+                  style={{
+                    backgroundColor: "#E9ECF1",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Thesis Title
+                </td>
+                <td>{report.thesisTitle || " - "}</td>
+              </tr>
+
+              <tr
+                style={{
+                  color: "#333333",
+                  backgroundColor: "#F7F6F3",
+                }}
+              >
+                <td
+                  valign="middle"
+                  style={{
+                    backgroundColor: "#E9ECF1",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Status
+                </td>
+                <td>{report?.progressReport?.status || " - "}</td>
+                <td
+                  valign="middle"
+                  style={{
+                    backgroundColor: "#E9ECF1",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Comments
+                </td>
+                <td>{report?.progressReport?.comment || " - "}</td>
+              </tr>
+              <tr
+                style={{
+                  color: "#333333",
+                  backgroundColor: "#F7F6F3",
+                }}
+              >
+                <td
+                  valign="middle"
+                  style={{
+                    backgroundColor: "#E9ECF1",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Synopsis Evaluation
+                </td>
+                <td>Successfull</td>
+                <td
+                  valign="middle"
+                  style={{
+                    backgroundColor: "#E9ECF1",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Thesis Evaluation
+                </td>
+                <td>Successfull</td>
+              </tr>
+            </>
+          )}
         </tbody>
       </table>
-      {/* <div
-                style={{
-                  width: "100%",
-                  // minWidth: "6rem",
-                  // maxWidth: "10rem",
-                  margin: "2rem auto",
-                  borderTop: "2px Dashed #572E74",
-                }}
-              /> */}
     </Paper>
   );
 };
