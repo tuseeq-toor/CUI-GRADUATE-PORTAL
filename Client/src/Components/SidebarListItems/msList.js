@@ -235,11 +235,21 @@ export const msListitems = [
     ],
   },
 
-  {
+  /* {
     text: "Reports",
     icon: <ListIcon />,
     active: false,
     subMenu: [
+      {
+        text: "Processed Report",
+        icon: <ScreenSearchDesktopIcon />,
+        path: "/Dashboard/ProcessedReports",
+      },
+      {
+        text: "In Process Report",
+        icon: <PageviewIcon />,
+        path: "/Dashboard/InprocessReports",
+      },
       {
         text: "Program-Wise Report",
         icon: <LeaderboardIcon />,
@@ -262,7 +272,7 @@ export const msListitems = [
         path: "/Dashboard/summary-report",
       },
     ],
-  },
+  }, */
   /* {
     text: "View Notification",
     icon: <ManageAccountsIcon />,

@@ -69,6 +69,8 @@ import ForgotPassword from "../ForgotPassword";
 import ResetPassword from "../ResetPassword";
 import SendAnnouncement from "../../Pages/SendAnnouncement";
 import SuperivorWiseReports from "../../Pages/SupervisorWiseReports";
+import ProcessedReports from "../../Pages/ProcessedReports";
+import InprocessReports from "../../Pages/InprocessReports";
 const AdminRoutes = (props) => {
   const { isLoggedIn } = useSelector((state) => state.auth);
   console.log(isLoggedIn);
@@ -250,6 +252,14 @@ const AdminRoutes = (props) => {
             <Route
               path="/Dashboard/Thesis-WiseReport"
               element={<ThesisWiseReports />}
+            />
+            <Route
+              path="/Dashboard/ProcessedReports"
+              element={<ProcessedReports />}
+            />
+            <Route
+              path="/Dashboard/InprocessReports"
+              element={<InprocessReports />}
             />
             <Route
               path="/Dashboard/ChangePassword"

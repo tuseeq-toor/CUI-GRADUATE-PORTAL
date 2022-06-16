@@ -30,7 +30,6 @@ import ReportTemplate from "../UI/ReportTemplate";
 const statuses = [
   "Scheduled",
   "Unscheduled",
-  "Pass Out",
   "Synopsis Evaluation",
   "Internal Evaluation",
   "External Evaluation",
@@ -55,7 +54,7 @@ const statuses = [
   "Rejected",
 ];
 
-export default function SummaryReport() {
+export default function ProcessedReports() {
   const componentRef = useRef();
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(true);
@@ -93,7 +92,12 @@ export default function SummaryReport() {
           (synopsis) => synopsis.student_id._id === student._id
         );
 
-        if (filteredSynopsis.length > 0 && filteredThesis.length > 0) {
+        if (
+          filteredSynopsis.length > 0 &&
+          filteredThesis.length > 0 &&
+          filteredSynopsis[0].synopsisStatus !== "Pass Out" &&
+          filteredThesis[0].thesisStatus !== "Pass Out"
+        ) {
           selectedStudents.push({
             student_id: filteredSynopsis[0].student_id,
             sessionTitle: filteredSynopsis[0].student_id.session_id.title,
@@ -102,14 +106,20 @@ export default function SummaryReport() {
             thesisStatus: filteredThesis[0].thesisStatus,
             thesisTitle: filteredThesis[0].thesisTitle,
           });
-        } else if (filteredThesis.length > 0) {
+        } else if (
+          filteredThesis.length > 0 &&
+          filteredThesis[0].thesisStatus !== "Pass Out"
+        ) {
           selectedStudents.push({
             student_id: filteredThesis[0].student_id,
             sessionTitle: filteredThesis[0].student_id.session_id.title,
             thesisStatus: filteredThesis[0].thesisStatus,
             thesisTitle: filteredThesis[0].thesisTitle,
           });
-        } else if (filteredSynopsis.length > 0) {
+        } else if (
+          filteredSynopsis.length > 0 &&
+          filteredSynopsis[0].synopsisStatus !== "Pass Out"
+        ) {
           selectedStudents.push({
             student_id: filteredSynopsis[0].student_id,
             sessionTitle: filteredSynopsis[0].student_id.session_id.title,
@@ -118,6 +128,7 @@ export default function SummaryReport() {
           });
         }
       });
+
       setSelectedReport(selectedStudents);
       setFilteredReport(selectedStudents);
       setSessions(sessions);
@@ -224,7 +235,7 @@ export default function SummaryReport() {
           textAlign={"center"}
           variant="h5"
         >
-          Summary Report
+          In Process Report
         </Typography>
         <FormControl sx={{ mb: 1 }}>
           <FormLabel color="secondary">Student</FormLabel>
@@ -298,45 +309,46 @@ export default function SummaryReport() {
             />
           </Box>
         </Box>
-        {loading ? (
-          <Box
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: "4rem",
-            }}
-          >
-            <CircularProgress size={60} thickness={4.5} color="secondary" />
-          </Box>
-        ) : (
-          <>
-            <div ref={componentRef} className="supervisorWiseReport">
-              {filteredReport.map((report) => {
-                return (
-                  <div>
-                    {reportType === "Synopsis" && report.synopsisStatus && (
-                      <ReportTemplate report={report} reportType={reportType} />
-                    )}
-                    {reportType === "Thesis" && report.thesisStatus && (
-                      <ReportTemplate report={report} reportType={reportType} />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-            <Button
-              fullWidth
-              type="button"
-              variant="contained"
-              color="secondary"
-              sx={{ mb: 2 }}
-              onClick={handlePrint}
-            >
-              Print PDF
-            </Button>
-          </>
-        )}
       </Box>
+
+      {loading ? (
+        <Box
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginBottom: "4rem",
+            marginTop: "2rem",
+          }}
+        >
+          <CircularProgress size={60} thickness={4.5} color="secondary" />
+        </Box>
+      ) : (
+        <>
+          <div ref={componentRef} className="supervisorWiseReport">
+            {filteredReport.map((report) => {
+              return (
+                <div>
+                  {reportType === "Synopsis" && report.synopsisStatus && (
+                    <ReportTemplate report={report} reportType={reportType} />
+                  )}
+                  {reportType === "Thesis" && report.thesisStatus && (
+                    <ReportTemplate report={report} reportType={reportType} />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <Button
+            type="button"
+            variant="contained"
+            color="secondary"
+            sx={{ mb: 2 }}
+            onClick={handlePrint}
+          >
+            Print PDF
+          </Button>
+        </>
+      )}
     </>
   );
 }
