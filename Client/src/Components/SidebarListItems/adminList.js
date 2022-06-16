@@ -104,6 +104,11 @@ export const adminListitems = [
     active: false,
     subMenu: [
       {
+        text: "My Students",
+        icon: <LayersIcon />,
+        path: "/Dashboard/MyStudents",
+      },
+      {
         text: "Manage Students",
         icon: <LayersIcon />,
         path: "/Dashboard/ManageStudents",

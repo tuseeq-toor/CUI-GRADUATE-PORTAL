@@ -33,6 +33,9 @@ import { useFormik } from "formik";
 import sessionsService from "../../API/sessions";
 import programsService from "../../API/programs";
 import adminService from "../../API/admin";
+import ReportTemplate from "../UI/ReportTemplate";
+import synopsisService from "../../API/synopsis";
+import thesisService from "../../API/thesis";
 
 const style = {
   position: "absolute",
@@ -42,7 +45,7 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 600,
+  width: 900,
   bgcolor: "background.paper",
 
   /* border: "2px solid #000", */
@@ -50,7 +53,14 @@ const style = {
   p: 4,
 };
 
-export default function MyStudent() {
+export default function MyStudents() {
+  const {
+    user: { faculty: currentUser },
+  } = JSON.parse(localStorage.getItem("user"));
+  console.log(currentUser);
+  const [reportType, setReportType] = useState("Synopsis");
+  const [filteredReport, setFilteredReport] = useState([]);
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [open, setOpen] = useState(false);
@@ -61,6 +71,75 @@ export default function MyStudent() {
   const [supervisors, setSupervisors] = useState([]);
   const [programs, setPrograms] = useState([]);
   const [selectedStudent, setselectedStudent] = useState({});
+
+  useEffect(() => {
+    async function fetchData() {
+      const students = await studentService.getStudents();
+      const submittedSynopsis = await synopsisService.getSubmittedSynopsis();
+      const submittedThesis = await thesisService.getSubmittedThesis();
+
+      console.log(students);
+      console.log(submittedSynopsis);
+      console.log(submittedThesis);
+
+      let selectedStudents = [];
+
+      students.forEach((student) => {
+        if (student.supervisor_id.username === currentUser.fullName) {
+          let filteredSynopsis = submittedSynopsis.filter(
+            (synopsis) => synopsis.student_id._id === student._id
+          );
+          let filteredThesis = submittedThesis.filter(
+            (thesis) => thesis.student_id._id === student._id
+          );
+
+          console.log(filteredSynopsis);
+          console.log(filteredThesis);
+
+          if (filteredSynopsis.length > 0 && filteredThesis.length > 0) {
+            selectedStudents.push({
+              student_id: filteredSynopsis[0].student_id,
+              synopsisStatus: filteredSynopsis[0].synopsisStatus,
+              synopsisTitle: filteredSynopsis[0].synopsisTitle,
+              thesisStatus: filteredThesis[0].thesisStatus,
+              thesisTitle: filteredThesis[0].thesisTitle,
+            });
+          } else if (
+            filteredThesis.length > 0 &&
+            filteredSynopsis.length === 0
+          ) {
+            selectedStudents.push({
+              student_id: filteredThesis[0].student_id,
+              thesisStatus: filteredThesis[0].thesisStatus,
+              thesisTitle: filteredThesis[0].thesisTitle,
+            });
+          } else if (
+            filteredSynopsis.length > 0 &&
+            filteredThesis.length === 0
+          ) {
+            selectedStudents.push({
+              student_id: filteredSynopsis[0].student_id,
+              synopsisStatus: filteredSynopsis[0].synopsisStatus,
+              synopsisTitle: filteredSynopsis[0].synopsisTitle,
+            });
+          } /* else if (
+            filteredSynopsis.length === 0 &&
+            filteredThesis.length === 0
+          ) {
+            selectedStudents.push({
+              student_id: student,
+            });
+          } */
+        }
+      });
+      console.log(selectedStudents);
+      setFilteredReport(selectedStudents);
+      /* setSelectedReport(selectedStudents);
+      setSupervisors(supervisors);
+      setLoading(false); */
+    }
+    fetchData();
+  }, []);
 
   const getSupervisors = async () => {
     let data = await studentService.getSupervisors();
@@ -79,15 +158,20 @@ export default function MyStudent() {
     const res = await studentService.getStudents();
     console.log(res);
 
-    let data = res.map((stud) => ({
-      Name: stud?.username,
-      RegistrationNo: stud?.registrationNo,
-      Email: stud?.email,
-      id: stud?._id,
-      Program: stud?.program_id?.programShortName,
-      data: stud,
-    }));
-    setStudents(data);
+    let data = [];
+    if (filteredReport) {
+      filteredReport.forEach((stud) => {
+        data.push({
+          Name: stud.student_id.username,
+          RegistrationNo: stud.student_id.registrationNo,
+          Email: stud.student_id.email,
+          id: stud.student_id._id,
+          Program: stud.student_id.program_id.programShortName,
+          /* data: stud, */
+        });
+      });
+      setStudents(data);
+    }
   }
 
   useEffect(() => {
@@ -110,7 +194,7 @@ export default function MyStudent() {
       width: 150,
       renderCell: (props) => (
         <>
-          <Button
+          {/* <Button
             onClick={async () => {
               console.log(props.row);
               const res = await studentService.deleteStudent(props.row.id);
@@ -126,7 +210,7 @@ export default function MyStudent() {
             style={{ marginLeft: 0 }}
           >
             Delete
-          </Button>
+          </Button> */}
 
           <Button
             onClick={() => {
@@ -138,7 +222,7 @@ export default function MyStudent() {
             size="small"
             style={{ marginLeft: 10 }}
           >
-            Edit
+            View Details
           </Button>
         </>
       ),
@@ -180,7 +264,63 @@ export default function MyStudent() {
     <>
       <Modal open={open} onClose={handleClose}>
         <Box sx={style} component="form" onSubmit={formik.handleSubmit}>
-          <Box>
+          <FormControl sx={{ mb: 1 }}>
+            <FormLabel color="secondary">Student</FormLabel>
+            <RadioGroup
+              row
+              name="studentType"
+              value={reportType}
+              onChange={(e) => {
+                setReportType(e.target.value);
+              }}
+            >
+              <FormControlLabel
+                value="Synopsis"
+                control={<Radio color="secondary" />}
+                label="Synopsis"
+              />
+              <FormControlLabel
+                value="Thesis"
+                control={<Radio color="secondary" />}
+                label="Thesis"
+              />
+            </RadioGroup>
+          </FormControl>
+
+          {filteredReport.map((report) => {
+            return (
+              <>
+                <div>
+                  {selectedStudent?.id === report.student_id._id && (
+                    <>
+                      {reportType === "Synopsis" && report.synopsisStatus && (
+                        <ReportTemplate
+                          report={report}
+                          reportType={reportType}
+                        />
+                      )}
+                      {reportType === "Thesis" && report.thesisStatus && (
+                        <ReportTemplate
+                          report={report}
+                          reportType={reportType}
+                        />
+                      )}
+                    </>
+                  )}
+                </div>
+              </>
+            );
+          })}
+          <Button
+            type="button"
+            onClick={handleClose}
+            variant="contained"
+            color="secondary"
+            sx={{ mt: 1.5 }}
+          >
+            Back
+          </Button>
+          {/* <Box>
             <Box sx={{ display: "flex", gap: "1rem" }}>
               <Box sx={{ width: "50%" }}>
                 <TextField
@@ -353,7 +493,7 @@ export default function MyStudent() {
             >
               Update
             </Button>
-          </Box>
+          </Box> */}
         </Box>
       </Modal>
       <div style={{ height: 400, width: "100%", backgroundColor: "white" }}>
