@@ -58,14 +58,14 @@ export const goListitems = [
         icon: <PersonAddIcon />,
         path: "/Dashboard/GenerateSynopsisReport",
       }, */
-      {
-        text: "View Report",
-        icon: <LayersIcon />,
-        path: "/Dashboard/ViewSynopsisReport",
-      },
+      // {
+      //   text: "View Report",
+      //   icon: <LayersIcon />,
+      //   path: "/Dashboard/ViewSynopsisReport",
+      // },
 
       {
-        text: "Send Report",
+        text: "Evaluate Synopsis",
         icon: <PersonAddIcon />,
         path: "/Dashboard/SendSynopsisReport",
       },
@@ -88,14 +88,14 @@ export const goListitems = [
         icon: <PersonAddIcon />,
         path: "/Dashboard/GenerateThesisReport",
       }, */
-      {
-        text: "View Report",
-        icon: <LayersIcon />,
-        path: "/Dashboard/ViewThesisReport",
-      },
+      // {
+      //   text: "View Report",
+      //   icon: <LayersIcon />,
+      //   path: "/Dashboard/ViewThesisReport",
+      // },
 
       {
-        text: "Send Report",
+        text: "Evaluate Thesis",
         icon: <PersonAddIcon />,
         path: "/Dashboard/SendThesisReport",
       },
@@ -159,48 +159,46 @@ export const goListitems = [
     ],
   },
 
-  {
-    text: "Evaluate Synopsis",
-    icon: <ListIcon />,
-    active: false,
-    subMenu: [
-      {
-        text: "Synopsis MS",
-        icon: <AnalyticsIcon />,
-        path: "/Dashboard/EvaluateSynopsis(MS)",
-      },
+  // {
+  //   text: "Evaluate Synopsis",
+  //   icon: <ListIcon />,
+  //   active: false,
+  //   subMenu: [
+  //     {
+  //       text: "Synopsis MS",
+  //       icon: <AnalyticsIcon />,
+  //       path: "/Dashboard/EvaluateSynopsis(MS)",
+  //     },
+  //     {
+  //       text: " Synopsis PhD",
+  //       icon: <MapIcon />,
+  //       path: "/Dashboard/EvaluateSynopsis(PhD)",
+  //     },
+  //   ],
+  // },
 
-      {
-        text: " Synopsis PhD",
-        icon: <MapIcon />,
-        path: "/Dashboard/EvaluateSynopsis(PhD)",
-      },
-    ],
-  },
-
-  {
-    text: "Evaluate Thesis",
-    icon: <ListIcon />,
-    active: false,
-    subMenu: [
-      /*  {
-        text: "Pending Thesis",
-        icon: <EditNotificationsIcon />,
-        path: "/Dashboard/PendingThesis",
-      }, */
-      {
-        text: "Thesis MS",
-        icon: <AnalyticsIcon />,
-        path: "/Dashboard/EvaluateThesis(MS)",
-      },
-
-      {
-        text: "Thesis PhD",
-        icon: <MapIcon />,
-        path: "/Dashboard/EvaluateThesis(PhD)",
-      },
-    ],
-  },
+  // {
+  //   text: "Evaluate Thesis",
+  //   icon: <ListIcon />,
+  //   active: false,
+  //   subMenu: [
+  //      {
+  //       text: "Pending Thesis",
+  //       icon: <EditNotificationsIcon />,
+  //       path: "/Dashboard/PendingThesis",
+  //     },
+  //     {
+  //       text: "Thesis MS",
+  //       icon: <AnalyticsIcon />,
+  //       path: "/Dashboard/EvaluateThesis(MS)",
+  //     },
+  //     {
+  //       text: "Thesis PhD",
+  //       icon: <MapIcon />,
+  //       path: "/Dashboard/EvaluateThesis(PhD)",
+  //     },
+  //   ],
+  // },
 
   {
     text: "Notification",

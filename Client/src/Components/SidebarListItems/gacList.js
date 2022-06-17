@@ -27,44 +27,46 @@ export const gacListitems = [
     text: "Evaluate Synopsis",
     icon: <ListIcon />,
     active: false,
-    subMenu: [
-      {
-        text: "Synopsis MS",
-        icon: <AnalyticsIcon />,
-        path: "/Dashboard/EvaluateSynopsis(MS)",
-      },
+    path: "/Dashboard/SendSynopsisReport",
+    // subMenu: [
+    //   {
+    //     text: "Synopsis MS",
+    //     icon: <AnalyticsIcon />,
+    //     path: "/Dashboard/SendSynopsisReport",
+    //   },
 
-      {
-        text: " Synopsis PhD",
-        icon: <MapIcon />,
-        path: "/Dashboard/EvaluateSynopsis(PhD)",
-      },
-    ],
+    //   {
+    //     text: " Synopsis PhD",
+    //     icon: <MapIcon />,
+    //     path: "/Dashboard/SendSynopsisReport",
+    //   },
+    // ],
   },
 
   {
     text: "Evaluate Thesis",
-    icon: <ListIcon />,
+    icon: <EditNotificationsIcon />,
     active: false,
-    subMenu: [
-      /*  {
-        text: "Pending Thesis",
-        icon: <EditNotificationsIcon />,
-        path: "/Dashboard/PendingThesis",
-      }, */
+    path: "/Dashboard/SendThesisReport",
+    // subMenu: [
+    //    {
+    //     text: "Pending Thesis",
+    //     icon: <EditNotificationsIcon />,
+    //     path: "/Dashboard/PendingThesis",
+    //   },
 
-      {
-        text: "Thesis MS",
-        icon: <AnalyticsIcon />,
-        path: "/Dashboard/EvaluateThesis(MS)",
-      },
+    //   {
+    //     text: "Thesis MS",
+    //     icon: <AnalyticsIcon />,
+    //     path: "/Dashboard/EvaluateThesis(MS)",
+    //   },
 
-      {
-        text: "Thesis PhD",
-        icon: <MapIcon />,
-        path: "/Dashboard/EvaluateThesis(PhD)",
-      },
-    ],
+    //   {
+    //     text: "Thesis PhD",
+    //     icon: <MapIcon />,
+    //     path: "/Dashboard/EvaluateThesis(PhD)",
+    //   },
+    // ],
   },
   {
     text: "Update Thesis/Synopsis Status",

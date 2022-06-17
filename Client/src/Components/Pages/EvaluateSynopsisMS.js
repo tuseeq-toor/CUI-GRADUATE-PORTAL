@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import FormControl from "@mui/material/FormControl";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
@@ -21,7 +21,8 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import BackdropModal from "../UI/BackdropModal";
 
-export default function EvaluateSynopsisMS() {
+export default function EvaluateSynopsisMS({}) {
+  let navigate = useNavigate();
   const { currentRole } = useSelector((state) => state.userRoles);
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [autocompleteValue, setAutocompleteValue] = useState(null);
@@ -38,6 +39,7 @@ export default function EvaluateSynopsisMS() {
   const [submittedSynopsis, setSubmittedSynopsis] = useState({});
   const [data, setData] = useState({});
   const [scheduleLabels, setScheduleLabels] = useState([]);
+  const location = useLocation();
 
   const uniqueScheduleLabels = async (array) => {
     const labels = [
@@ -50,67 +52,68 @@ export default function EvaluateSynopsisMS() {
     setScheduleLabels(labels);
   };
 
-  useEffect(() => {
-    async function fetchData() {
-      const schd = await synopsisService.getSynopsisSchedules();
-      const alreadyevaluatedSynopsis =
-        await synopsisService.getSynopsisEvaluations();
-      const alreadysubmittedSynopsis =
-        await synopsisService.getSubmittedSynopsis();
+  // useEffect(() => {
+  //   console.log(location.state.data.registrationNo);
+  //   async function fetchData() {
+  //     const schd = await synopsisService.getSynopsisSchedules();
+  //     // isme se student ka data chaiye humein
+  //     const alreadysubmittedSynopsis =
+  //       await synopsisService.getSubmittedSynopsis();
+  //     // us student ke synosses se related chezain
 
-      let filteredMsSchedules = schd.filter((msSchedule) =>
-        msSchedule.program_id.programShortName.toLowerCase().includes("ms")
-      );
+  //     let filteredMsSchedules = schd.filter((msSchedule) =>
+  //       msSchedule.program_id.programShortName.toLowerCase().includes("ms")
+  //     );
 
-      // console.log(filteredMsSchedules);
-      setSchedules(filteredMsSchedules);
-      uniqueScheduleLabels(filteredMsSchedules);
+  //     // console.log(filteredMsSchedules);
+  //     setSchedules(filteredMsSchedules);
+  //     uniqueScheduleLabels(filteredMsSchedules);
 
-      setEvaluations(alreadyevaluatedSynopsis);
-      setSubmittedSynopsis(alreadysubmittedSynopsis);
+  //     // setEvaluations(alreadyevaluatedSynopsis);
+  //     setSubmittedSynopsis(alreadysubmittedSynopsis);
 
-      setLoading(false);
-    }
-    fetchData();
-  }, []);
+  //     setLoading(false);
+  //   }
+  //   fetchData();
+  // }, []);
 
-  console.log(schedules);
-  console.log(evaluations);
-  console.log(submittedSynopsis);
+  // console.log(schedules);
+  // console.log(evaluations);
+  // console.log(submittedSynopsis);
 
-  const handleRegistrationNo = (reg) => {
-    setHasEvaluatedSynopsis(false);
+  // const handleRegistrationNo = (reg) => {
+  //   setHasEvaluatedSynopsis(false);
 
-    schedules.forEach((oneSchedule) => {
-      if (reg === oneSchedule?.student_id?.registrationNo) {
-        evaluations.forEach((evaluatedSynopsis) => {
-          if (evaluatedSynopsis.schedule_id) {
-            if (evaluatedSynopsis.schedule_id._id === oneSchedule._id) {
-              if (evaluatedSynopsis.evaluator_id._id === user.user._id) {
-                console.log(true);
-                setHasEvaluatedSynopsis(true);
-              }
-            }
-          }
-        });
+  //   schedules.forEach((oneSchedule) => {
+  //     if (reg === oneSchedule?.student_id?.registrationNo) {
+  //       evaluations.forEach((evaluatedSynopsis) => {
+  //         if (evaluatedSynopsis.schedule_id) {
+  //           if (evaluatedSynopsis.schedule_id._id === oneSchedule._id) {
+  //             if (evaluatedSynopsis.evaluator_id._id === user.user._id) {
+  //               console.log(true);
+  //               setHasEvaluatedSynopsis(true);
+  //             }
+  //           }
+  //         }
+  //       });
 
-        setSelectedSchedule(oneSchedule);
+  //       setSelectedSchedule(oneSchedule);
 
-        console.log("Selected Schedule", selectedSchedule);
-        setData({ ...data, schedule_id: oneSchedule._id });
+  //       console.log("Selected Schedule", selectedSchedule);
+  //       setData({ ...data, schedule_id: oneSchedule._id });
 
-        submittedSynopsis.forEach((oneSynopsis) => {
-          if (
-            selectedSchedule.student_id?._id ===
-            submittedSynopsis.student_id?._id
-          ) {
-            console.log("Selected Synopsis", oneSynopsis);
-            setSelectedSynopsis(oneSynopsis);
-          }
-        });
-      }
-    });
-  };
+  //       submittedSynopsis.forEach((oneSynopsis) => {
+  //         if (
+  //           selectedSchedule.student_id?._id ===
+  //           submittedSynopsis.student_id?._id
+  //         ) {
+  //           console.log("Selected Synopsis", oneSynopsis);
+  //           setSelectedSynopsis(oneSynopsis);
+  //         }
+  //       });
+  //     }
+  //   });
+  // };
 
   const handleChange = (event) => {
     setData({ ...data, [event.target.name]: event.target.value });
@@ -136,12 +139,16 @@ export default function EvaluateSynopsisMS() {
     }
     if (currentRole === "GO") {
       try {
+        console.log(data);
         const res = await synopsisService.updateGoEvaluation(data);
 
         console.log(res);
 
         if (res.status === 200) {
           setShowEvaluateModal(true);
+          navigate("/Dashboard/viewSynopsisReport", {
+            state: { data: location.state.data.registrationNo },
+          });
         }
       } catch (error) {
         if (error.response.status === 500) {
@@ -156,6 +163,31 @@ export default function EvaluateSynopsisMS() {
     getOptionLabel: (schedule) => schedule || "",
   };
 
+  useEffect(() => {
+    async function fetchData() {
+      // location.state.data.registrationNo
+      const schd = await synopsisService.getSynopsisSchedules();
+      // isme se student ka data chaiye humein
+      const alreadysubmittedSynopsis =
+        await synopsisService.getSubmittedSynopsis();
+      const schedularData = schd.filter(
+        (s) =>
+          s.student_id.registrationNo === location.state.data.registrationNo
+      );
+      const synopsisData = alreadysubmittedSynopsis.filter(
+        (s) =>
+          s.student_id.registrationNo === location.state.data.registrationNo
+      );
+      setSelectedSchedule(schedularData);
+      console.log(schedularData);
+      setSelectedSynopsis(synopsisData);
+      setLoading(false);
+      setData({ ...data, schedule_id: schedularData[0]._id });
+    }
+
+    fetchData();
+  }, []);
+
   return loading ? (
     <Box
       style={{
@@ -168,7 +200,7 @@ export default function EvaluateSynopsisMS() {
     </Box>
   ) : (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-      <Box sx={{ mb: 4 }}>
+      {/* <Box sx={{ mb: 4 }}>
         <Autocomplete
           {...defaultProps}
           id="controlled-demo"
@@ -177,7 +209,7 @@ export default function EvaluateSynopsisMS() {
             let registrationNo = newValue;
             setAutocompleteValue(newValue);
 
-            handleRegistrationNo(registrationNo);
+            // handleRegistrationNo(registrationNo);
           }}
           renderInput={(params) => (
             <TextField
@@ -188,7 +220,7 @@ export default function EvaluateSynopsisMS() {
             />
           )}
         />
-      </Box>
+      </Box> */}
       {hasEvaluatedSynopsis ? (
         <p>You have already evaluated this student</p>
       ) : (
@@ -228,7 +260,7 @@ export default function EvaluateSynopsisMS() {
                       >
                         Registration No
                       </td>
-                      <td>{selectedSchedule?.student_id?.registrationNo}</td>
+                      <td>{selectedSchedule[0]?.student_id?.registrationNo}</td>
                       <td
                         valign="top"
                         style={{
@@ -238,7 +270,7 @@ export default function EvaluateSynopsisMS() {
                       >
                         Area of Specialization
                       </td>
-                      <td>{selectedSynopsis?.specializationTrack}</td>
+                      <td>{selectedSynopsis[0]?.specializationTrack}</td>
                     </tr>
                     <tr style={{ backgroundColor: "White" }}>
                       <td
@@ -250,7 +282,7 @@ export default function EvaluateSynopsisMS() {
                       >
                         Name
                       </td>
-                      <td>{selectedSchedule?.student_id?.username}</td>
+                      <td>{selectedSchedule[0]?.student_id?.username}</td>
                       <td
                         valign="top"
                         style={{
@@ -277,7 +309,7 @@ export default function EvaluateSynopsisMS() {
                       >
                         Email
                       </td>
-                      <td>{selectedSchedule?.student_id?.email}</td>
+                      <td>{selectedSchedule[0]?.student_id?.email}</td>
                       <td
                         valign="top"
                         style={{
@@ -298,7 +330,9 @@ export default function EvaluateSynopsisMS() {
                       >
                         Program
                       </td>
-                      <td>{selectedSchedule?.program_id?.programShortName}</td>
+                      <td>
+                        {selectedSchedule[0]?.program_id?.programShortName}
+                      </td>
                       <td
                         valign="top"
                         style={{
@@ -325,7 +359,7 @@ export default function EvaluateSynopsisMS() {
                       >
                         Supervisor
                       </td>
-                      <td>{selectedSynopsis?.supervisor_id?.fullName}</td>
+                      <td>{selectedSynopsis[0]?.supervisor_id?.fullName}</td>
                       <td
                         valign="top"
                         style={{
@@ -347,7 +381,7 @@ export default function EvaluateSynopsisMS() {
                       >
                         Co-Supervisor
                       </td>
-                      <td>{selectedSynopsis?.coSupervisor_id?.fullName}</td>
+                      <td>{selectedSynopsis[0]?.coSupervisor_id?.fullName}</td>
                       <td
                         valign="top"
                         style={{
@@ -357,7 +391,7 @@ export default function EvaluateSynopsisMS() {
                       >
                         Synopsis Status
                       </td>
-                      <td>{submittedSynopsis?.synopsisStatus}</td>
+                      <td>{selectedSynopsis[0]?.synopsisStatus}</td>
                     </tr>
                     {/* <tr
                         style={{
@@ -399,10 +433,10 @@ export default function EvaluateSynopsisMS() {
                       <td colspan="3">
                         <a
                           target="_blank"
-                          href={`${process.env.REACT_APP_URL}/${selectedSynopsis?.synopsisFileName}`}
+                          href={`${process.env.REACT_APP_URL}/${selectedSynopsis[0]?.synopsisFileName}`}
                           rel="noopener noreferrer"
                         >
-                          {selectedSynopsis?.synopsisFileName}
+                          {selectedSynopsis[0]?.synopsisFileName}
                         </a>
                       </td>
                     </tr>
@@ -417,7 +451,7 @@ export default function EvaluateSynopsisMS() {
                         Synopsis Title
                       </td>
                       <td colspan="3">
-                        {selectedSchedule?.student_id?.synopsisTitle}
+                        {selectedSchedule[0]?.student_id?.synopsisTitle}
                       </td>
                     </tr>
                   </tbody>

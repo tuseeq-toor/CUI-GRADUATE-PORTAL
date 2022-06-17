@@ -167,11 +167,11 @@ export const phdListitems = [
         icon: <MapIcon />,
         path: "/Dashboard/EvaluateThesis(PhD)",
       },
-      {
+      /*   {
         text: "Pending Thesis",
         icon: <EditNotificationsIcon />,
         path: "/Dashboard/PendingThesis",
-      },
+      }, */
       /* {
         text: "Generate Report",
         icon: <PersonAddIcon />,

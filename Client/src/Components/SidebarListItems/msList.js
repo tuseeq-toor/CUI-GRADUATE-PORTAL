@@ -111,24 +111,24 @@ export const msListitems = [
         icon: <LayersIcon />,
         path: "/Dashboard/CreateSynopsisSchedule",
       },
-      {
-        text: "Evaluate Synopsis MS",
-        icon: <AnalyticsIcon />,
-        path: "/Dashboard/EvaluateSynopsis(MS)",
-      },
+      // {
+      //   text: "Evaluate Synopsis MS",
+      //   icon: <AnalyticsIcon />,
+      //   path: "/Dashboard/EvaluateSynopsis(MS)",
+      // },
       /* {
         text: "Generate Report",
         icon: <PersonAddIcon />,
         path: "/Dashboard/GenerateSynopsisReport",
       }, */
-      {
-        text: "View Report",
-        icon: <LayersIcon />,
-        path: "/Dashboard/ViewSynopsisReport",
-      },
+      // {
+      //   text: "View Report",
+      //   icon: <LayersIcon />,
+      //   path: "/Dashboard/ViewSynopsisReport",
+      // },
 
       {
-        text: "Send Report",
+        text: "Evaluate Synopsis",
         icon: <PersonAddIcon />,
         path: "/Dashboard/SendSynopsisReport",
       },
@@ -150,29 +150,29 @@ export const msListitems = [
         icon: <LayersIcon />,
         path: "/Dashboard/CreateThesisSchedule",
       },
-      {
-        text: "Evaluate Thesis MS",
-        icon: <AnalyticsIcon />,
-        path: "/Dashboard/EvaluateThesis(MS)",
-      },
-      {
+      // {
+      //   text: "Evaluate Thesis MS",
+      //   icon: <AnalyticsIcon />,
+      //   path: "/Dashboard/EvaluateThesis(MS)",
+      // },
+      /*    {
         text: "Pending Thesis",
         icon: <EditNotificationsIcon />,
         path: "/Dashboard/PendingThesis",
-      },
+      }, */
       /* {
         text: "Generate Report",
         icon: <PersonAddIcon />,
         path: "/Dashboard/GenerateThesisReport",
       }, */
-      {
-        text: "View Report",
-        icon: <LayersIcon />,
-        path: "/Dashboard/ViewThesisReport",
-      },
+      // {
+      //   text: "View Report",
+      //   icon: <LayersIcon />,
+      //   path: "/Dashboard/ViewThesisReport",
+      // },
 
       {
-        text: "Send Report",
+        text: "Evaluate Thesis",
         icon: <PersonAddIcon />,
         path: "/Dashboard/SendThesisReport",
       },

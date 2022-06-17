@@ -17,11 +17,12 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import BackdropModal from "../UI/BackdropModal";
 
 export default function EvaluateThesisMS() {
+  const navigate = useNavigate();
   const { currentRole } = useSelector((state) => state.userRoles);
   const { isLoggedIn, user } = useSelector((state) => state.auth);
   const [autocompleteValue, setAutocompleteValue] = useState(null);
@@ -39,73 +40,98 @@ export default function EvaluateThesisMS() {
   const [data, setData] = useState({});
 
   const [scheduleLabels, setScheduleLabels] = useState([]);
-
-  const uniqueScheduleLabels = async (array) => {
-    const labels = [
-      ...new Set(
-        await array.map((item) => {
-          return item?.student_id?.registrationNo;
-        })
-      ),
-    ];
-    setScheduleLabels(labels);
-  };
+  const location = useLocation();
 
   useEffect(() => {
     async function fetchData() {
+      // location.state.data.registrationNo
       const schd = await thesisService.getThesisSchedules();
-      const alreadyevaluatedThesis = await thesisService.getThesisEvaluations();
-      const alreadysubmittedThesis = await thesisService.getSubmittedThesis();
-
-      let filteredMsSchedules = schd.filter((msSchedule) =>
-        msSchedule.program_id.programShortName.toLowerCase().includes("ms")
+      // isme se student ka data chaiye humein
+      const alreadysubmittedSynopsis = await thesisService.getSubmittedThesis();
+      const schedularData = schd.filter(
+        (s) =>
+          s.student_id.registrationNo === location.state.data.registrationNo
       );
-      setSchedules(filteredMsSchedules);
-      uniqueScheduleLabels(filteredMsSchedules);
-      setEvaluations(alreadyevaluatedThesis);
-      setSubmittedThesis(alreadysubmittedThesis);
-
+      const synopsisData = alreadysubmittedSynopsis.filter(
+        (s) =>
+          s.student_id.registrationNo === location.state.data.registrationNo
+      );
+      setSelectedSchedule(schedularData);
+      console.log(schedularData);
+      setSelectedThesis(synopsisData);
       setLoading(false);
+      setData({ ...data, schedule_id: schedularData[0]._id });
     }
+
     fetchData();
   }, []);
 
-  console.log(schedules);
-  console.log(evaluations);
-  console.log(submittedThesis);
+  // const uniqueScheduleLabels = async (array) => {
+  //   const labels = [
+  //     ...new Set(
+  //       await array.map((item) => {
+  //         return item?.student_id?.registrationNo;
+  //       })
+  //     ),
+  //   ];
+  //   setScheduleLabels(labels);
+  // };
 
-  const handleRegistrationNo = (reg) => {
-    setHasEvaluatedThesis(false);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     const schd = await thesisService.getThesisSchedules();
+  //     const alreadyevaluatedThesis = await thesisService.getThesisEvaluations();
+  //     const alreadysubmittedThesis = await thesisService.getSubmittedThesis();
 
-    schedules.forEach((oneSchedule) => {
-      if (reg === oneSchedule?.student_id?.registrationNo) {
-        evaluations.forEach((evaluatedThesis) => {
-          if (evaluatedThesis.schedule_id) {
-            if (evaluatedThesis.schedule_id._id === oneSchedule._id) {
-              if (evaluatedThesis.evaluator_id._id === user.user._id) {
-                console.log(true);
-                setHasEvaluatedThesis(true);
-              }
-            }
-          }
-        });
+  //     let filteredMsSchedules = schd.filter((msSchedule) =>
+  //       msSchedule.program_id.programShortName.toLowerCase().includes("ms")
+  //     );
+  //     setSchedules(filteredMsSchedules);
+  //     uniqueScheduleLabels(filteredMsSchedules);
+  //     setEvaluations(alreadyevaluatedThesis);
+  //     setSubmittedThesis(alreadysubmittedThesis);
 
-        setSelectedSchedule(oneSchedule);
+  //     setLoading(false);
+  //   }
+  //   fetchData();
+  // }, []);
 
-        console.log("Selected Schedule", selectedSchedule);
-        setData({ ...data, schedule_id: oneSchedule._id });
+  // console.log(schedules);
+  // console.log(evaluations);
+  // console.log(submittedThesis);
 
-        submittedThesis.forEach((oneThesis) => {
-          if (
-            selectedSchedule.student_id?._id === submittedThesis.student_id?._id
-          ) {
-            console.log("Selected Thesis", oneThesis);
-            setSelectedThesis(oneThesis);
-          }
-        });
-      }
-    });
-  };
+  // const handleRegistrationNo = (reg) => {
+  //   setHasEvaluatedThesis(false);
+
+  //   schedules.forEach((oneSchedule) => {
+  //     if (reg === oneSchedule?.student_id?.registrationNo) {
+  //       evaluations.forEach((evaluatedThesis) => {
+  //         if (evaluatedThesis.schedule_id) {
+  //           if (evaluatedThesis.schedule_id._id === oneSchedule._id) {
+  //             if (evaluatedThesis.evaluator_id._id === user.user._id) {
+  //               console.log(true);
+  //               setHasEvaluatedThesis(true);
+  //             }
+  //           }
+  //         }
+  //       });
+
+  //       setSelectedSchedule(oneSchedule);
+
+  //       console.log("Selected Schedule", selectedSchedule);
+  //       setData({ ...data, schedule_id: oneSchedule._id });
+
+  //       submittedThesis.forEach((oneThesis) => {
+  //         if (
+  //           selectedSchedule.student_id?._id === submittedThesis.student_id?._id
+  //         ) {
+  //           console.log("Selected Thesis", oneThesis);
+  //           setSelectedThesis(oneThesis);
+  //         }
+  //       });
+  //     }
+  //   });
+  // };
 
   const handleChange = (event) => {
     setData({ ...data, [event.target.name]: event.target.value });
@@ -137,6 +163,9 @@ export default function EvaluateThesisMS() {
 
         if (res.status === 200) {
           setShowEvaluateModal(true);
+          navigate("/Dashboard/viewThesisReport", {
+            state: { data: location.state.data.registrationNo },
+          });
         }
       } catch (error) {
         if (error.response.status === 500) {
@@ -150,6 +179,7 @@ export default function EvaluateThesisMS() {
     options: scheduleLabels,
     getOptionLabel: (schedule) => schedule || "",
   };
+
   return loading ? (
     <Box
       style={{
@@ -162,7 +192,7 @@ export default function EvaluateThesisMS() {
     </Box>
   ) : (
     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-      <Box sx={{ mb: 4 }}>
+      {/* <Box sx={{ mb: 4 }}>
         <Autocomplete
           {...defaultProps}
           id="controlled-demo"
@@ -182,7 +212,7 @@ export default function EvaluateThesisMS() {
             />
           )}
         />
-      </Box>
+      </Box> */}
       {hasEvaluatedThesis ? (
         <p>You have already evaluated this student</p>
       ) : (
@@ -214,7 +244,7 @@ export default function EvaluateThesisMS() {
                       >
                         Registration No
                       </td>
-                      <td>{selectedSchedule?.student_id?.registrationNo}</td>
+                      <td>{selectedSchedule[0]?.student_id?.registrationNo}</td>
                     </tr>
                     <tr style={{ backgroundColor: "White" }}>
                       <td
@@ -227,7 +257,7 @@ export default function EvaluateThesisMS() {
                       >
                         Name
                       </td>
-                      <td>{selectedSchedule?.student_id?.username}</td>
+                      <td>{selectedSchedule[0]?.student_id?.username}</td>
                     </tr>
                     <tr
                       style={{
@@ -245,7 +275,7 @@ export default function EvaluateThesisMS() {
                       >
                         Email
                       </td>
-                      <td>{selectedSchedule?.student_id?.email}</td>
+                      <td>{selectedSchedule[0]?.student_id?.email}</td>
                     </tr>
                     <tr style={{ backgroundColor: "White" }}>
                       <td
@@ -258,7 +288,9 @@ export default function EvaluateThesisMS() {
                       >
                         Program
                       </td>
-                      <td>{selectedSchedule?.program_id?.programShortName}</td>
+                      <td>
+                        {selectedSchedule[0]?.program_id?.programShortName}
+                      </td>
                     </tr>
                     <tr
                       style={{
@@ -307,7 +339,8 @@ export default function EvaluateThesisMS() {
                       >
                         Thesis Status
                       </td>
-                      <td>{selectedThesis.thesisStatus}</td>
+                      {/* {console.log(selectedThesis[0].thesisStatus)} */}
+                      <td>{selectedThesis[0].thesisStatus}</td>
                     </tr>
                     <tr style={{ backgroundColor: "White" }}>
                       <td
@@ -320,7 +353,7 @@ export default function EvaluateThesisMS() {
                       >
                         Thesis Title
                       </td>
-                      <td>{selectedThesis.thesisTitle}</td>
+                      <td>{selectedThesis[0].thesisTitle}</td>
                     </tr>
                     <tr
                       style={{
@@ -338,7 +371,7 @@ export default function EvaluateThesisMS() {
                       >
                         Area of Specialization
                       </td>
-                      <td>{selectedThesis?.specializationTrack}</td>
+                      <td>{selectedThesis[0]?.specializationTrack}</td>
                     </tr>
                     <tr style={{ backgroundColor: "White" }}>
                       <td
@@ -400,7 +433,7 @@ export default function EvaluateThesisMS() {
                       >
                         Supervisor
                       </td>
-                      <td>{selectedThesis?.supervisor_id?.fullName}</td>
+                      <td>{selectedThesis[0]?.supervisor_id?.fullName}</td>
                     </tr>
                     <tr style={{ backgroundColor: "White" }}>
                       <td
@@ -413,7 +446,7 @@ export default function EvaluateThesisMS() {
                       >
                         Co-Supervisor
                       </td>
-                      <td>{selectedThesis?.coSupervisor_id?.fullName}</td>
+                      <td>{selectedThesis[0]?.coSupervisor_id?.fullName}</td>
                     </tr>
                     <tr
                       style={{
@@ -437,7 +470,7 @@ export default function EvaluateThesisMS() {
                           href={`${process.env.REACT_APP_URL}/${selectedThesis?.thesisFileName}`}
                           rel="noopener noreferrer"
                         >
-                          {selectedThesis?.thesisFileName}
+                          {selectedThesis[0]?.thesisFileName}
                         </a>
                       </td>
                     </tr>

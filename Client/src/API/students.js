@@ -59,6 +59,24 @@ const getSupervisors = async () => {
   }
 };
 
+const getSpecificSupervisor = async (supervisor_id) => {
+  let token = getToken();
+  try {
+    const { data } = await API_STUD.get(
+      `/students/supervisors/${supervisor_id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const updateProfile = async (formData) => {
   let token = getToken();
   try {
@@ -90,6 +108,7 @@ const studentService = {
   updateProfile,
   getStudents,
   deleteStudent,
+  getSpecificSupervisor,
 };
 
 export default studentService;
