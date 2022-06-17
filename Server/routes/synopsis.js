@@ -406,7 +406,7 @@ router.put("/update-synopsis-status", (req, res) => {
     });
 });
 
-router.post("/add-deadline", auth.verifyUser, auth.checkAdmin, (req, res) => {
+router.post("/add-deadline", auth.verifyUser, (req, res) => {
   Deadline.create(req.body)
     .then((deadline) => {
       res.setHeader("Content-Type", "application/json");
@@ -439,7 +439,6 @@ router.get(
 router.delete(
   "/delete-deadline/:id",
   auth.verifyUser,
-  auth.checkAdmin,
   async (req, res, next) => {
     try {
       await Deadline.findByIdAndDelete(req.params.id);
@@ -454,7 +453,6 @@ router.delete(
 router.patch(
   "/update-deadline/:id",
   auth.verifyUser,
-  auth.checkAdmin,
   async (req, res, next) => {
     try {
       await Deadline.findByIdAndUpdate(req.params.id, req.body);

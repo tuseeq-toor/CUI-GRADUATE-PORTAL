@@ -7,8 +7,10 @@ import pdfReportsService from "../../API/pdfReports";
 import synopsisService from "../../API/synopsis";
 import thesisService from "../../API/thesis";
 import "../../Components/UI/ActiveTab.css";
+import { useLocation } from "react-router-dom";
 
 const ViewThesisReport = () => {
+  const location = useLocation();
   const { currentRole } = useSelector((state) => state.userRoles);
   const [autocompleteValue, setAutocompleteValue] = useState(null);
   const [evaluations, setEvaluations] = useState([]);
@@ -17,86 +19,86 @@ const ViewThesisReport = () => {
   const [filteredThesis, setFilteredThesis] = useState([]);
   const [submittedThesis, setSubmittedThesis] = useState([]);
 
-  const uniqueEvaluatedLabels = async (array) => {
-    const labels = [
-      ...new Set(
-        await array.map((a) => {
-          return a?.schedule_id?.student_id?.registrationNo;
-        })
-      ),
-    ];
-    setEvaluationLabels(labels);
-  };
+  // const uniqueEvaluatedLabels = async (array) => {
+  //   const labels = [
+  //     ...new Set(
+  //       await array.map((a) => {
+  //         return a?.schedule_id?.student_id?.registrationNo;
+  //       })
+  //     ),
+  //   ];
+  //   setEvaluationLabels(labels);
+  // };
 
-  useEffect(() => {
-    async function fetchData() {
-      const res = await thesisService.getThesisEvaluations();
-      const syn = await thesisService.getSubmittedThesis();
-      console.log(res);
-      console.log(syn);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     const res = await thesisService.getThesisEvaluations();
+  //     const syn = await thesisService.getSubmittedThesis();
+  //     console.log(res);
+  //     console.log(syn);
 
-      let filteredsubmittedEvaluation = [];
-      let filteredThesisEvaluation = [];
-      if (currentRole.toLowerCase().includes("ms")) {
-        filteredThesisEvaluation = res.filter((item) =>
-          item.schedule_id.student_id.program_id.programShortName
-            .toLowerCase()
-            .includes("ms")
-        );
-        filteredsubmittedEvaluation = syn.filter((item) =>
-          item.student_id.program_id.programShortName
-            .toLowerCase()
-            .includes("ms")
-        );
-      } else if (currentRole.toLowerCase().includes("phd")) {
-        filteredThesisEvaluation = res.filter((item) =>
-          item.schedule_id?.student_id?.program_id?.programShortName
-            .toLowerCase()
-            .includes("phd")
-        );
-        filteredsubmittedEvaluation = syn.filter((item) =>
-          item.student_id.program_id.programShortName
-            .toLowerCase()
-            .includes("phd")
-        );
-      } else {
-        filteredThesisEvaluation = res;
-        filteredsubmittedEvaluation = syn;
-      }
+  //     let filteredsubmittedEvaluation = [];
+  //     let filteredThesisEvaluation = [];
+  //     if (currentRole.toLowerCase().includes("ms")) {
+  //       filteredThesisEvaluation = res.filter((item) =>
+  //         item.schedule_id.student_id.program_id.programShortName
+  //           .toLowerCase()
+  //           .includes("ms")
+  //       );
+  //       filteredsubmittedEvaluation = syn.filter((item) =>
+  //         item.student_id.program_id.programShortName
+  //           .toLowerCase()
+  //           .includes("ms")
+  //       );
+  //     } else if (currentRole.toLowerCase().includes("phd")) {
+  //       filteredThesisEvaluation = res.filter((item) =>
+  //         item.schedule_id?.student_id?.program_id?.programShortName
+  //           .toLowerCase()
+  //           .includes("phd")
+  //       );
+  //       filteredsubmittedEvaluation = syn.filter((item) =>
+  //         item.student_id.program_id.programShortName
+  //           .toLowerCase()
+  //           .includes("phd")
+  //       );
+  //     } else {
+  //       filteredThesisEvaluation = res;
+  //       filteredsubmittedEvaluation = syn;
+  //     }
 
-      setEvaluations(filteredThesisEvaluation);
-      setSubmittedThesis(filteredsubmittedEvaluation);
-      uniqueEvaluatedLabels(filteredThesisEvaluation);
-    }
+  //     setEvaluations(filteredThesisEvaluation);
+  //     setSubmittedThesis(filteredsubmittedEvaluation);
+  //     uniqueEvaluatedLabels(filteredThesisEvaluation);
+  //   }
 
-    fetchData();
-    console.log("Labels", evaluationLabels);
-  }, []);
+  //   fetchData();
+  //   console.log("Labels", evaluationLabels);
+  // }, []);
 
-  const handleRegistrationNo = (reg) => {
-    let evals = evaluations.filter(
-      (evaluation) =>
-        evaluation?.schedule_id?.student_id?.registrationNo === reg
-    );
-    let subSyn = submittedThesis.filter(
-      (submittedThesis) => submittedThesis.student_id.registrationNo === reg
-    );
-    console.log(subSyn);
+  // const handleRegistrationNo = (reg) => {
+  //   let evals = evaluations.filter(
+  //     (evaluation) =>
+  //       evaluation?.schedule_id?.student_id?.registrationNo === reg
+  //   );
+  //   let subSyn = submittedThesis.filter(
+  //     (submittedThesis) => submittedThesis.student_id.registrationNo === reg
+  //   );
+  //   console.log(subSyn);
 
-    setFilteredEvaluations(evals);
-    setFilteredThesis(subSyn);
-    console.log(filteredThesis);
-    console.log(filteredEvaluations);
-  };
+  //   setFilteredEvaluations(evals);
+  //   setFilteredThesis(subSyn);
+  //   console.log(filteredThesis);
+  //   console.log(filteredEvaluations);
+  // };
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
 
-  const defaultProps = {
-    options: evaluationLabels,
-    getOptionLabel: (evaluation) => evaluation || "",
-  };
+  // const defaultProps = {
+  //   options: evaluationLabels,
+  //   getOptionLabel: (evaluation) => evaluation || "",
+  // };
 
   const handleSubmit = async () => {
     await pdfReportsService.generateThesisReport({
@@ -108,9 +110,41 @@ const ViewThesisReport = () => {
     );
   };
 
+  const handleSend = async () => {
+    await pdfReportsService.generateAndSendSynopsis(
+      {
+        evaluations: filteredEvaluations,
+        synopsis: filteredThesis,
+      },
+      filteredThesis[0]?.student_id?.email,
+      filteredThesis[0]?.supervisor_id?.email
+    );
+  };
+
+  useEffect(() => {
+    async function fetchData() {
+      const evaluationss = await thesisService.getThesisEvaluations();
+      const submittedThesis = await thesisService.getSubmittedThesis();
+      let reg = location.state.data;
+      let evals = evaluationss.filter(
+        (evaluation) =>
+          evaluation?.schedule_id?.student_id?.registrationNo === reg
+      );
+      let subSyn = submittedThesis.filter(
+        (submittedThesis) => submittedThesis.student_id.registrationNo === reg
+      );
+      console.log(subSyn);
+
+      setFilteredEvaluations(evals);
+      setFilteredThesis(subSyn);
+    }
+
+    fetchData();
+  }, []);
+
   return (
     <>
-      <Box sx={{ mb: 4 }}>
+      {/* <Box sx={{ mb: 4 }}>
         <Autocomplete
           {...defaultProps}
           id="controlled-demo"
@@ -130,7 +164,7 @@ const ViewThesisReport = () => {
             />
           )}
         />
-      </Box>
+      </Box> */}
       <div ref={componentRef} className="pdf">
         <div
           style={{
@@ -396,7 +430,7 @@ const ViewThesisReport = () => {
           </div>
         ))}
       </div>
-      <div style={{ display: "grid", placeContent: "center" }}>
+      <div style={{ display: "flex", placeContent: "center" }}>
         {/* <Button
           type="button"
           variant="contained"
@@ -410,10 +444,19 @@ const ViewThesisReport = () => {
           type="downlaod"
           variant="contained"
           color="secondary"
-          sx={{ mb: 2 }}
+          sx={{ mb: 2, mr: 2 }}
           onClick={handleSubmit}
         >
           Download PDF
+        </Button>
+        <Button
+          type="downlaod"
+          variant="contained"
+          color="secondary"
+          sx={{ mb: 2 }}
+          onClick={handleSend}
+        >
+          Generate & send PDF
         </Button>
       </div>
     </>

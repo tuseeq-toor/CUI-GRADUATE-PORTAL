@@ -28,6 +28,23 @@ const generateSynopsisReport = async (data) => {
     return error.response;
   }
 };
+const generateAndSendSynopsis = async (data, studentEmail, supervisorEmail) => {
+  let token = getToken();
+  try {
+    const res = await API_PdfReports.post(
+      `pdfReports/generate-and-send-synopsis/${supervisorEmail}/${studentEmail}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
 const downlaodSynopsisReport = async (registrationNo) => {
   console.log("registraitionNO", registrationNo);
   window.open(
@@ -58,10 +75,29 @@ const downlaodThesisReport = async (registrationNo) => {
     `${process.env.REACT_APP_URL}/pdfReports/generate-thesis-report/${registrationNo}`
   );
 };
+const generateAndSendThesis = async (data, studentEmail, supervisorEmail) => {
+  let token = getToken();
+  try {
+    const res = await API_PdfReports.post(
+      `pdfReports/generate-and-send-thesis/${supervisorEmail}/${studentEmail}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res;
+  } catch (error) {
+    return error.response;
+  }
+};
+
 const pdfReportsService = {
   generateSynopsisReport,
   downlaodSynopsisReport,
   generateThesisReport,
   downlaodThesisReport,
+  generateAndSendSynopsis,
 };
 export default pdfReportsService;

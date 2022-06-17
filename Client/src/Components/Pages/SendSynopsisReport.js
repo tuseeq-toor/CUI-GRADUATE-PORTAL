@@ -1,71 +1,117 @@
-import { Button } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import studentService from "../../API/students";
 import synopsisService from "../../API/synopsis";
 import thesisService from "../../API/thesis";
+import { useNavigate } from "react-router-dom";
 
 import { programWiseData } from "../DummyData/DummyData";
 import BackdropModal from "../UI/BackdropModal";
 import DataTable from "../UI/TableUI";
+import programsService from "../../API/programs";
 
 export default function SendThesisReport() {
+  let navigate = useNavigate();
   const { currentRole } = useSelector((state) => state.userRoles);
+  const { user } = useSelector((state) => state.auth);
   const [showReportModal, setShowReportModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [evaluations, setEvaluations] = useState([]);
-
-  const uniqueEvaluatedLabels = (array) => {
-    const arrayUniqueByKey = [
-      ...new Map(
-        array.map((item) => [
-          item[item.schedule_id.student_id.registrationNo],
-          item,
-        ])
-      ).values(),
-    ];
-
-    return arrayUniqueByKey;
-  };
+  const [programs, setPrograms] = useState([]);
+  const [dataGridData, setDataGridData] = useState([]);
+  const [filteredSchedules, setFilteredSchedules] = useState();
 
   useEffect(() => {
     async function fetchData() {
-      const res = await synopsisService.getSynopsisEvaluations();
-      console.log(res);
-
-      const goEvaluated = res.filter((item) => item?.goEvaluation?.isEvaluated);
-
-      let filteredSynopsisEvaluation = [];
-      if (currentRole.toLowerCase().includes("ms")) {
-        filteredSynopsisEvaluation = goEvaluated.filter((item) =>
-          item.schedule_id.student_id.program_id.programShortName
-            .toLowerCase()
-            .includes("ms")
+      console.log(user.user._id);
+      const prog = await programsService.getPrograms();
+      setPrograms(prog);
+      const schd = await synopsisService.getSynopsisSchedules();
+      console.log(schd[0].program_id.programShortName);
+      const alreadyEvaluated = await synopsisService.getSynopsisEvaluations();
+      // console.log(res);
+      console.log(currentRole);
+      // let filteredMsSchedules = schd.filter((msSchedule) =>
+      //   msSchedule.program_id.programShortName.toLowerCase().includes("ms")
+      // );
+      let filteredMsSchedules;
+      if (currentRole === "PHD_COR") {
+        console.log("PHDDD");
+        filteredMsSchedules = schd.filter((msSchedule) =>
+          msSchedule.program_id.programShortName.toLowerCase().includes("phd")
         );
-      } else if (currentRole.toLowerCase().includes("phd")) {
-        filteredSynopsisEvaluation = goEvaluated.filter((item) =>
-          item.schedule_id?.student_id?.program_id?.programShortName
-            .toLowerCase()
-            .includes("phd")
+        console.log(filteredMsSchedules);
+      } else if (currentRole === "MS_COR") {
+        console.log("MSCORR");
+        filteredMsSchedules = schd.filter((msSchedule) =>
+          msSchedule.program_id.programShortName.toLowerCase().includes("ms")
         );
       } else {
-        filteredSynopsisEvaluation = goEvaluated;
+        console.log("GOOOO");
+        console.log(schd);
+        filteredMsSchedules = schd;
       }
+      // ager isme id perhi hai oar wo logged in user ke equal nahi hai tou display kero wo student
+      // let result;
+      // filteredMsSchedules = filteredMsSchedules.map((oneSchedule) => {
+      //   res.forEach((evaluatedSynopsis) => {
+      //     if (evaluatedSynopsis.schedule_id) {
+      //       if (
+      //         evaluatedSynopsis.schedule_id.student_id._id ===
+      //         oneSchedule.student_id._id
+      //       ) {
+      //         if (!evaluatedSynopsis.evaluator_id._id === user.user._id) {
+      //           result = oneSchedule;
+      //         }
+      //       }
+      //     }
+      //   });
+      //   return result;
+      // });
 
-      console.log(filteredSynopsisEvaluation);
+      // const result = alreadyEvaluated.filter((element) =>
+      //   schd.includes(element.schedule_id.student_id._id)
+      // );
+      // let result = alreadyEvaluated.filter((o1) =>
+      //   schd.some((o2) => o1.schedule_id.student_id._id === o2.student_id._id)
+      // );
+      // // console.log(result);
+      // result = result.filter((x) => x.evaluator_id._id !== user.user._id);
+      // // console.log(result);
+      // // console.log(filteredMsSchedules);
 
-      var values = uniqueEvaluatedLabels(filteredSynopsisEvaluation);
-      console.log(values);
+      // result = schd.filter((o1) =>
+      //   result.some((o2) => o2.schedule_id.student_id._id === o1.student_id._id)
+      // );
+      // console.log(result);
+      setFilteredSchedules(filteredMsSchedules);
 
-      const data = values.map((res) => ({
-        name: res?.schedule_id?.student_id?.username,
-        registrationNo: res?.schedule_id?.student_id?.registrationNo,
-        email: res?.schedule_id?.student_id?.email,
-        professor: res?.evaluator_id?.username,
-        id: res?._id,
-      }));
+      // result.student_id.supervisor_id
+      const { supervisors } = await studentService.getSupervisors();
+      console.log(supervisors);
+      const dataa = filteredMsSchedules.map((res) => {
+        const s = supervisors.filter(
+          (mys) => mys._id === res.student_id.supervisor_id
+        );
+        console.log(s);
+        return {
+          name: res?.student_id?.username,
+          registrationNo: res?.student_id?.registrationNo,
+          email: res?.student_id?.email,
+          supervisor: s[0].username,
+          id: res?._id,
+        };
+      });
 
-      setEvaluations(data);
+      setDataGridData(dataa);
     }
 
     fetchData();
@@ -81,7 +127,7 @@ export default function SendThesisReport() {
     },
     { field: "registrationNo", headerName: "Registration No.", width: 200 },
     { field: "email", headerName: "Email", width: 350 },
-    { field: "professor", headerName: "Professor", width: 200 },
+    { field: "supervisor", headerName: "Supervisor", width: 200 },
     {
       field: "actions",
       headerName: "Action",
@@ -89,16 +135,17 @@ export default function SendThesisReport() {
       renderCell: (props) => (
         <>
           <Button
-            /* onClick={() => {
-              setselectedobj(props.row);
-              handleOpen();
-            }} */
+            onClick={() => {
+              navigate("/Dashboard/EvaluateSynopsis(MS)", {
+                state: { data: props.row },
+              });
+            }}
             variant="contained"
             color="secondary"
             size="small"
             style={{ marginLeft: 10 }}
           >
-            Send Report
+            Evaluate Report
           </Button>
         </>
       ),
@@ -111,9 +158,30 @@ export default function SendThesisReport() {
 
   return (
     <>
+      {/* <FormControl color="secondary" fullWidth>
+        <InputLabel>Student</InputLabel>
+        <Select
+          sx={{ marginBottom: "15px" }}
+          label="Student"
+          name="student_id"
+          onChange={(e) => {
+            setDataGridData(
+              filteredSchedules.filter(
+                (oneSchedule) =>oneSchedule.program_id.programShortName.includes(e.target.value)
+              )
+            );
+          }}
+        >
+          {programs.map((oneProgram) => (
+            <MenuItem value={oneProgram.programShortName}>
+              {oneProgram.programShortName}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl> */}
       <div style={{ height: 400, width: "100%", backgroundColor: "white" }}>
         <DataGrid
-          rows={evaluations}
+          rows={dataGridData}
           columns={programWiseHeader}
           pageSize={5}
           rowsPerPageOptions={[5]}

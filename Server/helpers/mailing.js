@@ -5,7 +5,7 @@ var transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: "tuseeqtoor9@gmail.com",
-    pass: "forgoti@g!",
+    pass: "forgoti@G!",
   },
 });
 
@@ -25,12 +25,12 @@ module.exports = signupMail = (email) => {
     }
   });
 };
-module.exports = reportMail = (email) => {
+module.exports = reportMail = (email, path) => {
   var mailOptions = {
     from: "tuseeqtoor9@gmail.com",
     to: email,
     subject: "Signup Successful",
-    text: "That was easy!",
+    attachment: path,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {

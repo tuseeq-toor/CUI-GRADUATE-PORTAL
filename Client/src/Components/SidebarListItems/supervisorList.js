@@ -33,6 +33,7 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import LayersIcon from "@mui/icons-material/Layers";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import HomeIcon from "@mui/icons-material/Home";
+import ListIcon from "@mui/icons-material/List";
 
 export const SupervisorListitems = [
   {
@@ -41,10 +42,28 @@ export const SupervisorListitems = [
     path: "/Dashboard/HomeSupervisor",
   },
   {
+    text: "Progress Report",
+    icon: <ListIcon />,
+    active: false,
+    subMenu: [
+      {
+        text: "Manage Report",
+        icon: <DonutSmallIcon />,
+        path: "/Dashboard/ManageProgressReport",
+      },
+
+      {
+        text: "Add Report",
+        icon: <AutoStoriesIcon />,
+        path: "/Dashboard/AddProgressReport",
+      },
+    ],
+  },
+  /*   {
     text: "Pending Thesis",
     icon: <EditNotificationsIcon />,
     path: "/Dashboard/PendingThesis",
-  },
+  }, */
   {
     text: "Change Password",
     icon: <ChangeCircleIcon />,
