@@ -71,6 +71,8 @@ import SendAnnouncement from "../../Pages/SendAnnouncement";
 import SuperivorWiseReports from "../../Pages/SupervisorWiseReports";
 import ProcessedReports from "../../Pages/ProcessedReports";
 import InprocessReports from "../../Pages/InprocessReports";
+import MyStudent from "../../Pages/MyStudents";
+import MyStudents from "../../Pages/MyStudents";
 const AdminRoutes = (props) => {
   const { isLoggedIn } = useSelector((state) => state.auth);
   console.log(isLoggedIn);
@@ -117,6 +119,7 @@ const AdminRoutes = (props) => {
               path="/Dashboard/ManageStudents"
               element={<ManageStudent />}
             />
+            <Route path="/Dashboard/MyStudents" element={<MyStudents />} />
             <Route path="/Dashboard/AddStudent" element={<AddStudent />} />
             <Route
               path="/Dashboard/ManageDeadline"

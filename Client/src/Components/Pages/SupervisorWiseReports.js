@@ -282,67 +282,105 @@ export default function SupervisorWiseReports() {
           </Box>
         ) : (
           <>
-            <div ref={componentRef} className="supervisorWiseReport">
-              {selectedSupervisor && (
-                <Box>
-                  <table
-                    cellSpacing={4}
-                    cellPadding={6}
-                    style={{
-                      color: "#333333",
-                      borderCollapse: "separate",
-                      padding: ".5rem",
-                    }}
-                  >
-                    <colgroup className="cols">
-                      <col width="180px" />
-                      <col width="50px" />
-                      <col width="180px" />
-                      <col width="50px" />
-                      <col width="180px" />
-                      <col width="50px" />
-                    </colgroup>
-                    <tbody>
-                      <tr
+            {selectedSupervisor && (
+              <Box>
+                <table
+                  cellSpacing={4}
+                  cellPadding={6}
+                  style={{
+                    color: "#333333",
+                    borderCollapse: "separate",
+                    padding: ".5rem",
+                  }}
+                >
+                  <colgroup className="cols">
+                    <col width="180px" />
+                    <col width="50px" />
+                    <col width="180px" />
+                    <col width="50px" />
+                    <col width="180px" />
+                    <col width="50px" />
+                  </colgroup>
+                  <tbody>
+                    <tr
+                      style={{
+                        backgroundColor: "white",
+                      }}
+                    >
+                      <td
+                        valign="middle"
                         style={{
-                          backgroundColor: "white",
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
                         }}
                       >
-                        <td
-                          valign="middle"
-                          style={{
-                            backgroundColor: "#E9ECF1",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Total Students
-                        </td>
-                        <td>{totalSupervisorStudents}</td>
-                        <td
-                          valign="middle"
-                          style={{
-                            backgroundColor: "#E9ECF1",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Slots Available
-                        </td>
-                        <td>{totalSlotsAvailable}</td>
-                        <td
-                          valign="middle"
-                          style={{
-                            backgroundColor: "#E9ECF1",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Students Passed Out
-                        </td>
-                        <td>{totalPassedOut}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </Box>
-              )}
+                        Total Students
+                      </td>
+                      <td>{totalSupervisorStudents}</td>
+                      <td
+                        valign="middle"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Slots Available
+                      </td>
+                      <td>{totalSlotsAvailable}</td>
+                      <td
+                        valign="middle"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Students Passed Out
+                      </td>
+                      <td>{totalPassedOut}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </Box>
+            )}
+            <div ref={componentRef} className="supervisorWiseReport">
+              <Box
+                sx={{
+                  marginTop: 2,
+                  marginBottom: 4,
+                  padding: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: "2px solid #f2f2f2",
+                }}
+              >
+                <div style={{ display: "flex" }}>
+                  <img
+                    style={{
+                      width: "350px",
+                    }}
+                    alt="Remy Sharp"
+                    src="../assets/images/cui.png"
+                  />
+                  <Typography
+                    style={{ marginLeft: "-13rem", marginTop: "3px" }}
+                    component="h1"
+                    variant="h4"
+                  >
+                    COMSATS UNIVERSITY ISLAMABD
+                  </Typography>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <Typography
+                    style={{ marginTop: "-2rem" }}
+                    component="h1"
+                    variant="h5"
+                  >
+                    GRADUATE OFFICE
+                  </Typography>
+                </div>
+              </Box>
               {filteredReport.map((report) => {
                 return (
                   <div>

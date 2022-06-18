@@ -123,24 +123,24 @@ export const phdListitems = [
         icon: <LayersIcon />,
         path: "/Dashboard/CreateSynopsisSchedule",
       },
-      {
+      /*    {
         text: "Evaluate Synopsis PhD",
         icon: <MapIcon />,
         path: "/Dashboard/EvaluateSynopsis(PhD)",
-      },
+      }, */
       /* {
         text: "Generate Report",
         icon: <PersonAddIcon />,
         path: "/Dashboard/GenerateSynopsisReport",
       }, */
-      {
-        text: "View Report",
-        icon: <LayersIcon />,
-        path: "/Dashboard/ViewSynopsisReport",
-      },
+      // {
+      //   text: "View Report",
+      //   icon: <LayersIcon />,
+      //   path: "/Dashboard/ViewSynopsisReport",
+      // },
 
       {
-        text: "Send Report",
+        text: "Evaluate Synopsis",
         icon: <PersonAddIcon />,
         path: "/Dashboard/SendSynopsisReport",
       },
@@ -162,11 +162,11 @@ export const phdListitems = [
         icon: <LayersIcon />,
         path: "/Dashboard/CreateThesisSchedule",
       },
-      {
-        text: "Evaluate Thesis PhD",
-        icon: <MapIcon />,
-        path: "/Dashboard/EvaluateThesis(PhD)",
-      },
+      // {
+      //   text: "Evaluate Thesis PhD",
+      //   icon: <MapIcon />,
+      //   path: "/Dashboard/EvaluateThesis(PhD)",
+      // },
       /*   {
         text: "Pending Thesis",
         icon: <EditNotificationsIcon />,
@@ -177,14 +177,14 @@ export const phdListitems = [
         icon: <PersonAddIcon />,
         path: "/Dashboard/GenerateThesisReport",
       }, */
-      {
-        text: "View Report",
-        icon: <LayersIcon />,
-        path: "/Dashboard/ViewThesisReport",
-      },
+      // {
+      //   text: "View Report",
+      //   icon: <LayersIcon />,
+      //   path: "/Dashboard/ViewThesisReport",
+      // },
 
       {
-        text: "Send Report",
+        text: "Evaluate Thesis",
         icon: <PersonAddIcon />,
         path: "/Dashboard/SendThesisReport",
       },

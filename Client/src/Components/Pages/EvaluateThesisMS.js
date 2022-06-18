@@ -16,6 +16,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Typography,
 } from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -218,15 +219,31 @@ export default function EvaluateThesisMS() {
       ) : (
         <>
           <div className="row">
-            <div className="col-md-12 mt-3">
+            <div className="col-md-12 mt-2">
               <div className="border">
+                <Typography
+                  sx={{ mb: 2, color: "#572E74", fontWeight: "500" }}
+                  textAlign={"center"}
+                  variant="h4"
+                >
+                  Thesis Evaluation
+                </Typography>
                 <table
-                  className="small-12 medium-12 large-12 columns table table-sm"
                   cellSpacing={0}
                   cellPadding={4}
                   id="ContentPlaceHolder1_DetailsView1"
-                  style={{ color: "#333333", borderCollapse: "collapse" }}
+                  style={{
+                    width: "100%",
+                    color: "#333333",
+                    borderCollapse: "collapse",
+                  }}
                 >
+                  <colgroup>
+                    <col style={{ width: "15%" }} />
+                    <col style={{ width: "30%" }} />
+                    <col style={{ width: "20%" }} />
+                    <col style={{ width: "35%" }} />
+                  </colgroup>
                   <tbody>
                     <tr
                       style={{
@@ -239,134 +256,16 @@ export default function EvaluateThesisMS() {
                         style={{
                           backgroundColor: "#E9ECF1",
                           fontWeight: "bold",
-                          width: "20%",
                         }}
                       >
                         Registration No
                       </td>
                       <td>{selectedSchedule[0]?.student_id?.registrationNo}</td>
-                    </tr>
-                    <tr style={{ backgroundColor: "White" }}>
                       <td
                         valign="top"
                         style={{
                           backgroundColor: "#E9ECF1",
                           fontWeight: "bold",
-                          width: "20%",
-                        }}
-                      >
-                        Name
-                      </td>
-                      <td>{selectedSchedule[0]?.student_id?.username}</td>
-                    </tr>
-                    <tr
-                      style={{
-                        color: "#333333",
-                        backgroundColor: "#F7F6F3",
-                      }}
-                    >
-                      <td
-                        valign="top"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                          width: "20%",
-                        }}
-                      >
-                        Email
-                      </td>
-                      <td>{selectedSchedule[0]?.student_id?.email}</td>
-                    </tr>
-                    <tr style={{ backgroundColor: "White" }}>
-                      <td
-                        valign="top"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                          width: "20%",
-                        }}
-                      >
-                        Program
-                      </td>
-                      <td>
-                        {selectedSchedule[0]?.program_id?.programShortName}
-                      </td>
-                    </tr>
-                    <tr
-                      style={{
-                        color: "#333333",
-                        backgroundColor: "#F7F6F3",
-                      }}
-                    >
-                      <td
-                        valign="top"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                          width: "20%",
-                        }}
-                      >
-                        Course work completion
-                      </td>
-                      <td>N/A</td>
-                    </tr>
-                    <tr style={{ backgroundColor: "White" }}>
-                      <td
-                        valign="top"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                          width: "20%",
-                        }}
-                      >
-                        Comprehensive Exam
-                      </td>
-                      <td>N/A</td>
-                    </tr>
-                    <tr
-                      style={{
-                        color: "#333333",
-                        backgroundColor: "#F7F6F3",
-                      }}
-                    >
-                      <td
-                        valign="top"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                          width: "20%",
-                        }}
-                      >
-                        Thesis Status
-                      </td>
-                      {/* {console.log(selectedThesis[0].thesisStatus)} */}
-                      <td>{selectedThesis[0].thesisStatus}</td>
-                    </tr>
-                    <tr style={{ backgroundColor: "White" }}>
-                      <td
-                        valign="top"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                          width: "20%",
-                        }}
-                      >
-                        Thesis Title
-                      </td>
-                      <td>{selectedThesis[0].thesisTitle}</td>
-                    </tr>
-                    <tr
-                      style={{
-                        color: "#333333",
-                        backgroundColor: "#F7F6F3",
-                      }}
-                    >
-                      <td
-                        valign="top"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                          width: "20%",
                         }}
                       >
                         Area of Specialization
@@ -379,7 +278,16 @@ export default function EvaluateThesisMS() {
                         style={{
                           backgroundColor: "#E9ECF1",
                           fontWeight: "bold",
-                          width: "20%",
+                        }}
+                      >
+                        Name
+                      </td>
+                      <td>{selectedSchedule[0]?.student_id?.username}</td>
+                      <td
+                        valign="top"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
                         }}
                       >
                         Foreign Submission
@@ -397,10 +305,69 @@ export default function EvaluateThesisMS() {
                         style={{
                           backgroundColor: "#E9ECF1",
                           fontWeight: "bold",
-                          width: "20%",
+                        }}
+                      >
+                        Email
+                      </td>
+                      <td>{selectedSchedule[0]?.student_id?.email}</td>
+                      <td
+                        valign="top"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
                         }}
                       >
                         GAT Subject
+                      </td>
+                    </tr>
+                    <tr style={{ backgroundColor: "White" }}>
+                      <td
+                        valign="top"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Program
+                      </td>
+                      <td>
+                        {selectedSchedule[0]?.program_id?.programShortName}
+                      </td>
+                      <td
+                        valign="top"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Course work completion
+                      </td>
+                      <td>N/A</td>
+                    </tr>
+                    <tr
+                      style={{
+                        color: "#333333",
+                        backgroundColor: "#F7F6F3",
+                      }}
+                    >
+                      <td
+                        valign="top"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Supervisor
+                      </td>
+                      <td>{selectedThesis[0]?.supervisor_id?.fullName}</td>
+                      <td
+                        valign="top"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Comprehensive Exam
                       </td>
                       <td>N/A</td>
                     </tr>
@@ -410,14 +377,23 @@ export default function EvaluateThesisMS() {
                         style={{
                           backgroundColor: "#E9ECF1",
                           fontWeight: "bold",
-                          width: "20%",
                         }}
                       >
-                        Status
+                        Co-Supervisor
                       </td>
-                      <td>&nbsp;</td>
+                      <td>{selectedThesis[0]?.coSupervisor_id?.fullName}</td>
+                      <td
+                        valign="top"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Thesis Status
+                      </td>
+                      <td>{selectedThesis[0]?.thesisStatus}</td>
                     </tr>
-                    <tr
+                    {/* <tr
                       style={{
                         color: "#333333",
                         backgroundColor: "#F7F6F3",
@@ -428,12 +404,41 @@ export default function EvaluateThesisMS() {
                         style={{
                           backgroundColor: "#E9ECF1",
                           fontWeight: "bold",
-                          width: "20%",
                         }}
                       >
-                        Supervisor
+                        Synopsis Status
                       </td>
-                      <td>{selectedThesis[0]?.supervisor_id?.fullName}</td>
+                      <td>{submittedSynopsis?.synopsisStatus}</td>
+                      <td
+                        valign="top"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Status
+                      </td>
+                      <td>&nbsp;</td>
+                    </tr> */}
+                    <tr>
+                      <td
+                        valign="top"
+                        style={{
+                          backgroundColor: "#E9ECF1",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Thesis File
+                      </td>
+                      <td colspan="3">
+                        <a
+                          target="_blank"
+                          href={`${process.env.REACT_APP_URL}/${selectedThesis[0]?.thesisFileName}`}
+                          rel="noopener noreferrer"
+                        >
+                          {selectedThesis[0]?.thesisFileName}
+                        </a>
+                      </td>
                     </tr>
                     <tr style={{ backgroundColor: "White" }}>
                       <td
@@ -441,37 +446,12 @@ export default function EvaluateThesisMS() {
                         style={{
                           backgroundColor: "#E9ECF1",
                           fontWeight: "bold",
-                          width: "20%",
                         }}
                       >
-                        Co-Supervisor
+                        Thesis Title
                       </td>
-                      <td>{selectedThesis[0]?.coSupervisor_id?.fullName}</td>
-                    </tr>
-                    <tr
-                      style={{
-                        color: "#333333",
-                        backgroundColor: "#F7F6F3",
-                      }}
-                    >
-                      <td
-                        valign="top"
-                        style={{
-                          backgroundColor: "#E9ECF1",
-                          fontWeight: "bold",
-                          width: "20%",
-                        }}
-                      >
-                        Thesis File
-                      </td>
-                      <td>
-                        <a
-                          target="_blank"
-                          href={`${process.env.REACT_APP_URL}/${selectedThesis?.thesisFileName}`}
-                          rel="noopener noreferrer"
-                        >
-                          {selectedThesis[0]?.thesisFileName}
-                        </a>
+                      <td colspan="3">
+                        {selectedSchedule[0]?.student_id?.synopsisTitle}
                       </td>
                     </tr>
                   </tbody>
@@ -479,15 +459,16 @@ export default function EvaluateThesisMS() {
               </div>
             </div>
           </div>
+
           <div className="row">
             <div className="col-md-12 p-4">
-              <table style={{ width: "100%" }} className="table table-sm">
+              <table style={{ width: "100%", marginTop: "1rem" }}>
                 {currentRole === "GO" ? (
                   <>
                     <Box
                       sx={{
                         minWidth: 120,
-                        marginTop: "1rem",
+                        marginTop: "0.2rem",
                       }}
                     >
                       <>
@@ -545,14 +526,12 @@ export default function EvaluateThesisMS() {
                   </>
                 ) : (
                   <tbody>
-                    <tr>
-                      <th colSpan={4}>
-                        <b>
-                          After in depth examination of the manuscript following
-                          are the recommendations of GAC member
-                        </b>
+                    {/* <tr>
+                      <th>
+                        After in depth examination of the manuscript following
+                        are the recommendations of GAC member
                       </th>
-                    </tr>
+                    </tr> */}
                     <FormControl>
                       <RadioGroup
                         aria-labelledby="demo-radio-buttons-group-label"
@@ -560,15 +539,6 @@ export default function EvaluateThesisMS() {
                         name="radio-buttons-group"
                       >
                         <tr>
-                          <td>1</td>
-                          <td>
-                            The candidate is recommended to do <b>minor</b>{" "}
-                            changings.
-                          </td>
-                          <td>
-                            A Candidate has to submit a manuscript within 1
-                            week.
-                          </td>
                           <td>
                             <FormControlLabel
                               value="Minor Changings."
@@ -578,14 +548,16 @@ export default function EvaluateThesisMS() {
                               onChange={handleChange}
                             />
                           </td>
-                        </tr>
-                        <tr>
-                          <td>2</td>
                           <td>
-                            The candidate is recommended to do <b>major</b>{" "}
+                            The candidate is recommended to do <b>minor</b>
                             changings.
                           </td>
-                          <td>Candidate has to re-appear in next semester. </td>
+                          <td>
+                            A Candidate has to submit a manuscript within 1
+                            week.
+                          </td>
+                        </tr>
+                        <tr>
                           <td>
                             <FormControlLabel
                               value="Major Changings."
@@ -595,6 +567,11 @@ export default function EvaluateThesisMS() {
                               onChange={handleChange}
                             />
                           </td>
+                          <td>
+                            The candidate is recommended to do <b>major</b>{" "}
+                            changings.
+                          </td>
+                          <td>Candidate has to re-appear in next semester. </td>
                         </tr>
                       </RadioGroup>
                     </FormControl>
@@ -628,7 +605,7 @@ export default function EvaluateThesisMS() {
                 setShowModal={setShowEvaluateModal}
                 title={"Evaluate!"}
               >
-                Synopsis has been Evaluated.
+                Thesis has been Evaluated.
               </BackdropModal>
               <BackdropModal
                 showModal={showErrorModal}

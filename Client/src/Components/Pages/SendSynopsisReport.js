@@ -179,16 +179,15 @@ export default function SendThesisReport() {
           ))}
         </Select>
       </FormControl> */}
-      <div style={{ height: 400, width: "100%", backgroundColor: "white" }}>
+      <div style={{ height: 500, width: "100%", backgroundColor: "white" }}>
         <DataGrid
           rows={dataGridData}
           columns={programWiseHeader}
-          pageSize={5}
+          pageSize={6}
           rowsPerPageOptions={[5]}
-          checkboxSelection
         />
       </div>
-      <div>
+      {/*  <div>
         <Button
           sx={{ mt: 2 }}
           variant="contained"
@@ -198,7 +197,7 @@ export default function SendThesisReport() {
         >
           Send Report
         </Button>
-      </div>
+      </div> */}
 
       <BackdropModal
         showModal={showReportModal}

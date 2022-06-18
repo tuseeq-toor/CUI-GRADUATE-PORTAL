@@ -104,6 +104,11 @@ export const adminListitems = [
     active: false,
     subMenu: [
       {
+        text: "My Students",
+        icon: <LayersIcon />,
+        path: "/Dashboard/MyStudents",
+      },
+      {
         text: "Manage Students",
         icon: <LayersIcon />,
         path: "/Dashboard/ManageStudents",
@@ -155,24 +160,24 @@ export const adminListitems = [
     ],
   },
 
-  {
-    text: "Evaluate Synopsis",
-    icon: <ListIcon />,
-    active: false,
-    subMenu: [
-      {
-        text: "Synopsis (MS)",
-        icon: <AnalyticsIcon />,
-        path: "/Dashboard/EvaluateSynopsis(MS)",
-      },
+  // {
+  //   text: "Evaluate Synopsis",
+  //   icon: <ListIcon />,
+  //   active: false,
+  //   subMenu: [
+  //     {
+  //       text: "Synopsis (MS)",
+  //       icon: <AnalyticsIcon />,
+  //       path: "/Dashboard/EvaluateSynopsis(MS)",
+  //     },
 
-      {
-        text: "Synopsis (PhD)",
-        icon: <MapIcon />,
-        path: "/Dashboard/EvaluateSynopsis(PhD)",
-      },
-    ],
-  },
+  //     {
+  //       text: "Synopsis (PhD)",
+  //       icon: <MapIcon />,
+  //       path: "/Dashboard/EvaluateSynopsis(PhD)",
+  //     },
+  //   ],
+  // },
 
   {
     text: "Notification",

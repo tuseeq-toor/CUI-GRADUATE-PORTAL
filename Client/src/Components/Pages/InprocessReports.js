@@ -325,6 +325,44 @@ export default function ProcessedReports() {
       ) : (
         <>
           <div ref={componentRef} className="supervisorWiseReport">
+            <Box
+              sx={{
+                marginTop: 2,
+                marginBottom: 4,
+                padding: 2,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                border: "2px solid #f2f2f2",
+              }}
+            >
+              <div style={{ display: "flex" }}>
+                <img
+                  style={{
+                    width: "350px",
+                  }}
+                  alt="Remy Sharp"
+                  src="../assets/images/cui.png"
+                />
+                <Typography
+                  style={{ marginLeft: "-13rem", marginTop: "3px" }}
+                  component="h1"
+                  variant="h4"
+                >
+                  COMSATS UNIVERSITY ISLAMABD
+                </Typography>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <Typography
+                  style={{ marginTop: "-2rem" }}
+                  component="h1"
+                  variant="h5"
+                >
+                  GRADUATE OFFICE
+                </Typography>
+              </div>
+            </Box>
             {filteredReport.map((report) => {
               return (
                 <div>

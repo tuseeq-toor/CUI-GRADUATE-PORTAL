@@ -16,6 +16,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -226,8 +227,15 @@ export default function EvaluateSynopsisMS({}) {
       ) : (
         <>
           <div className="row">
-            <div className="col-md-12 mt-3">
+            <div className="col-md-12 mt-2">
               <div className="border">
+                <Typography
+                  sx={{ mb: 2, color: "#572E74", fontWeight: "500" }}
+                  textAlign={"center"}
+                  variant="h4"
+                >
+                  Thesis Evaluation
+                </Typography>
                 <table
                   cellSpacing={0}
                   cellPadding={4}
@@ -468,7 +476,7 @@ export default function EvaluateSynopsisMS({}) {
                     <Box
                       sx={{
                         minWidth: 120,
-                        marginTop: "1rem",
+                        marginTop: "0.2rem",
                       }}
                     >
                       <>
