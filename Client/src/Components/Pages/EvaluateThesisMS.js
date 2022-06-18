@@ -16,6 +16,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Typography,
 } from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -218,8 +219,15 @@ export default function EvaluateThesisMS() {
       ) : (
         <>
           <div className="row">
-            <div className="col-md-12 mt-3">
+            <div className="col-md-12 mt-2">
               <div className="border">
+                <Typography
+                  sx={{ mb: 2, color: "#572E74", fontWeight: "500" }}
+                  textAlign={"center"}
+                  variant="h4"
+                >
+                  Thesis Evaluation
+                </Typography>
                 <table
                   cellSpacing={0}
                   cellPadding={4}
@@ -460,7 +468,7 @@ export default function EvaluateThesisMS() {
                     <Box
                       sx={{
                         minWidth: 120,
-                        marginTop: "1rem",
+                        marginTop: "0.2rem",
                       }}
                     >
                       <>
